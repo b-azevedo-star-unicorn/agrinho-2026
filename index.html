@@ -3,121 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sabor & Arte | Receitas Simples</title>
+    <title>Gourmet em Casa | Receitas Selecionadas</title>
     <style>
-        /* Estilização Básica */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            background-color: #f9f9f9;
-            color: #333;
+        :root {
+            --primary: #d35400;
+            --secondary: #2c3e50;
+            --accent: #f39c12;
+            --bg: #fdfaf7;
+            --white: #ffffff;
         }
 
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            color: var(--secondary);
+        }
+
+        /* Cabeçalho e Navegação */
         header {
-            background-color: #e67e22;
-            color: white;
-            padding: 2rem;
+            background: var(--white);
+            padding: 20px 0;
             text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header h1 {
+            margin: 0;
+            color: var(--primary);
+            font-size: 2.5rem;
+            letter-spacing: -1px;
         }
 
         nav {
-            background: #d35400;
-            padding: 0.5rem;
-            text-align: center;
+            margin-top: 15px;
         }
 
-        nav a {
+        .btn-nav {
+            background: none;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 8px 20px;
+            margin: 0 5px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-nav:hover {
+            background: var(--primary);
             color: white;
-            margin: 0 15px;
+        }
+
+        /* Container Principal */
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            border-left: 5px solid var(--accent);
+            padding-left: 15px;
+            margin: 40px 0 20px;
+            color: var(--secondary);
+        }
+
+        /* Grid de Receitas */
+        .recipe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .recipe-card {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .recipe-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .recipe-content {
+            padding: 20px;
+        }
+
+        .category-tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            background: #eee;
+            padding: 3px 10px;
+            border-radius: 10px;
+            color: #777;
+        }
+
+        .recipe-content h3 {
+            margin: 10px 0;
+            color: var(--secondary);
+        }
+
+        .btn-view {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background: var(--primary);
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
             text-decoration: none;
             font-weight: bold;
-        }
-
-        main {
-            max-width: 800px;
-            margin: 20px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .recipe-header {
-            border-bottom: 2px solid #e67e22;
-            margin-bottom: 20px;
-        }
-
-        .ingredients-list {
-            background-color: #fff5e6;
-            padding: 15px;
-            border-left: 5px solid #e67e22;
-            list-style-type: square;
-        }
-
-        .instructions ol {
-            padding-left: 20px;
-        }
-
-        .instructions li {
-            margin-bottom: 10px;
+            margin-top: 15px;
         }
 
         footer {
             text-align: center;
-            padding: 20px;
-            font-size: 0.9rem;
-            color: #777;
+            padding: 40px;
+            background: var(--secondary);
+            color: white;
+            margin-top: 60px;
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Sabor & Arte</h1>
-    <p>Receitas caseiras explicadas de um jeito fácil.</p>
+    <h1>Gourmet em Casa</h1>
+    <nav>
+        <a href="#salgados" class="btn-nav">Salgados</a>
+        <a href="#doces" class="btn-nav">Doces</a>
+        <a href="#bebidas" class="btn-nav">Bebidas</a>
+    </nav>
 </header>
 
-<nav>
-    <a href="#">Início</a>
-    <a href="#">Doces</a>
-    <a href="#">Salgados</a>
-    <a href="#">Dicas</a>
-</nav>
-
-<main>
-    <article>
-        <div class="recipe-header">
-            <h2>Bolo de Caneca de Chocolate (3 Minutos)</h2>
-            <p><em>Uma sobremesa rápida para aqueles momentos de pressa.</em></p>
+<div class="container">
+    
+    <h2 id="salgados" class="section-title">Pratos Salgados</h2>
+    <div class="recipe-grid">
+        <div class="recipe-card">
+            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=500&q=80" alt="Salada Bowl" class="recipe-img">
+            <div class="recipe-content">
+                <span class="category-tag">Almoço Fit</span>
+                <h3>Bowl de Quinoa e Legumes</h3>
+                <p>Uma opção saudável, colorida e cheia de nutrientes para o seu dia a dia.</p>
+                <a href="#" class="btn-view">Ver Receita</a>
+            </div>
         </div>
 
-        <h3>Ingredientes:</h3>
-        <ul class="ingredients-list">
-            <li>1 ovo pequeno</li>
-            <li>4 colheres (sopa) de leite</li>
-            <li>3 colheres (sopa) de óleo</li>
-            <li>2 colheres (sopa) rasas de chocolate em pó</li>
-            <li>4 colheres (sopa) rasas de açúcar</li>
-            <li>4 colheres (sopa) rasas de farinha de trigo</li>
-            <li>1 colher (café) de fermento em pó</li>
-        </ul>
-
-        <h3>Modo de Preparo:</h3>
-        <div class="instructions">
-            <ol>
-                <li>Coloque o ovo na caneca e bata levemente com um garfo.</li>
-                <li>Adicione o óleo, o açúcar, o leite e o chocolate, mexendo bem até homogeneizar.</li>
-                <li>Incorpore a farinha de trigo e o fermento, mexendo suavemente.</li>
-                <li>Leve ao micro-ondas por 3 minutos em potência alta.</li>
-                <li>**Dica:** Sirva quente com uma bola de sorvete de creme!</li>
-            </ol>
+        <div class="recipe-card">
+            <img src="https://images.unsplash.com/photo-1603033093047-d42b3b7fc1ee?auto=format&fit=crop&w=500&q=80" alt="Risoto" class="recipe-img">
+            <div class="recipe-content">
+                <span class="category-tag">Jantar</span>
+                <h3>Risoto de Cogumelos</h3>
+                <p>Clássico italiano cremoso com mix de cogumelos frescos e parmesão.</p>
+                <a href="#" class="btn-view">Ver Receita</a>
+            </div>
         </div>
-    </article>
-</main>
+    </div>
+
+    <h2 id="doces" class="section-title">Doces e Sobremesas</h2>
+    <div class="recipe-grid">
+        <div class="recipe-card">
+            <img src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=500&q=80" alt="Cupcake" class="recipe-img">
+            <div class="recipe-content">
+                <span class="category-tag">Confeitaria</span>
+                <h3>Cupcake de Red Velvet</h3>
+                <p>Massa aveludada com cobertura de cream cheese super leve.</p>
+                <a href="#" class="btn-view">Ver Receita</a>
+            </div>
+        </div>
+
+        <div class="recipe-card">
+            <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=500&q=80" alt="Donut" class="recipe-img">
+            <div class="recipe-content">
+                <span class="category-tag">Lanche</span>
+                <h3>Donuts Caseiros</h3>
+                <p>Fofinhos, fritos na hora e com aquela cobertura de chocolate irresistível.</p>
+                <a href="#" class="btn-view">Ver Receita</a>
+            </div>
+        </div>
+    </div>
+
+</div>
 
 <footer>
-    <p>&copy; 2024 Sabor & Arte - Feito com ❤️ para cozinheiros amadores.</p>
+    <p>&copy; 2024 Gourmet em Casa | Transformando ingredientes em memórias.</p>
 </footer>
 
 </body>
