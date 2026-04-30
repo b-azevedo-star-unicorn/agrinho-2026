@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio-Radar | Economia Circular Agro</title>
+    <style>
+        :root {
+            --primary: #00ff88;
+            --secondary: #00d4ff;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f1f5f9;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar de Filtros */
+        .sidebar {
+            width: 350px;
+            background: var(--card);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid #334155;
+            padding: 12px;
+            border-radius: 10px;
+            color: white;
+            width: 90%;
+        }
+
+        .filter-group h4 { margin-bottom: 10px; font-size: 0.9rem; color: #94a3b8; }
+
+        .tag-container { display: flex; flex-wrap: wrap; gap: 8px; }
+        
+        .tag {
+            background: #334155;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .tag.active { background: var(--primary); color: #000; font-weight: bold; }
+
+        /* Área do Mapa */
+        .map-area {
+            flex-grow: 1;
+            position: relative;
+            background: #111;
+            background-image: url('https://api.mapbox.com/styles/v1/mapbox/dark-v10/static/-51.52,-24.85,11,0/1000x800?access_token=Sua_Token_Aqui'); /* Placeholder de mapa */
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Marcadores no Mapa (Simulados) */
+        .marker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border: 3px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 15px var(--primary);
+            transition: 0.3s;
+        }
+
+        .marker:hover { transform: scale(1.5); z-index: 10; }
+
+        /* Info Card flutuante */
+        .info-panel {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            width: 300px;
+            background: var(--card);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid var(--primary);
+            display: none; /* Aparece ao clicar no marcador */
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .btn-match {
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 10px;
+            font-weight: bold;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        .stats-circle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.6);
+            padding: 15px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stats-circle span { color: var(--primary); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo">🔄 Bio-Radar</div>
+        
+        <input type="text" class="search-box" placeholder="Buscar resíduo (ex: esterco, palha)...">
+
+        <div class="filter-group">
+            <h4>CATEGORIAS</h4>
+            <div class="tag-container">
+                <span class="tag active">Todos</span>
+                <span class="tag">Fertilizantes Orgânicos</span>
+                <span class="tag">Biomassa/Energia</span>
+                <span class="tag">Ração Animal</span>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <h4>RAIO DE BUSCA (KM)</h4>
+            <input type="range" min="1" max="100" value="25" style="width: 100%;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px;">
+                <span>1km</span>
+                <span>100km</span>
+            </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #334155; margin: 10px 0;">
+
+        <div class="filter-group">
+            <h4>OFERTAS RECENTES</h4>
+            <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; margin-bottom: 10px;">
+                <small style="color: var(--primary);">Disponível agora</small>
+                <div style="font-size: 0.9rem;">10t de Cama de Frango</div>
+                <small style="color: #64748b;">Fazenda Santa Maria - 4km</small>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px;">
+                <small style="color: var(--secondary);">Disponível agora</small>
+                <div style="font-size: 0.9rem;">Palha de Milho para Cobertura</div>
+                <small style="color: #64748b;">Sítio Alvorada - 12km</small>
+            </div>
+        </div>
+    </aside>
+
+    <main class="map-area" id="map">
+        <div class="marker" style="top: 40%; left: 30%;" onclick="showInfo('Cama de Frango', 'Fazenda Santa Maria', '10 toneladas', 'Fertilizante Premium')"></div>
+        <div class="marker" style="top: 60%; left: 55%;" onclick="showInfo('Casca de Arroz', 'Grãos do Sul', '50 m³', 'Combustível/Caldeira')"></div>
+        <div class="marker" style="top: 25%; left: 70%;" onclick="showInfo('Bagaço de Cana', 'Usina Verde', '100t', 'Biomassa')"></div>
+
+        <div class="stats-circle">
+            Total de Resíduos Reutilizados: <br>
+            <span>1.240 Toneladas em 2026</span>
+        </div>
+
+        <div class="info-panel" id="info-panel">
+            <h2 id="info-title" style="margin: 0; font-size: 1.2rem;">Nome do Resíduo</h2>
+            <p id="info-farm" style="color: var(--primary); margin: 5px 0;">Nome da Fazenda</p>
+            <p id="info-desc" style="font-size: 0.9rem; color: #94a3b8;">Descrição do material e volume disponível para coleta.</p>
+            <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; margin-top: 10px;">
+                <small>Impacto Ambiental Evitado:</small><br>
+                <strong style="color: #fff;">-2.4t de CO₂ eq</strong>
+            </div>
+            <button class="btn-match" onclick="alert('Match realizado! Contato enviado para o produtor.')">SOLICITAR MATCH</button>
+            <button onclick="closeInfo()" style="background: none; border: none; color: #64748b; font-size: 0.8rem; cursor: pointer; margin-top: 10px; width: 100%;">Fechar</button>
+        </div>
+    </main>
+
+    <script>
+        function showInfo(title, farm, volume, desc) {
+            document.getElementById('info-panel').style.display = 'block';
+            document.getElementById('info-title').innerText = title;
+            document.getElementById('info-farm').innerText = farm + ' (' + volume + ')';
+            document.getElementById('info-desc').innerText = 'Material: ' + desc + '. Disponível para retirada imediata visando economia circular.';
+        }
+
+        function closeInfo() {
+            document.getElementById('info-panel').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
