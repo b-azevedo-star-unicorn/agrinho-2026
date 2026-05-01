@@ -9,157 +9,134 @@
 
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background: #020502; color: #00ff88;
+            /* Fundo de segurança caso a imagem demore, para não ficar preto */
+            background: #2d3e10; 
+            color: #00ff88;
             font-family: 'JetBrains Mono', monospace; overflow: hidden;
         }
 
-        /* O SEGREDO DO MAPA INFINITO */
+        /* O MAPA INFINITO - CAMADA 1 (PLANTAÇÃO) */
         #drone-view {
             position: fixed; 
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            /* Imagem de plantação sem emendas (Seamless) */
-            background-image: url('https://img.freepik.com/free-photo/aerial-view-green-grass-texture-background_1253-1250.jpg');
+            top: -1000%; left: -1000%;
+            width: 3000%; height: 3000%; /* Tamanho gigantesco para evitar bordas */
+            /* Imagem de plantação aérea real */
+            background-image: url('https://www.google.com/maps/vt/pb=!1m4!1m3!1i17!2i38125!3i64250!2m3!1e0!2sm!3i605151525!3m8!2spt-BR!3sUS!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e4!23i1301875');
             background-repeat: repeat;
-            background-size: 600px; /* Ajuste para escala real de voo */
+            background-size: 500px; 
             z-index: 1;
-            /* Filtros para parecer visão de satélite/drone */
-            filter: saturate(1.4) brightness(0.7) contrast(1.1);
-            transition: transform 0.3s ease-out; /* Suaviza o zoom (W/S) */
+            filter: saturate(1.5) brightness(0.8);
+            transition: transform 0.1s linear;
         }
 
-        /* HUD E INTERFACE */
+        /* LINHAS DE GRADE DO GPS (PARA DAR REALISMO) */
+        .grid-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(0, 255, 136, 0.05) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 255, 136, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 5; pointer-events: none;
+        }
+
         .hud-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            border: 25px solid transparent;
-            border-image: radial-gradient(circle, transparent 65%, rgba(0, 255, 136, 0.2) 100%) 25;
-            box-sizing: border-box; z-index: 10; pointer-events: none;
+            border: 20px solid transparent;
+            border-image: radial-gradient(circle, transparent 70%, rgba(0, 255, 136, 0.2) 100%) 20;
+            z-index: 10; pointer-events: none;
         }
 
         .crosshair {
             position: fixed; top: 50%; left: 50%;
-            width: 160px; height: 160px;
-            border: 1px solid rgba(0, 255, 136, 0.4);
+            width: 180px; height: 180px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
             transform: translate(-50%, -50%);
             border-radius: 50%; z-index: 15;
         }
-        .crosshair::before { content: ''; position: absolute; top: 50%; left: -50px; width: 260px; height: 1px; background: #00ff88; opacity: 0.3; }
-        .crosshair::after { content: ''; position: absolute; left: 50%; top: -50px; width: 1px; height: 260px; background: #00ff88; opacity: 0.3; }
 
         .panel {
-            position: absolute; background: rgba(0, 0, 0, 0.8);
+            position: absolute; background: rgba(0, 15, 0, 0.85);
             padding: 20px; border: 1px solid #00ff88;
             backdrop-filter: blur(10px); z-index: 20;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
 
-        .left-panel { top: 40px; left: 40px; width: 220px; border-radius: 0 15px 15px 15px; }
-        .right-panel { top: 40px; right: 40px; width: 260px; border-radius: 15px 0 15px 15px; }
-        .bottom-panel { bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; gap: 40px; padding: 12px 40px; border-radius: 50px; }
+        .left-panel { top: 40px; left: 40px; width: 220px; }
+        .right-panel { top: 40px; right: 40px; width: 260px; }
+        .bottom-panel { bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; gap: 40px; }
 
-        h2 { font-family: 'Outfit'; margin: 0 0 10px 0; font-size: 0.9rem; text-transform: uppercase; color: #fff; letter-spacing: 2px; }
-        .stat { margin-bottom: 8px; font-size: 0.75rem; }
         .stat-val { color: #fff; float: right; font-weight: bold; }
-
-        .btn {
-            background: #00ff88; color: #000; border: none; padding: 12px;
-            font-weight: bold; cursor: pointer; width: 100%; font-family: 'JetBrains Mono';
-            margin-top: 10px; transition: 0.2s;
-        }
-        .btn:hover { background: #fff; transform: scale(1.02); }
-
-        .controls-hint {
-            position: absolute; bottom: 120px; right: 40px;
-            font-size: 0.7rem; color: #00ff88; background: rgba(0,0,0,0.6);
-            padding: 10px; border: 1px solid rgba(0, 255, 136, 0.3);
-        }
-
         .back-btn {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            color: #fff; text-decoration: none; font-size: 0.7rem; border: 1px solid rgba(255,255,255,0.4);
-            padding: 8px 20px; border-radius: 20px; z-index: 100;
+            position: fixed; top: 20px; left: 20px;
+            color: #fff; text-decoration: none; font-size: 0.7rem; border: 1px solid #00ff88;
+            padding: 8px 15px; border-radius: 5px; z-index: 100; background: rgba(0,0,0,0.5);
         }
     </style>
 </head>
 <body>
 
-    <a href="agrovr.html" class="back-btn">CANCEL MISSION</a>
+    <a href="agrovr.html" class="back-btn">← ABORTAR</a>
+    
     <div id="drone-view"></div>
+    <div class="grid-overlay"></div>
     <div class="hud-overlay"></div>
     <div class="crosshair"></div>
 
     <div class="panel left-panel">
-        <h2>Telemetry</h2>
-        <div class="stat">ALTITUDE: <span class="stat-val" id="alt">50m</span></div>
-        <div class="stat">SPEED: <span class="stat-val" id="vel">0km/h</span></div>
-        <div class="stat">BATTERY: <span class="stat-val" style="color:#00ff88">94%</span></div>
+        <h2>TELEMETRIA</h2>
+        <div style="font-size:0.7rem; margin-bottom:10px; color:#00ff88">ID: AGR-2026</div>
+        <div>ALT: <span class="stat-val" id="alt">50m</span></div>
+        <div>SPD: <span class="stat-val" id="vel">0km/h</span></div>
     </div>
 
     <div class="panel right-panel">
-        <h2>AI Insights</h2>
-        <div style="font-size: 0.7rem; color: #aaa;">SENSOR STATUS: <span style="color:#00ff88">ACTIVE</span></div>
-        <div id="results" style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #333;">
-            <div class="stat">NDVI INDEX: <span class="stat-val">0.82</span></div>
-            <div class="stat">EST. YIELD: <span class="stat-val">4.2 t/ha</span></div>
+        <h2>IA SCANNER</h2>
+        <div style="font-size:0.75rem">STATUS: <span style="color:#00ff88">ONLINE</span></div>
+        <div style="margin-top:10px; border-top:1px solid #00ff88; padding-top:10px;">
+            SETOR: <span class="stat-val">B-12</span><br>
+            UMIDADE: <span class="stat-val">24%</span>
         </div>
-        <button class="btn" onclick="alert('Iniciando análise térmica...')">THERMAL SCAN</button>
-    </div>
-
-    <div class="controls-hint">
-        ← ↑ → ↓ : FLY | W : ASCEND | S : DESCEND
     </div>
 
     <div class="panel bottom-panel">
-        <div class="stat">LAT: <span id="lat">-23.4421</span></div>
-        <div class="stat">LONG: <span id="lng">-51.8842</span></div>
+        <div>X: <span id="posx">0</span></div>
+        <div>Y: <span id="posy">0</span></div>
+        <div style="color:#00ff88; font-weight:bold">MODO: MANUAL</div>
     </div>
 
     <script>
-        const droneView = document.getElementById('drone-view');
-        let posX = 0;
-        let posY = 0;
+        const view = document.getElementById('drone-view');
+        let x = 0;
+        let y = 0;
         let zoom = 1;
         let altitude = 50;
 
-        // Movimentação via Teclado
         document.addEventListener('keydown', (e) => {
-            const step = 25; // Velocidade do voo
-
+            const step = 40;
             switch(e.key) {
-                case "ArrowUp":    posY += step; break;
-                case "ArrowDown":  posY -= step; break;
-                case "ArrowLeft":  posX += step; break;
-                case "ArrowRight": posX -= step; break;
+                case "ArrowUp":    y += step; break;
+                case "ArrowDown":  y -= step; break;
+                case "ArrowLeft":  x += step; break;
+                case "ArrowRight": x -= step; break;
                 case "w": case "W": 
-                    if(zoom < 2.5) { zoom += 0.1; altitude += 5; } 
-                    break;
+                    if(zoom < 3) { zoom += 0.1; altitude -= 2; } break;
                 case "s": case "S": 
-                    if(zoom > 0.6) { zoom -= 0.1; altitude -= 5; } 
-                    break;
+                    if(zoom > 0.5) { zoom -= 0.1; altitude += 2; } break;
             }
             updateDrone();
         });
 
         function updateDrone() {
-            // MOVE O BACKGROUND POSITION: Isso garante que a imagem nunca acabe
-            droneView.style.backgroundPosition = `${posX}px ${posY}px`;
-            
-            // APLICA O ZOOM (Altitude)
-            droneView.style.transform = `scale(${zoom})`;
+            // O segredo do movimento infinito sem erro de fundo preto:
+            // Aplicamos o movimento no translate para ser suave e no background-position para ser infinito
+            view.style.backgroundPosition = `${x}px ${y}px`;
+            view.style.transform = `scale(${zoom})`;
 
-            // ATUALIZA HUD
+            document.getElementById('posx').innerText = x;
+            document.getElementById('posy').innerText = y;
             document.getElementById('alt').innerText = altitude + "m";
-            document.getElementById('vel').innerText = "36 km/h";
-            
-            // Simula mudança de GPS baseado no movimento
-            document.getElementById('lat').innerText = (-23.4421 + (posY / 10000)).toFixed(4);
-            document.getElementById('lng').innerText = (-51.8842 + (posX / 10000)).toFixed(4);
+            document.getElementById('vel').innerText = "32km/h";
 
-            // Reseta a velocidade para 0 após parar de apertar
-            clearTimeout(window.stopTimer);
-            window.stopTimer = setTimeout(() => {
-                document.getElementById('vel').innerText = "0 km/h";
-            }, 400);
+            clearTimeout(window.t);
+            window.t = setTimeout(() => document.getElementById('vel').innerText = "0km/h", 300);
         }
     </script>
 </body>
