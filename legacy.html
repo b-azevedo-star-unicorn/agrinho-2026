@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legacy Pro | Valorização de Terra</title>
+    <style>
+        :root {
+            --primary: #8b5a2b; 
+            --secondary: #556b2f; 
+            --bg: #fdf5e6; 
+            --text: #3e2723;
+            --border: #d7ccc8;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        nav {
+            width: 100%;
+            padding: 20px;
+            background: #fff;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 0.9rem;
+            border: 1px solid var(--primary);
+            padding: 5px 15px;
+            border-radius: 5px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 90%;
+            padding: 40px 0;
+        }
+
+        header { text-align: center; margin-bottom: 40px; }
+        header h1 { color: var(--primary); font-size: 2.5rem; margin: 0; }
+
+        .legacy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .panel {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        h3 { border-bottom: 1px solid var(--border); padding-bottom: 10px; color: var(--secondary); }
+
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 0.9rem; }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        /* Estilo do Gráfico Simulado */
+        .chart-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 150px;
+            margin: 20px 0;
+            background: rgba(0,0,0,0.02);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .bar {
+            width: 40px;
+            background: var(--secondary);
+            transition: height 0.5s ease;
+            position: relative;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .bar span {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .bar-label { font-size: 0.7rem; margin-top: 10px; text-align: center; color: #777; }
+
+        .result-box {
+            background: #fffdf5;
+            border: 2px solid var(--primary);
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .valor-final { font-size: 2rem; font-weight: bold; color: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="back-btn">← VOLTAR AO HUB</a>
+        <div style="font-weight: bold; color: var(--secondary);">LIFETIME EQUITY</div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>Legacy Pro</h1>
+            <p>Projeção de Valor Patrimonial da Fazenda (Sucessão Familiar)</p>
+        </header>
+
+        <div class="legacy-grid">
+            <div class="panel">
+                <h3>Configuração de Projeção</h3>
+                
+                <div class="input-group">
+                    <label>Valor Atual do Hectare (R$)</label>
+                    <input type="number" id="val_ha" value="50000" oninput="projetar()">
+                </div>
+
+                <div class="input-group">
+                    <label>Total de Hectares</label>
+                    <input type="number" id="total_ha" value="100" oninput="projetar()">
+                </div>
+
+                <div class="input-group">
+                    <label>Tecnologias Adotadas</label>
+                    <select id="tech" onchange="projetar()">
+                        <option value="1.05">Mínima (Valorização Natural 5%)</option>
+                        <option value="1.15">Sustentável (Bio-insumos +15%)</option>
+                        <option value="1.30">Full Tech (Energia + Carbono +30%)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>Valorização por Década</h3>
+                <div class="chart-container">
+                    <div class="bar" id="b1" style="height: 30%;"> <span id="v1">R$ 5M</span> </div>
+                    <div class="bar" id="b2" style="height: 50%;"> <span id="v2">R$ 7M</span> </div>
+                    <div class="bar" id="b3" style="height: 90%;"> <span id="v3">R$ 12M</span> </div>
+                </div>
+                <div style="display: flex; justify-content: space-around;">
+                    <div class="bar-label">Hoje</div>
+                    <div class="bar-label">10 Anos</div>
+                    <div class="bar-label">20 Anos</div>
+                </div>
+
+                <div class="result-box">
+                    <small>Patrimônio Estimado para Próxima Geração</small>
+                    <div class="valor-final" id="v_final">R$ 0,00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function projetar() {
+            const vHa = parseFloat(document.getElementById('val_ha').value) || 0;
+            const tHa = parseFloat(document.getElementById('total_ha').value) || 0;
+            const multiplicador = parseFloat(document.getElementById('tech').value);
+
+            const atual = vHa * tHa;
+            const decada1 = atual * multiplicador;
+            const decada2 = decada1 * multiplicador;
+
+            // Atualiza Gráfico
+            document.getElementById('b1').style.height = "30%";
+            document.getElementById('v1').innerText = "R$ " + (atual/1000000).toFixed(1) + "M";
+
+            document.getElementById('b2').style.height = (30 * multiplicador) + "%";
+            document.getElementById('v2').innerText = "R$ " + (decada1/1000000).toFixed(1) + "M";
+
+            document.getElementById('b3').style.height = (30 * multiplicador * multiplicador) + "%";
+            document.getElementById('v3').innerText = "R$ " + (decada2/1000000).toFixed(1) + "M";
+
+            // Resultado Final
+            document.getElementById('v_final').innerText = decada2.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        // Iniciar cálculo
+        projetar();
+    </script>
+</body>
+</html>
