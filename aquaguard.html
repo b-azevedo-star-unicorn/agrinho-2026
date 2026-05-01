@@ -73,7 +73,7 @@
 
         header h1 {
             font-family: 'Fredoka', sans-serif;
-            font-size: 4rem;
+            font-size: 3.5rem;
             text-align: center;
             margin: 10px 0;
             color: var(--foam);
@@ -113,7 +113,7 @@
             bottom: 0;
             width: 100%;
             background: linear-gradient(180deg, var(--accent) 0%, var(--water) 100%);
-            transition: height 0.3s linear; /* Transição mais rápida para tempo real */
+            transition: height 0.3s linear;
         }
 
         .wave-top {
@@ -125,7 +125,42 @@
 
         @keyframes move-wave { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        /* BOTÕES */
+        /* CONTROLES REORGANIZADOS */
+        label { font-size: 0.8rem; color: var(--accent); font-weight: bold; margin-top: 10px; display: block; }
+        
+        select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid var(--water);
+            margin-bottom: 15px;
+        }
+
+        .speed-control {
+            display: flex;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+
+        .speed-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .speed-btn.active { background: var(--water); color: var(--deep); }
+
         .btn-main {
             width: 100%;
             padding: 15px;
@@ -133,35 +168,12 @@
             border: none;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 10px;
             text-transform: uppercase;
+            transition: 0.3s;
         }
 
         .btn-chuva { background: var(--accent); color: var(--deep); }
-        .btn-chuva.active { background: var(--danger); color: white; }
-
-        /* NOVO BOTÃO DE VELOCIDADE */
-        .speed-control {
-            display: flex;
-            background: rgba(0,0,0,0.3);
-            border-radius: 50px;
-            padding: 5px;
-            margin-top: 15px;
-        }
-
-        .speed-btn {
-            flex: 1;
-            padding: 8px;
-            border: none;
-            background: transparent;
-            color: white;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 0.7rem;
-            font-weight: bold;
-        }
-
-        .speed-btn.active { background: var(--water); }
+        .btn-chuva.active { background: var(--danger); color: white; box-shadow: 0 0 20px rgba(255, 90, 95, 0.4); }
 
         .data-row {
             display: flex;
@@ -179,54 +191,56 @@
 
     <nav>
         <a href="index.html" class="back-btn">← HUB</a>
-        <div style="font-weight: bold; color: var(--accent);">AQUAGUARD ULTIMATE</div>
+        <div style="font-weight: bold; color: var(--accent);">AQUAGUARD PRO</div>
     </nav>
 
     <div class="container">
         <header>
             <h1>AquaGuard</h1>
-            <p style="text-align:center;">Monitoramento Hídrico de Precisão</p>
+            <p style="text-align:center;">Gestão de Recursos Hídricos Inteligente</p>
         </header>
 
         <div class="grid">
             <div class="card">
-                <h3>⚙️ Configuração</h3>
-                <label>MODO DE ATUALIZAÇÃO:</label>
+                <h3>⚙️ Painel de Controle</h3>
+                
+                <label>ÁREA DE MONITORAMENTO:</label>
+                <select id="setor" onchange="resetSim()">
+                    <option value="pivo">📍 Pivô Central (Soja)</option>
+                    <option value="nascente">🌿 Nascente Protegida</option>
+                    <option value="estufa">🧪 Estufa Hidropônica</option>
+                </select>
+
+                <label>FREQUÊNCIA DE DADOS:</label>
                 <div class="speed-control">
                     <button id="sp-real" class="speed-btn active" onclick="setSpeed('real')">TEMPO REAL</button>
                     <button id="sp-sim" class="speed-btn" onclick="setSpeed('sim')">SIMULAÇÃO 24H</button>
                 </div>
 
-                <div style="margin-top:25px;">
-                    <button id="btn-chuva" class="btn-main btn-chuva" onclick="toggleChuva()">LIGAR IRRIGAÇÃO</button>
-                </div>
-
-                <div style="margin-top:25px;">
-                    <h3>📊 Sensores</h3>
-                    <div class="data-row"><span>PH:</span><span id="ph">6.8</span></div>
-                    <div class="data-row"><span>PUR.:</span><span>98%</span></div>
-                </div>
+                <label>AÇÃO MANUAL:</label>
+                <button id="btn-chuva" class="btn-main btn-chuva" onclick="toggleChuva()">LIGAR IRRIGAÇÃO</button>
             </div>
 
             <div class="card" style="text-align:center;">
-                <h3>Status do Reservatório</h3>
+                <h3 id="display-title">Nível do Reservatório</h3>
                 <div class="tank-wrap">
                     <div id="water-fill" class="water-body" style="height: 80%;">
                         <div class="wave-top"></div>
                     </div>
                 </div>
                 <div style="font-size: 3rem; font-weight: bold; margin-top:10px;" id="txt-perc">80%</div>
-                <small id="txt-mode" style="color: var(--accent)">LENDO DADOS EM TEMPO REAL...</small>
+                <small id="txt-mode" style="color: var(--accent); text-transform: uppercase;">Modo: Tempo Real</small>
             </div>
 
             <div class="card">
                 <h3>📈 Dashboard</h3>
                 <div class="data-row"><span>UMIDADE SOLO:</span><span id="solo-val">45%</span></div>
-                <div class="data-row"><span>VAZÃO:</span><span id="vazao">0 L/s</span></div>
+                <div class="data-row"><span>VAZÃO ATUAL:</span><span id="vazao">0 L/s</span></div>
+                <div class="data-row"><span>QUALIDADE:</span><span>98%</span></div>
                 
                 <div style="margin-top: 20px; background: rgba(0,245,212,0.1); padding: 15px; border-radius: 15px;">
-                    <small>DICA DE IA:</small>
-                    <p style="font-size: 0.8rem; margin: 5px 0;">O solo está com boa retenção. Evite irrigar entre 10h e 16h para reduzir a evaporação.</p>
+                    <small>IA SUGERE:</small>
+                    <p style="font-size: 0.8rem; margin: 5px 0;">O nível está estável. Recomendamos irrigação em pulsos curtos para economizar energia.</p>
                 </div>
             </div>
         </div>
@@ -248,16 +262,16 @@
         let irrigando = false;
         let nivel = 80;
         let solo = 45;
-        let speedMode = 'real'; // 'real' ou 'sim'
+        let speedMode = 'real';
         let intervalo;
 
         function setSpeed(mode) {
             speedMode = mode;
             document.getElementById('sp-real').classList.toggle('active', mode === 'real');
             document.getElementById('sp-sim').classList.toggle('active', mode === 'sim');
-            document.getElementById('txt-mode').innerText = mode === 'real' ? "LENDO DADOS EM TEMPO REAL..." : "PROCESSANDO SIMULAÇÃO 24H...";
+            document.getElementById('txt-mode').innerText = "Modo: " + (mode === 'real' ? "Tempo Real" : "Simulação 24h");
             
-            if(irrigando) { // Reinicia o intervalo se mudar a velocidade enquanto irriga
+            if(irrigando) {
                 pararIrrigacao();
                 toggleChuva();
             }
@@ -271,8 +285,6 @@
                 btn.innerText = "PARAR IRRIGAÇÃO";
                 btn.classList.add('active');
                 
-                // Define a velocidade da "descida"
-                // Tempo Real = 0.05 por tick | Simulação = 0.8 por tick
                 const taxaConsumo = speedMode === 'real' ? 0.05 : 0.8;
                 const taxaSolo = speedMode === 'real' ? 0.08 : 1.2;
 
@@ -308,6 +320,19 @@
             
             const fill = document.getElementById('water-fill');
             fill.style.background = nivel < 20 ? "var(--danger)" : "linear-gradient(180deg, var(--accent) 0%, var(--water) 100%)";
+        }
+
+        function resetSim() {
+            nivel = 80;
+            solo = 30 + Math.random() * 20;
+            pararIrrigacao();
+            atualizarTela();
+            
+            const setor = document.getElementById('setor').value;
+            const title = document.getElementById('display-title');
+            if(setor === 'nascente') title.innerText = "Nível da Reserva";
+            else if(setor === 'estufa') title.innerText = "Nível Hidropônico";
+            else title.innerText = "Nível do Reservatório";
         }
     </script>
 </body>
