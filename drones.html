@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drone Pilot | SustentaAgro VR</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@600&display=swap');
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: #000; color: #00ff88;
+            font-family: 'JetBrains Mono', monospace; overflow: hidden;
+        }
+
+        /* VISTA DO DRONE (BACKGROUND) */
+        .camera-feed {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://images.unsplash.com/photo-1505144808419-1957a94ca61e?auto=format&fit=crop&q=80&w=2000') no-repeat center center;
+            background-size: cover;
+            filter: saturate(1.2) contrast(1.1);
+            z-index: 1;
+            transition: 0.2s;
+        }
+
+        /* SOBREPOSIÇÃO DE INTERFACE (HUD) */
+        .hud-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border: 40px solid transparent;
+            border-image: radial-gradient(circle, transparent 70%, rgba(0, 255, 136, 0.2) 100%) 40;
+            box-sizing: border-box; z-index: 10; pointer-events: none;
+        }
+
+        /* MIRA CENTRAL */
+        .crosshair {
+            position: fixed; top: 50%; left: 50%;
+            width: 100px; height: 100px;
+            border: 1px solid rgba(0, 255, 136, 0.5);
+            transform: translate(-50%, -50%);
+            border-radius: 50%; z-index: 15;
+        }
+        .crosshair::before { content: ''; position: absolute; top: 50%; left: -20px; width: 140px; height: 1px; background: #00ff88; }
+        .crosshair::after { content: ''; position: absolute; left: 50%; top: -20px; width: 1px; height: 140px; background: #00ff88; }
+
+        /* PAINÉIS LATERAIS */
+        .panel {
+            position: absolute; background: rgba(0, 0, 0, 0.7);
+            padding: 20px; border: 1px solid #00ff88;
+            backdrop-filter: blur(5px); z-index: 20;
+            pointer-events: all;
+        }
+
+        .left-panel { top: 40px; left: 40px; width: 250px; }
+        .right-panel { top: 40px; right: 40px; width: 250px; }
+        .bottom-panel { bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; gap: 40px; }
+
+        h2 { font-family: 'Outfit'; margin: 0 0 15px 0; font-size: 1rem; text-transform: uppercase; color: #fff; }
+        
+        .stat { margin-bottom: 10px; font-size: 0.8rem; }
+        .stat-val { color: #fff; float: right; }
+
+        /* SCANNER ANIMATION */
+        .scanner-line {
+            position: fixed; top: 0; left: 0; width: 100%; height: 2px;
+            background: rgba(0, 255, 136, 0.5); box-shadow: 0 0 15px #00ff88;
+            z-index: 12; animation: scan 4s linear infinite; display: none;
+        }
+        @keyframes scan { from { top: 0; } to { top: 100%; } }
+
+        /* BOTÕES */
+        .btn {
+            background: #00ff88; color: #000; border: none;
+            padding: 10px 15px; font-weight: bold; cursor: pointer;
+            width: 100%; margin-top: 10px; font-family: 'JetBrains Mono';
+        }
+        .btn:hover { background: #fff; }
+
+        .back-btn {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            color: #fff; text-decoration: none; font-size: 0.7rem; border: 1px solid #fff;
+            padding: 5px 15px; border-radius: 20px; z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="agrovr.html" class="back-btn">VOLTAR PARA ACADEMY</a>
+    <div class="scanner-line" id="scanner"></div>
+    <div class="camera-feed" id="feed"></div>
+    <div class="hud-overlay"></div>
+    <div class="crosshair"></div>
+
+    <div class="panel left-panel">
+        <h2>Telemetry</h2>
+        <div class="stat">ALTITUDE: <span class="stat-val" id="alt">45m</span></div>
+        <div class="stat">VELOCIDADE: <span class="stat-val" id="vel">18km/h</span></div>
+        <div class="stat">BATERIA: <span class="stat-val" style="color: #00ff88;">88%</span></div>
+        <div class="stat">SINAIS GPS: <span class="stat-val">12 SAT</span></div>
+        <hr border="0" style="border-top: 1px solid #00ff88; margin: 15px 0;">
+        <button class="btn" onclick="toggleScan()">ATIVAR SCANNER IA</button>
+    </div>
+
+    <div class="panel right-panel">
+        <h2>Análise de Campo</h2>
+        <div id="status-analise" style="font-size: 0.75rem; color: #ccc;">
+            Aguardando comando de escaneamento...
+        </div>
+        <div id="results" style="display:none; margin-top: 15px;">
+            <div class="stat">UMIDADE SOLO: <span class="stat-val">22%</span></div>
+            <div class="stat">PRAGAS: <span class="stat-val" style="color: #ff4444;">DETECTADO</span></div>
+            <div class="stat">SETOR: <span class="stat-val">B-07</span></div>
+        </div>
+    </div>
+
+    <div class="panel bottom-panel">
+        <div class="stat">LAT: <span id="lat">-23.5505</span></div>
+        <div class="stat">LONG: <span id="lng">-46.6333</span></div>
+        <div class="stat">MODO: <span style="color: #00ff88;">AUTO_PILOT</span></div>
+    </div>
+
+    <script>
+        const feed = document.getElementById('feed');
+        const scanner = document.getElementById('scanner');
+        const statusAnalise = document.getElementById('status-analise');
+        const results = document.getElementById('results');
+
+        // Simulação de movimento da câmera com o mouse
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 30;
+            const y = (e.clientY / window.innerHeight - 0.5) * 30;
+            feed.style.transform = `scale(1.1) translate(${x}px, ${y}px)`;
+            
+            // Atualiza coordenadas fakes
+            document.getElementById('lat').innerText = (-23.5505 + (y/1000)).toFixed(4);
+            document.getElementById('lng').innerText = (-46.6333 + (x/1000)).toFixed(4);
+        });
+
+        function toggleScan() {
+            if (scanner.style.display === 'block') {
+                scanner.style.display = 'none';
+                statusAnalise.innerText = "Escaneamento interrompido.";
+                results.style.display = 'none';
+            } else {
+                scanner.style.display = 'block';
+                statusAnalise.innerText = "PROCESSANDO IMAGENS MULTIESPECTRAIS...";
+                
+                setTimeout(() => {
+                    statusAnalise.innerHTML = "✅ <span style='color:#00ff88'>ANÁLISE CONCLUÍDA</span>";
+                    results.style.display = 'block';
+                }, 2000);
+            }
+        }
+
+        // Variar altitude e velocidade levemente
+        setInterval(() => {
+            const alt = 45 + Math.floor(Math.random() * 3);
+            const vel = 18 + Math.floor(Math.random() * 2);
+            document.getElementById('alt').innerText = alt + "m";
+            document.getElementById('vel').innerText = vel + "km/h";
+        }, 3000);
+    </script>
+</body>
+</html>
