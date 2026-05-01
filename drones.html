@@ -9,33 +9,32 @@
 
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            /* Fundo de segurança caso a imagem demore, para não ficar preto */
-            background: #2d3e10; 
+            background: #1a2e05; /* Cor de fundo verde terra */
             color: #00ff88;
             font-family: 'JetBrains Mono', monospace; overflow: hidden;
         }
 
-        /* O MAPA INFINITO - CAMADA 1 (PLANTAÇÃO) */
+        /* O MAPA INFINITO - GERADO VIA CSS (Sem risco de sumir ou dar fundo preto) */
         #drone-view {
             position: fixed; 
-            top: -1000%; left: -1000%;
-            width: 3000%; height: 3000%; /* Tamanho gigantesco para evitar bordas */
-            /* Imagem de plantação aérea real */
-            background-image: url('https://www.google.com/maps/vt/pb=!1m4!1m3!1i17!2i38125!3i64250!2m3!1e0!2sm!3i605151525!3m8!2spt-BR!3sUS!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e4!23i1301875');
-            background-repeat: repeat;
-            background-size: 500px; 
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            /* Textura que simula linhas de plantação e terra */
+            background: 
+                linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+                repeating-linear-gradient(90deg, #2d4a10 0, #2d4a10 20px, #355a15 20px, #355a15 40px);
+            background-size: 100px 100px, 100px 100px, 40px 100%;
             z-index: 1;
-            filter: saturate(1.5) brightness(0.8);
-            transition: transform 0.1s linear;
+            transition: transform 0.2s ease-out;
         }
 
-        /* LINHAS DE GRADE DO GPS (PARA DAR REALISMO) */
-        .grid-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: linear-gradient(rgba(0, 255, 136, 0.05) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(0, 255, 136, 0.05) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: 5; pointer-events: none;
+        /* ADICIONA "RUIDO" PARA PARECER TERRA REAL */
+        #drone-view::after {
+            content: "";
+            position: absolute; width: 100%; height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/pinstriped-suit.png');
+            opacity: 0.3;
         }
 
         .hud-overlay {
@@ -52,54 +51,57 @@
             transform: translate(-50%, -50%);
             border-radius: 50%; z-index: 15;
         }
+        .crosshair::before { content: ''; position: absolute; top: 50%; left: -40px; width: 260px; height: 1px; background: #00ff88; opacity: 0.4; }
+        .crosshair::after { content: ''; position: absolute; left: 50%; top: -40px; width: 1px; height: 260px; background: #00ff88; opacity: 0.4; }
 
         .panel {
-            position: absolute; background: rgba(0, 15, 0, 0.85);
+            position: absolute; background: rgba(0, 15, 0, 0.9);
             padding: 20px; border: 1px solid #00ff88;
             backdrop-filter: blur(10px); z-index: 20;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
         }
 
         .left-panel { top: 40px; left: 40px; width: 220px; }
         .right-panel { top: 40px; right: 40px; width: 260px; }
-        .bottom-panel { bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; gap: 40px; }
+        .bottom-panel { bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; gap: 40px; border-radius: 50px;}
 
+        h2 { font-size: 0.8rem; margin: 0 0 10px 0; letter-spacing: 2px; }
         .stat-val { color: #fff; float: right; font-weight: bold; }
+
         .back-btn {
             position: fixed; top: 20px; left: 20px;
             color: #fff; text-decoration: none; font-size: 0.7rem; border: 1px solid #00ff88;
-            padding: 8px 15px; border-radius: 5px; z-index: 100; background: rgba(0,0,0,0.5);
+            padding: 8px 15px; border-radius: 5px; z-index: 100; background: rgba(0,0,0,0.7);
         }
     </style>
 </head>
 <body>
 
-    <a href="agrovr.html" class="back-btn">← ABORTAR</a>
+    <a href="agrovr.html" class="back-btn">← SAIR DO VOO</a>
     
     <div id="drone-view"></div>
-    <div class="grid-overlay"></div>
     <div class="hud-overlay"></div>
     <div class="crosshair"></div>
 
     <div class="panel left-panel">
         <h2>TELEMETRIA</h2>
-        <div style="font-size:0.7rem; margin-bottom:10px; color:#00ff88">ID: AGR-2026</div>
-        <div>ALT: <span class="stat-val" id="alt">50m</span></div>
-        <div>SPD: <span class="stat-val" id="vel">0km/h</span></div>
+        <div>ALTITUDE: <span class="stat-val" id="alt">50m</span></div>
+        <div>VELOC.: <span class="stat-val" id="vel">0km/h</span></div>
+        <div>BATERIA: <span class="stat-val" style="color:#00ff88">98%</span></div>
     </div>
 
     <div class="panel right-panel">
         <h2>IA SCANNER</h2>
-        <div style="font-size:0.75rem">STATUS: <span style="color:#00ff88">ONLINE</span></div>
+        <div style="font-size:0.7rem">SCANNING: <span style="color:#00ff88">FAZENDA_MODELO</span></div>
         <div style="margin-top:10px; border-top:1px solid #00ff88; padding-top:10px;">
-            SETOR: <span class="stat-val">B-12</span><br>
-            UMIDADE: <span class="stat-val">24%</span>
+            SAÚDE: <span class="stat-val" style="color:#00ff88">EXCELENTE</span><br>
+            PRAGAS: <span class="stat-val">0% DETECTADO</span>
         </div>
     </div>
 
     <div class="panel bottom-panel">
-        <div>X: <span id="posx">0</span></div>
-        <div>Y: <span id="posy">0</span></div>
-        <div style="color:#00ff88; font-weight:bold">MODO: MANUAL</div>
+        <div>COORD_X: <span id="posx">0</span></div>
+        <div>COORD_Y: <span id="posy">0</span></div>
     </div>
 
     <script>
@@ -110,33 +112,35 @@
         let altitude = 50;
 
         document.addEventListener('keydown', (e) => {
-            const step = 40;
+            const step = 25;
             switch(e.key) {
                 case "ArrowUp":    y += step; break;
                 case "ArrowDown":  y -= step; break;
                 case "ArrowLeft":  x += step; break;
                 case "ArrowRight": x -= step; break;
                 case "w": case "W": 
-                    if(zoom < 3) { zoom += 0.1; altitude -= 2; } break;
+                    if(zoom < 3) { zoom += 0.05; altitude -= 1; } break;
                 case "s": case "S": 
-                    if(zoom > 0.5) { zoom -= 0.1; altitude += 2; } break;
+                    if(zoom > 0.5) { zoom -= 0.05; altitude += 1; } break;
             }
             updateDrone();
         });
 
         function updateDrone() {
-            // O segredo do movimento infinito sem erro de fundo preto:
-            // Aplicamos o movimento no translate para ser suave e no background-position para ser infinito
+            // MOVE O BACKGROUND POSITION: GARANTE QUE NUNCA ACABA E NUNCA FICA PRETO
             view.style.backgroundPosition = `${x}px ${y}px`;
             view.style.transform = `scale(${zoom})`;
 
             document.getElementById('posx').innerText = x;
             document.getElementById('posy').innerText = y;
             document.getElementById('alt').innerText = altitude + "m";
-            document.getElementById('vel').innerText = "32km/h";
+            document.getElementById('vel').innerText = "28km/h";
 
+            // Timer para zerar velocidade quando parar de apertar
             clearTimeout(window.t);
-            window.t = setTimeout(() => document.getElementById('vel').innerText = "0km/h", 300);
+            window.t = setTimeout(() => {
+                document.getElementById('vel').innerText = "0km/h";
+            }, 300);
         }
     </script>
 </body>
