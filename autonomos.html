@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistemas Autônomos | SustentaAgro VR</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@600&display=swap');
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: #0a0a0c; color: #00e1ff;
+            font-family: 'JetBrains Mono', monospace; overflow: hidden;
+        }
+
+        /* GRID DE FUNDO ESTILO RADAR */
+        .radar-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(circle, rgba(0, 225, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(rgba(0, 225, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 225, 255, 0.05) 1px, transparent 1px);
+            background-size: 100px 100px, 40px 40px, 40px 40px;
+            z-index: 1;
+        }
+
+        /* CONTAINER DO TRATOR AUTÔNOMO */
+        #field-map {
+            position: absolute; top: 50%; left: 50%;
+            width: 800px; height: 600px;
+            transform: translate(-50%, -50%);
+            border: 2px solid rgba(0, 225, 255, 0.3);
+            background: rgba(0, 20, 40, 0.4);
+            z-index: 2; overflow: hidden;
+        }
+
+        .tractor {
+            position: absolute; width: 40px; height: 60px;
+            background: #00e1ff; border-radius: 4px;
+            top: 80%; left: 10%;
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px #00e1ff;
+        }
+
+        /* LINHA DE CAMINHO PLANEJADO */
+        .path-line {
+            position: absolute; border-left: 2px dashed rgba(0, 225, 255, 0.5);
+            width: 1px; z-index: 1;
+        }
+
+        /* PAINÉIS DE INTERFACE */
+        .panel {
+            position: absolute; background: rgba(0, 10, 20, 0.9);
+            padding: 20px; border: 1px solid #00e1ff;
+            backdrop-filter: blur(10px); z-index: 10;
+            box-shadow: 0 0 20px rgba(0, 225, 255, 0.2);
+        }
+
+        .side-panel { top: 40px; right: 40px; width: 280px; }
+        .bottom-bar { bottom: 40px; left: 50%; transform: translateX(-50%); width: 80%; display: flex; justify-content: space-around; }
+
+        h2 { font-family: 'Outfit'; margin: 0 0 15px 0; color: #fff; text-transform: uppercase; letter-spacing: 2px; font-size: 1rem; }
+        .stat { margin-bottom: 12px; font-size: 0.8rem; border-bottom: 1px solid rgba(0, 225, 255, 0.1); padding-bottom: 5px; }
+        .stat-val { float: right; font-weight: bold; color: #fff; }
+
+        .btn {
+            background: transparent; border: 1px solid #00e1ff; color: #00e1ff;
+            padding: 12px; width: 100%; cursor: pointer; font-family: 'JetBrains Mono';
+            margin-top: 10px; transition: 0.3s; font-weight: bold;
+        }
+        .btn:hover { background: #00e1ff; color: #000; }
+
+        .obstacle {
+            position: absolute; width: 30px; height: 30px;
+            background: #ff3e3e; border-radius: 50%;
+            top: 30%; left: 50%; animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(255, 62, 62, 0.7); }
+            70% { transform: scale(1.1); opacity: 0.8; box-shadow: 0 0 0 15px rgba(255, 62, 62, 0); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .back-btn {
+            position: fixed; top: 20px; left: 20px;
+            color: #fff; text-decoration: none; font-size: 0.7rem; border: 1px solid #00e1ff;
+            padding: 8px 15px; border-radius: 5px; z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="agrovr.html" class="back-btn">← MENU PRINCIPAL</a>
+    <div class="radar-grid"></div>
+
+    <div id="field-map">
+        <div class="obstacle" id="obstaculo"></div>
+        <div class="tractor" id="trator"></div>
+        <div style="position:absolute; top:10%; left:10%; color:#fff; font-size:10px;">PONTO A</div>
+        <div style="position:absolute; top:10%; left:80%; color:#fff; font-size:10px;">PONTO B</div>
+    </div>
+
+    <div class="panel side-panel">
+        <h2>Autonomy Engine v2</h2>
+        <div class="stat">FROTA ID: <span class="stat-val">TR-800</span></div>
+        <div class="stat">GPS PRECISION: <span class="stat-val">2.4cm</span></div>
+        <div class="stat">IA STATUS: <span class="stat-val" id="ia-status" style="color:#00ff88">IDLE</span></div>
+        <div class="stat">DETECT.: <span class="stat-val" id="obs-text">LIMPO</span></div>
+        
+        <button class="btn" onclick="iniciarRota()">INICIAR ROTA AUTÔNOMA</button>
+        <button class="btn" style="border-color:#ff3e3e; color:#ff3e3e;" onclick="paradaEmergencia()">PARADA DE EMERGÊNCIA</button>
+    </div>
+
+    <div class="panel bottom-bar">
+        <div class="stat">SENSORES LIDAR: <span class="stat-val" style="color:#00ff88">ONLINE</span></div>
+        <div class="stat">LAT: <span class="stat-val">-24.128</span></div>
+        <div class="stat">LONG: <span class="stat-val">-51.412</span></div>
+        <div class="stat">CONEXÃO: <span class="stat-val">5G ESTÁVEL</span></div>
+    </div>
+
+    <script>
+        const trator = document.getElementById('trator');
+        const iaStatus = document.getElementById('ia-status');
+        const obsText = document.getElementById('obs-text');
+        let emMovimento = false;
+
+        function iniciarRota() {
+            if(emMovimento) return;
+            
+            emMovimento = true;
+            iaStatus.innerText = "PROCESSANDO...";
+            iaStatus.style.color = "#ffbe0b";
+
+            // Sequência de movimentos do trator
+            setTimeout(() => {
+                iaStatus.innerText = "EXECUTANDO";
+                iaStatus.style.color = "#00ff88";
+                
+                // Primeiro movimento (subir)
+                trator.style.top = "35%";
+                
+                // Verificação de obstáculo no meio do caminho
+                setTimeout(() => {
+                    iaStatus.innerText = "OBSTÁCULO!";
+                    iaStatus.style.color = "#ff3e3e";
+                    obsText.innerText = "PESSOA DETECTADA";
+                    obsText.style.color = "#ff3e3e";
+                    
+                    // Desvio
+                    setTimeout(() => {
+                        iaStatus.innerText = "DESVIANDO...";
+                        trator.style.left = "40%";
+                        
+                        setTimeout(() => {
+                            iaStatus.innerText = "ROTA FINALIZADA";
+                            trator.style.top = "10%";
+                            trator.style.left = "80%";
+                            obsText.innerText = "LIMPO";
+                            obsText.style.color = "#00ff88";
+                            emMovimento = false;
+                        }, 2000);
+                    }, 1500);
+                }, 2000);
+
+            }, 1000);
+        }
+
+        function paradaEmergencia() {
+            // Cancela animações e para o trator
+            const currentTop = window.getComputedStyle(trator).top;
+            const currentLeft = window.getComputedStyle(trator).left;
+            trator.style.top = currentTop;
+            trator.style.left = currentLeft;
+            
+            iaStatus.innerText = "HALTED (MANUAL)";
+            iaStatus.style.color = "#ff3e3e";
+            emMovimento = false;
+            alert("SISTEMA BLOQUEADO PELO OPERADOR.");
+        }
+    </script>
+</body>
+</html>
