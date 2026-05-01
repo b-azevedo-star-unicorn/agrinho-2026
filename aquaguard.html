@@ -3,199 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AquaGuard | Gestão de Recursos Hídricos</title>
+    <title>AquaGuard | Smart Water</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap');
+
         :root {
-            --water-blue: #0077b6;
-            --crystal-blue: #ade8f4;
-            --deep-navy: #03045e;
-            --alert-red: #e63946;
-            --bg-glass: rgba(255, 255, 255, 0.9);
+            --water: #00b4d8;
+            --deep: #03045e;
+            --foam: #caf0f8;
+            --sand: #ffddd2;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #caf0f8 0%, #90e0ef 100%);
-            color: var(--deep-navy);
+            font-family: 'Fredoka', sans-serif; /* Fonte mais arredondada e amigável */
+            background: linear-gradient(180deg, #0077b6 0%, #03045e 100%);
+            color: white;
             margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            overflow-x: hidden;
             min-height: 100vh;
         }
 
+        /* ANIMAÇÃO DE BOLHAS */
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            bottom: -50px;
+            animation: rise 10s infinite ease-in;
+            z-index: 0;
+        }
+
+        @keyframes rise {
+            0% { transform: translateY(0) scale(1); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+        }
+
         nav {
-            width: 100%;
-            padding: 20px;
-            background: var(--deep-navy);
-            color: white;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
             display: flex;
             justify-content: space-around;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
+            position: relative;
+            z-index: 10;
         }
 
         .back-btn {
             text-decoration: none;
-            color: var(--crystal-blue);
-            border: 1px solid var(--crystal-blue);
-            padding: 6px 18px;
+            color: var(--foam);
+            border: 2px solid var(--foam);
+            padding: 5px 15px;
             border-radius: 20px;
-            font-size: 0.8rem;
-            transition: 0.3s;
+            font-weight: bold;
         }
-
-        .back-btn:hover { background: var(--crystal-blue); color: var(--deep-navy); }
 
         .container {
+            position: relative;
+            z-index: 1;
             max-width: 1000px;
-            width: 90%;
-            padding: 40px 0;
+            margin: 0 auto;
+            padding: 40px 20px;
         }
 
-        header { text-align: center; margin-bottom: 30px; }
-        header h1 { font-size: 2.5rem; margin: 0; color: var(--deep-navy); text-transform: uppercase; letter-spacing: 2px; }
+        header h1 {
+            font-size: 4rem;
+            text-align: center;
+            margin: 0;
+            color: var(--foam);
+            text-shadow: 4px 4px 0px var(--water);
+            letter-spacing: 2px;
+        }
 
         .dashboard {
             display: grid;
-            grid-template-columns: 1fr 1.5fr;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 25px;
+            margin-top: 30px;
         }
-
-        @media (max-width: 850px) { .dashboard { grid-template-columns: 1fr; } }
 
         .card {
-            background: var(--bg-glass);
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 30px;
             padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 119, 182, 0.1);
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
-        /* SIMULAÇÃO DE NÍVEL DE ÁGUA */
-        .water-tank {
-            width: 120px;
-            height: 200px;
-            border: 4px solid var(--deep-navy);
-            border-radius: 10px 10px 20px 20px;
-            margin: 20px auto;
-            position: relative;
-            overflow: hidden;
-            background: #eee;
-        }
-
-        .water-level {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            background: linear-gradient(to top, var(--water-blue), var(--crystal-blue));
-            transition: height 1s ease-in-out;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        /* ONDA ANIMADA */
-        .water-level::after {
-            content: "";
-            position: absolute;
-            top: -10px; left: 0; width: 100%; height: 20px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V49.75C51.56,76.72,124,77.76,191.63,65.28,248.8,54.71,282,63.74,321.39,56.44Z" fill="%23ade8f4"/></svg>');
-            background-size: cover;
-        }
-
-        .stat-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .stat-item {
-            background: rgba(0, 119, 182, 0.05);
-            padding: 15px;
-            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
             text-align: center;
         }
 
-        .stat-value { font-size: 1.5rem; font-weight: bold; color: var(--water-blue); }
-        .stat-label { font-size: 0.7rem; text-transform: uppercase; color: #666; }
+        /* O TANQUE DE ÁGUA ESTILIZADO */
+        .tank-container {
+            width: 150px;
+            height: 250px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 5px solid var(--foam);
+            border-radius: 20px 20px 40px 40px;
+            margin: 20px auto;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 180, 216, 0.5);
+        }
 
-        select, input {
+        .water {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(180deg, var(--foam) 0%, var(--water) 100%);
+            transition: height 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* ONDA NO TOPO DA ÁGUA */
+        .wave {
+            position: absolute;
+            top: -15px;
+            left: 0;
+            width: 200%;
+            height: 20px;
+            background: var(--foam);
+            border-radius: 40%;
+            animation: wave-move 3s infinite linear;
+        }
+
+        @keyframes wave-move {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        select, input[type="range"] {
             width: 100%;
             padding: 12px;
-            border-radius: 10px;
-            border: 1px solid #ccc;
+            border-radius: 15px;
+            border: none;
             margin-top: 10px;
             font-family: inherit;
+            font-size: 1rem;
         }
 
-        .status-badge {
-            display: inline-block;
-            padding: 5px 15px;
+        .btn-action {
+            background: var(--foam);
+            color: var(--deep);
+            border: none;
+            padding: 15px 30px;
             border-radius: 50px;
-            font-size: 0.8rem;
             font-weight: bold;
-            margin-top: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s;
         }
 
-        .safe { background: #d8f3dc; color: #1b4332; }
-        .warning { background: #fee440; color: #5f0f40; }
+        .btn-action:hover { transform: scale(1.1); }
+
+        .info-pill {
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 15px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .label-pill { color: var(--water); font-size: 0.8rem; font-weight: bold; }
     </style>
 </head>
 <body>
 
+    <div id="bubbles-container"></div>
+
     <nav>
-        <a href="index.html" class="back-btn">← VOLTAR AO HUB</a>
-        <div style="font-weight: bold;">SISTEMA AQUAGUARD v4.2</div>
+        <a href="index.html" class="back-btn">← SAIR DA ÁGUA</a>
+        <div style="font-weight: bold;">AQUAGUARD 2.0</div>
     </nav>
 
     <div class="container">
         <header>
-            <h1>Monitoramento Hídrico</h1>
-            <p>Controle de Nascentes e Eficiência de Irrigação</p>
+            <h1>AquaGuard</h1>
+            <p>Monitoramento e Inteligência Hídrica</p>
         </header>
 
         <div class="dashboard">
             <div class="card">
-                <h3>Configuração de Sensores</h3>
-                <label>PONTO DE MONITORAMENTO</label>
-                <select id="sensor" onchange="atualizarDados()">
-                    <option value="nascente">Nascente Principal (APP)</option>
-                    <option value="reservatorio">Reservatório Central</option>
-                    <option value="setor_a">Irrigação Setor A (Soja)</option>
-                    <option value="setor_b">Irrigação Setor B (Milho)</option>
-                </select>
+                <h2>🌊 Controles</h2>
+                <div style="text-align: left;">
+                    <label>📍 Selecionar Área:</label>
+                    <select id="setor" onchange="atualizar()">
+                        <option value="nascente">Nascente das Pedras</option>
+                        <option value="reservatorio">Tanque de Peixes</option>
+                        <option value="irrigacao">Pivô Central (Soja)</option>
+                        <option value="estufa">Hidroponia</option>
+                    </select>
 
-                <label style="margin-top: 20px; display: block;">FLUXO DE SAÍDA (L/s)</label>
-                <input type="range" id="fluxo" min="10" max="100" value="75" oninput="atualizarDados()">
-                
-                <div style="margin-top: 30px;">
-                    <small>STATUS DO RECURSO:</small><br>
-                    <div id="status-tag" class="status-badge safe">DENTRO DA OUTORGA</div>
+                    <label style="margin-top: 20px; display: block;">💧 Fluxo de Entrada:</label>
+                    <input type="range" id="volume" min="5" max="100" value="60" oninput="atualizar()">
                 </div>
+
+                <div class="info-pill">
+                    <span class="label-pill">SOLO:</span>
+                    <span id="solo-status">Úmido</span>
+                </div>
+                
+                <button class="btn-action" onclick="alert('Sistema de Irrigação Ativado!')">ATIVAR CHUVA</button>
             </div>
 
-            <div class="card" style="text-align: center;">
-                <h3 id="display-title">Nível do Reservatório</h3>
-                
-                <div class="water-tank">
-                    <div class="water-level" id="water-fill" style="height: 75%;">
-                        <span id="pct-txt">75%</span>
+            <div class="card">
+                <h2 id="titulo-tanque">Nível do Tanque</h2>
+                <div class="tank-container">
+                    <div class="water" id="water-fill" style="height: 60%;">
+                        <div class="wave"></div>
                     </div>
                 </div>
-
-                <div class="stat-grid">
-                    <div class="stat-item">
-                        <div class="stat-value" id="val-pureza">98%</div>
-                        <div class="stat-label">Índice de Pureza</div>
+                <div style="font-size: 2rem; font-weight: bold;" id="txt-porcentagem">60%</div>
+                
+                <div class="dashboard" style="grid-template-columns: 1fr 1fr; margin-top: 10px; gap: 10px;">
+                    <div class="info-pill" style="flex-direction: column;">
+                        <span class="label-pill">PUREZA</span>
+                        <span id="pureza">94%</span>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="val-consumo">4.2k</div>
-                        <div class="stat-label">m³ / dia</div>
+                    <div class="info-pill" style="flex-direction: column;">
+                        <span class="label-pill">TEMP.</span>
+                        <span id="temp">24°C</span>
                     </div>
                 </div>
             </div>
@@ -203,46 +229,56 @@
     </div>
 
     <script>
-        function atualizarDados() {
-            const sensor = document.getElementById('sensor').value;
-            const fluxo = document.getElementById('fluxo').value;
-            
-            const fill = document.getElementById('water-fill');
-            const pctTxt = document.getElementById('pct-txt');
-            const title = document.getElementById('display-title');
-            const statusTag = document.getElementById('status-tag');
-            const valConsumo = document.getElementById('val-consumo');
-
-            // Atualiza visual do tanque
-            fill.style.height = fluxo + "%";
-            pctTxt.innerText = fluxo + "%";
-
-            // Lógica de títulos e valores simulados
-            if (sensor === 'nascente') {
-                title.innerText = "Nível da Nascente";
-                valConsumo.innerText = (fluxo * 0.5).toFixed(1) + " L/s";
-            } else if (sensor === 'reservatorio') {
-                title.innerText = "Nível do Reservatório";
-                valConsumo.innerText = (fluxo * 85).toFixed(0) + " m³";
-            } else {
-                title.innerText = "Pressão de Irrigação";
-                valConsumo.innerText = (fluxo * 1.2).toFixed(1) + " bar";
-            }
-
-            // Alerta de nível crítico
-            if (fluxo < 30) {
-                statusTag.innerText = "ALERTA: NÍVEL CRÍTICO";
-                statusTag.className = "status-badge warning";
-                fill.style.background = "linear-gradient(to top, #e63946, #ffadad)";
-            } else {
-                statusTag.innerText = "DENTRO DA OUTORGA";
-                statusTag.className = "status-badge safe";
-                fill.style.background = "linear-gradient(to top, #0077b6, #ade8f4)";
-            }
+        // GERADOR DE BOLHAS
+        const container = document.getElementById('bubbles-container');
+        for (let i = 0; i < 15; i++) {
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            const size = Math.random() * 40 + 10 + 'px';
+            bubble.style.width = size;
+            bubble.style.height = size;
+            bubble.style.left = Math.random() * 100 + 'vw';
+            bubble.style.animationDuration = Math.random() * 5 + 5 + 's';
+            bubble.style.animationDelay = Math.random() * 5 + 's';
+            container.appendChild(bubble);
         }
 
-        // Inicializa
-        atualizarDados();
+        function atualizar() {
+            const vol = document.getElementById('volume').value;
+            const setor = document.getElementById('setor').value;
+            
+            // Atualiza o visual da água
+            document.getElementById('water-fill').style.height = vol + "%";
+            document.getElementById('txt-porcentagem').innerText = vol + "%";
+
+            // Lógica de dados por setor
+            const statusSolo = document.getElementById('solo-status');
+            const pureza = document.getElementById('pureza');
+            const temp = document.getElementById('temp');
+            const titulo = document.getElementById('titulo-tanque');
+
+            if (vol < 20) {
+                statusSolo.innerText = "Seco ⚠️";
+                statusSolo.style.color = "#ff4d4d";
+            } else {
+                statusSolo.innerText = "Ideal ✓";
+                statusSolo.style.color = "#00ff88";
+            }
+
+            if(setor === 'nascente') {
+                titulo.innerText = "Fluxo da Nascente";
+                pureza.innerText = "99%";
+                temp.innerText = "18°C";
+            } else if (setor === 'estufa') {
+                titulo.innerText = "Nível Hidropônico";
+                pureza.innerText = "92%";
+                temp.innerText = "28°C";
+            } else {
+                titulo.innerText = "Nível do Reservatório";
+                pureza.innerText = "94%";
+                temp.innerText = "24°C";
+            }
+        }
     </script>
 </body>
 </html>
