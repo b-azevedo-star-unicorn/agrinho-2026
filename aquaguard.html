@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AquaGuard Pro | Gestão Hídrica 360</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Outfit:wght@300;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Outfit:wght@300;600&family=JetBrains+Mono:wght@400;700&display=swap');
 
         :root {
             --water: #00b4d8;
@@ -16,6 +16,56 @@
             --glass: rgba(255, 255, 255, 0.08);
         }
 
+        /* ----- ESTILO DO AVISO PEDAGÓGICO (MODAL) ----- */
+        #aviso-pedagogico {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 8, 20, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-conteudo {
+            background: #1b263b;
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 245, 212, 0.2);
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .modal-conteudo h2 {
+            color: var(--accent);
+            font-family: 'Fredoka', sans-serif;
+            margin-top: 0;
+        }
+
+        .modal-conteudo p {
+            line-height: 1.6;
+            color: var(--foam);
+            font-size: 0.95rem;
+        }
+
+        .btn-entendi {
+            background: var(--accent);
+            color: var(--deep);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+        .btn-entendi:hover { transform: scale(1.05); }
+        /* ------------------------------------------- */
+
         body {
             font-family: 'Outfit', sans-serif;
             background: linear-gradient(180deg, #023e8a 0%, #000814 100%);
@@ -25,6 +75,7 @@
             min-height: 100vh;
         }
 
+        /* ANIMAÇÃO DE BOLHAS */
         .bubble {
             position: absolute;
             background: rgba(255, 255, 255, 0.2);
@@ -78,13 +129,29 @@
             color: var(--foam);
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
+        .system-alert {
+            background: rgba(0, 0, 0, 0.6);
+            border-left: 5px solid var(--accent);
+            padding: 15px;
+            margin-bottom: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-radius: 4px;
         }
 
+        .alert-dot {
+            width: 12px; height: 12px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
         @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
 
         .card {
@@ -96,8 +163,7 @@
         }
 
         .tank-wrap {
-            width: 140px;
-            height: 240px;
+            width: 140px; height: 240px;
             background: rgba(0,0,0,0.4);
             border: 4px solid var(--foam);
             border-radius: 15px 15px 30px 30px;
@@ -108,8 +174,7 @@
 
         .water-body {
             position: absolute;
-            bottom: 0;
-            width: 100%;
+            bottom: 0; width: 100%;
             background: linear-gradient(180deg, var(--accent) 0%, var(--water) 100%);
             transition: height 0.3s linear;
         }
@@ -125,72 +190,39 @@
 
         label { font-size: 0.8rem; color: var(--accent); font-weight: bold; margin-top: 12px; display: block; }
         
-        /* CORREÇÃO DOS SELECTS */
         select {
-            width: 100%;
-            padding: 12px;
-            border-radius: 12px;
-            background: #1b263b; /* Fundo sólido para leitura */
-            color: white;
-            border: 1px solid var(--water);
-            margin-bottom: 10px;
-            font-family: inherit;
+            width: 100%; padding: 12px; border-radius: 12px;
+            background: #1b263b; color: white;
+            border: 1px solid var(--water); margin-bottom: 10px;
         }
 
-        select option {
-            background: #0d1b2a; /* Garante que as opções sejam legíveis */
-            color: white;
-        }
-
-        .speed-control {
-            display: flex;
-            background: rgba(0,0,0,0.3);
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 5px;
-        }
-
-        .speed-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            background: transparent;
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.7rem;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
+        .speed-control { display: flex; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 4px; }
+        .speed-btn { flex: 1; padding: 10px; border: none; background: transparent; color: white; border-radius: 8px; cursor: pointer; font-size: 0.7rem; font-weight: bold; }
         .speed-btn.active { background: var(--water); color: var(--deep); }
 
-        .btn-main {
-            width: 100%;
-            padding: 15px;
-            border-radius: 15px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: 0.3s;
-            margin-top: 15px;
-        }
-
+        .btn-main { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 15px; }
         .btn-chuva { background: var(--accent); color: var(--deep); }
-        .btn-chuva.active { background: var(--danger); color: white; box-shadow: 0 0 20px rgba(255, 90, 95, 0.4); }
+        .btn-chuva.active { background: var(--danger); color: white; }
 
-        .data-row {
-            display: flex;
-            justify-content: space-between;
-            background: rgba(0,0,0,0.2);
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 8px;
-        }
+        .data-row { display: flex; justify-content: space-between; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 12px; margin-bottom: 8px; }
     </style>
 </head>
 <body>
+
+    <div id="aviso-pedagogico">
+        <div class="modal-conteudo">
+            <h2>⚠️ Nota Importante</h2>
+            <p>
+                Este sistema é um <b>protótipo educacional</b> desenvolvido para fins pedagógicos. 
+                Os dados de vazão, umidade e sensores exibidos são <b>simulações fictícias</b> 
+                criadas para demonstrar o potencial da tecnologia no campo.
+            </p>
+            <p>
+                As informações não devem ser utilizadas para controle real de sistemas hídricos sem a supervisão de um engenheiro agrônomo.
+            </p>
+            <button class="btn-entendi" onclick="fecharAviso()">ENTRAR NO SISTEMA</button>
+        </div>
+    </div>
 
     <div id="bubble-bg"></div>
 
@@ -200,9 +232,13 @@
     </nav>
 
     <div class="container">
+        <div class="system-alert" id="radar-alert">
+            <div class="alert-dot" id="radar-dot"></div>
+            <span id="radar-text">SISTEMA ONLINE // AGUARDANDO COMANDO DE IRRIGAÇÃO...</span>
+        </div>
+
         <header>
             <h1>AquaGuard</h1>
-            <p style="text-align:center;">Gestão de Recursos Hídricos Inteligente</p>
         </header>
 
         <div class="grid">
@@ -222,11 +258,11 @@
                     <button id="sp-sim" class="speed-btn" onclick="setSpeed('sim')">SIMULAÇÃO 24H</button>
                 </div>
 
-                <label>TIPO DE PULSO DE IRRIGAÇÃO:</label>
+                <label>TIPO DE PULSO:</label>
                 <select id="tipo-pulso">
                     <option value="curto">⚡ Pulso Curto (Economia)</option>
                     <option value="longo">🌊 Pulso Longo (Profundo)</option>
-                    <option value="intermitente">🔄 Intermitente (Vazão Alternada)</option>
+                    <option value="intermitente">🔄 Intermitente</option>
                 </select>
 
                 <button id="btn-chuva" class="btn-main btn-chuva" onclick="toggleChuva()">LIGAR IRRIGAÇÃO</button>
@@ -258,6 +294,12 @@
     </div>
 
     <script>
+        // Função para fechar o aviso
+        function fecharAviso() {
+            document.getElementById('aviso-pedagogico').style.display = 'none';
+        }
+
+        // GERADOR DE BOLHAS
         const bg = document.getElementById('bubble-bg');
         for (let i = 0; i < 15; i++) {
             const b = document.createElement('div');
@@ -275,49 +317,41 @@
         let speedMode = 'real';
         let intervalo;
 
+        function atualizarAviso(msg, cor) {
+            const alertBox = document.getElementById('radar-alert');
+            const dot = document.getElementById('radar-dot');
+            const text = document.getElementById('radar-text');
+            text.innerText = msg;
+            alertBox.style.borderLeftColor = cor;
+            dot.style.background = cor;
+        }
+
         function setSpeed(mode) {
             speedMode = mode;
             document.getElementById('sp-real').classList.toggle('active', mode === 'real');
             document.getElementById('sp-sim').classList.toggle('active', mode === 'sim');
             document.getElementById('txt-mode').innerText = "Modo: " + (mode === 'real' ? "Tempo Real" : "Simulação 24h");
-            
-            if(irrigando) {
-                pararIrrigacao();
-                toggleChuva();
-            }
+            if(irrigando) { pararIrrigacao(); toggleChuva(); }
         }
 
         function toggleChuva() {
             const btn = document.getElementById('btn-chuva');
             const pulso = document.getElementById('tipo-pulso').value;
-
             if (!irrigando) {
-                if (nivel <= 1) return;
+                if (nivel <= 1) { atualizarAviso("ERRO CRÍTICO: VOLUME INSUFICIENTE", "#ff5a5f"); return; }
                 irrigando = true;
                 btn.innerText = "PARAR IRRIGAÇÃO";
                 btn.classList.add('active');
-                
-                // Base de consumo
+                atualizarAviso(`SISTEMA ATIVO // IRRIGANDO VIA ${pulso.toUpperCase()}`, "#00f5d4");
                 let taxaConsumo = speedMode === 'real' ? 0.05 : 0.8;
                 let taxaSolo = speedMode === 'real' ? 0.08 : 1.2;
-
-                // Modifica taxas baseado no pulso
                 if (pulso === 'longo') { taxaConsumo *= 2; taxaSolo *= 2; }
                 if (pulso === 'curto') { taxaConsumo *= 0.5; taxaSolo *= 0.5; }
-
                 intervalo = setInterval(() => {
-                    if (nivel > 0) {
-                        nivel -= taxaConsumo;
-                        solo += taxaSolo;
-                        if (solo > 98) solo = 98;
-                        atualizarTela();
-                    } else {
-                        pararIrrigacao();
-                    }
+                    if (nivel > 0) { nivel -= taxaConsumo; solo += taxaSolo; if (solo > 98) solo = 98; atualizarTela(); }
+                    else { pararIrrigacao(); }
                 }, 100);
-            } else {
-                pararIrrigacao();
-            }
+            } else { pararIrrigacao(); atualizarAviso("SISTEMA ONLINE // AGUARDANDO...", "#00f5d4"); }
         }
 
         function pararIrrigacao() {
@@ -333,38 +367,28 @@
             document.getElementById('water-fill').style.height = nivel + "%";
             document.getElementById('txt-perc').innerText = Math.floor(nivel) + "%";
             document.getElementById('solo-val').innerText = Math.floor(solo) + "%";
-            
             const pulso = document.getElementById('tipo-pulso').value;
             let vazaoBase = (speedMode === 'real' ? 2.5 : 45.0);
             if (pulso === 'longo') vazaoBase *= 2;
             if (pulso === 'curto') vazaoBase *= 0.5;
-
             document.getElementById('vazao').innerText = irrigando ? vazaoBase.toFixed(1) + " L/s" : "0 L/s";
-            
             const fill = document.getElementById('water-fill');
-            fill.style.background = nivel < 20 ? "var(--danger)" : "linear-gradient(180deg, var(--accent) 0%, var(--water) 100%)";
+            if (nivel < 20) {
+                fill.style.background = "var(--danger)";
+                atualizarAviso("ATENÇÃO: NÍVEL HÍDRICO ABAIXO DE 20%", "#ffbe0b");
+            }
         }
 
         function resetSim() {
-            nivel = 80;
-            solo = 30 + Math.random() * 20;
-            pararIrrigacao();
-            atualizarTela();
-            
+            nivel = 80; solo = 30 + Math.random() * 20;
+            pararIrrigacao(); atualizarTela();
+            atualizarAviso("SISTEMA ONLINE // ÁREA ALTERADA...", "#00f5d4");
             const setor = document.getElementById('setor').value;
             const title = document.getElementById('display-title');
             const sugestao = document.getElementById('sugestao-ia');
-
-            if(setor === 'nascente') {
-                title.innerText = "Nível da Reserva";
-                sugestao.innerText = "Área de Preservação: Mantenha a irrigação desligada a menos que haja seca severa detectada.";
-            } else if(setor === 'estufa') {
-                title.innerText = "Nível Hidropônico";
-                sugestao.innerText = "Estufa exige pulsos curtos e constantes (Intermitente) para manter as raízes oxigenadas.";
-            } else {
-                title.innerText = "Nível do Reservatório";
-                sugestao.innerText = "O nível está estável. Recomendamos irrigação em pulsos curtos para economizar energia.";
-            }
+            if(setor === 'nascente') { title.innerText = "Nível da Reserva"; sugestao.innerText = "Preservação: Irrigação restrita."; }
+            else if(setor === 'estufa') { title.innerText = "Nível Hidropônico"; sugestao.innerText = "Estufa exige pulsos constantes."; }
+            else { title.innerText = "Nível do Reservatório"; sugestao.innerText = "Sistema estável. Recomendamos pulsos curtos."; }
         }
     </script>
 </body>
