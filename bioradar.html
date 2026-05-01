@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bio-Radar | Economia Circular Agro</title>
+    <title>Bio-Radar | Marketplace de Resíduos</title>
     <style>
         :root {
             --primary: #00ff88;
@@ -23,7 +23,37 @@
             overflow: hidden;
         }
 
-        /* Sidebar de Filtros */
+        /* Modal de Aviso Pedagógico */
+        #modal-aviso {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            text-align: center;
+            border: 1px solid var(--primary);
+        }
+        .modal-content h2 { color: var(--primary); }
+        .btn-entendi {
+            background: var(--primary);
+            border: none;
+            padding: 10px 30px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        /* Sidebar */
         .sidebar {
             width: 350px;
             background: var(--card);
@@ -35,27 +65,19 @@
             overflow-y: auto;
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        
         .search-box {
             background: rgba(0,0,0,0.2);
             border: 1px solid #334155;
             padding: 12px;
             border-radius: 10px;
             color: white;
-            width: 90%;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .filter-group h4 { margin-bottom: 10px; font-size: 0.9rem; color: #94a3b8; }
-
         .tag-container { display: flex; flex-wrap: wrap; gap: 8px; }
         
         .tag {
@@ -66,24 +88,33 @@
             cursor: pointer;
             transition: 0.3s;
         }
-
         .tag.active { background: var(--primary); color: #000; font-weight: bold; }
 
-        /* Área do Mapa */
+        /* Lista de Ofertas */
+        .offer-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .offer-item {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: 0.2s;
+        }
+        .offer-item:hover { border-color: var(--primary); background: rgba(255,255,255,0.08); }
+
+        /* Mapa */
         .map-area {
             flex-grow: 1;
             position: relative;
             background: #111;
-            background-image: url('https://api.mapbox.com/styles/v1/mapbox/dark-v10/static/-51.52,-24.85,11,0/1000x800?access_token=Sua_Token_Aqui'); /* Placeholder de mapa */
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://i.imgur.com/8N4I8lC.png'); 
             background-size: cover;
-            background-position: center;
         }
 
-        /* Marcadores no Mapa (Simulados) */
         .marker {
             position: absolute;
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             background: var(--primary);
             border: 3px solid white;
             border-radius: 50%;
@@ -92,9 +123,7 @@
             transition: 0.3s;
         }
 
-        .marker:hover { transform: scale(1.5); z-index: 10; }
-
-        /* Info Card flutuante */
+        /* Painel de Info */
         .info-panel {
             position: absolute;
             bottom: 30px;
@@ -102,13 +131,11 @@
             width: 300px;
             background: var(--card);
             border-radius: 20px;
-            padding: 20px;
+            padding: 25px;
             border: 1px solid var(--primary);
-            display: none; /* Aparece ao clicar no marcador */
-            animation: slideUp 0.3s ease-out;
+            display: none;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
         }
-
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         .btn-match {
             background: var(--primary);
@@ -121,97 +148,123 @@
             margin-top: 15px;
             cursor: pointer;
         }
-
-        .stats-circle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.6);
-            padding: 15px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .stats-circle span { color: var(--primary); font-weight: bold; }
     </style>
 </head>
 <body>
 
+    <div id="modal-aviso">
+        <div class="modal-content">
+            <h2>⚠️ Aviso Importante</h2>
+            <p>Este site foi desenvolvido para fins pedagógicos (Concurso Agrinho 2026). Todas as informações, mapas e ofertas aqui presentes são <strong>fictícios</strong>, criados apenas para demonstração da funcionalidade do projeto.</p>
+            <button class="btn-entendi" onclick="fecharAviso()">ENTENDI</button>
+        </div>
+    </div>
+
     <aside class="sidebar">
-        <div class="logo">🔄 Bio-Radar</div>
+        <div class="logo" onclick="window.location.href='index.html'">🔄 Bio-Radar</div>
         
-        <input type="text" class="search-box" placeholder="Buscar resíduo (ex: esterco, palha)...">
+        <input type="text" id="searchInput" class="search-box" placeholder="Pesquisar resíduo..." onkeyup="filtrar()">
 
         <div class="filter-group">
             <h4>CATEGORIAS</h4>
-            <div class="tag-container">
-                <span class="tag active">Todos</span>
-                <span class="tag">Fertilizantes Orgânicos</span>
-                <span class="tag">Biomassa/Energia</span>
-                <span class="tag">Ração Animal</span>
+            <div class="tag-container" id="categoryFilters">
+                <span class="tag active" onclick="filtrarCategoria('Todos', this)">Todos</span>
+                <span class="tag" onclick="filtrarCategoria('Fertilizante', this)">Fertilizante</span>
+                <span class="tag" onclick="filtrarCategoria('Biomassa', this)">Biomassa</span>
+                <span class="tag" onclick="filtrarCategoria('Ração', this)">Ração</span>
             </div>
         </div>
 
         <div class="filter-group">
-            <h4>RAIO DE BUSCA (KM)</h4>
-            <input type="range" min="1" max="100" value="25" style="width: 100%;">
-            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 5px;">
-                <span>1km</span>
-                <span>100km</span>
-            </div>
-        </div>
-
-        <hr style="border: 0; border-top: 1px solid #334155; margin: 10px 0;">
-
-        <div class="filter-group">
-            <h4>OFERTAS RECENTES</h4>
-            <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; margin-bottom: 10px;">
-                <small style="color: var(--primary);">Disponível agora</small>
-                <div style="font-size: 0.9rem;">10t de Cama de Frango</div>
-                <small style="color: #64748b;">Fazenda Santa Maria - 4km</small>
-            </div>
-            <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px;">
-                <small style="color: var(--secondary);">Disponível agora</small>
-                <div style="font-size: 0.9rem;">Palha de Milho para Cobertura</div>
-                <small style="color: #64748b;">Sítio Alvorada - 12km</small>
-            </div>
+            <h4>OFERTAS DISPONÍVEIS</h4>
+            <div class="offer-list" id="offerList">
+                </div>
         </div>
     </aside>
 
-    <main class="map-area" id="map">
-        <div class="marker" style="top: 40%; left: 30%;" onclick="showInfo('Cama de Frango', 'Fazenda Santa Maria', '10 toneladas', 'Fertilizante Premium')"></div>
-        <div class="marker" style="top: 60%; left: 55%;" onclick="showInfo('Casca de Arroz', 'Grãos do Sul', '50 m³', 'Combustível/Caldeira')"></div>
-        <div class="marker" style="top: 25%; left: 70%;" onclick="showInfo('Bagaço de Cana', 'Usina Verde', '100t', 'Biomassa')"></div>
-
-        <div class="stats-circle">
-            Total de Resíduos Reutilizados: <br>
-            <span>1.240 Toneladas em 2026</span>
-        </div>
-
+    <main class="map-area" id="mapContainer">
         <div class="info-panel" id="info-panel">
-            <h2 id="info-title" style="margin: 0; font-size: 1.2rem;">Nome do Resíduo</h2>
-            <p id="info-farm" style="color: var(--primary); margin: 5px 0;">Nome da Fazenda</p>
-            <p id="info-desc" style="font-size: 0.9rem; color: #94a3b8;">Descrição do material e volume disponível para coleta.</p>
+            <h2 id="info-title" style="margin: 0; font-size: 1.2rem;"></h2>
+            <p id="info-farm" style="color: var(--primary); margin: 5px 0; font-weight: bold;"></p>
+            <p id="info-desc" style="font-size: 0.85rem; color: #94a3b8; line-height: 1.4;"></p>
             <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; margin-top: 10px;">
-                <small>Impacto Ambiental Evitado:</small><br>
-                <strong style="color: #fff;">-2.4t de CO₂ eq</strong>
+                <small>Impacto Ambiental:</small><br>
+                <strong id="info-impact" style="color: #fff;"></strong>
             </div>
-            <button class="btn-match" onclick="alert('Match realizado! Contato enviado para o produtor.')">SOLICITAR MATCH</button>
-            <button onclick="closeInfo()" style="background: none; border: none; color: #64748b; font-size: 0.8rem; cursor: pointer; margin-top: 10px; width: 100%;">Fechar</button>
+            <button class="btn-match" onclick="alert('Match realizado! Conexão pedagógica estabelecida.')">SOLICITAR MATCH</button>
+            <button onclick="document.getElementById('info-panel').style.display='none'" style="background:none; border:none; color:#555; cursor:pointer; width:100%; margin-top:10px;">Fechar</button>
         </div>
     </main>
 
     <script>
-        function showInfo(title, farm, volume, desc) {
-            document.getElementById('info-panel').style.display = 'block';
-            document.getElementById('info-title').innerText = title;
-            document.getElementById('info-farm').innerText = farm + ' (' + volume + ')';
-            document.getElementById('info-desc').innerText = 'Material: ' + desc + '. Disponível para retirada imediata visando economia circular.';
+        // Banco de Dados Fictício (Mais informações como pedido)
+        const ofertas = [
+            { id: 1, nome: "Cama de Frango", fazenda: "Fazenda Santa Maria", cat: "Fertilizante", vol: "10 ton", impact: "-2.4t CO2", lat: "40%", lng: "30%", desc: "Rico em nitrogênio, ideal para milho e soja." },
+            { id: 2, nome: "Bagaço de Cana", fazenda: "Usina Alvorada", cat: "Biomassa", vol: "100 m³", impact: "-5.0t CO2", lat: "25%", lng: "70%", desc: "Excelente para queima em caldeiras industriais." },
+            { id: 3, nome: "Soro de Leite", fazenda: "Laticínios Vale Verde", cat: "Ração", vol: "5000L", impact: "-1.2t CO2", lat: "60%", lng: "55%", desc: "Subproduto líquido para alimentação de suínos." },
+            { id: 4, nome: "Casca de Arroz", fazenda: "Grãos do Sul", cat: "Biomassa", vol: "20 ton", impact: "-3.1t CO2", lat: "75%", lng: "20%", desc: "Material seco para forração de solos ou energia." },
+            { id: 5, nome: "Esterco Bovino", fazenda: "Pecuária Horizonte", cat: "Fertilizante", vol: "15 ton", impact: "-4.0t CO2", lat: "45%", lng: "85%", desc: "Curtido e pronto para espalhamento em pastagens." },
+            { id: 6, nome: "Restos de Silagem", fazenda: "Sítio Novo", cat: "Ração", vol: "5 ton", impact: "-0.8t CO2", lat: "15%", lng: "45%", desc: "Excedente de produção de silagem de milho." }
+        ];
+
+        let categoriaAtual = "Todos";
+
+        // Inicializar Site
+        function fecharAviso() { document.getElementById('modal-aviso').style.display = 'none'; renderizar(); }
+
+        function renderizar() {
+            const list = document.getElementById('offerList');
+            const map = document.getElementById('mapContainer');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            
+            list.innerHTML = "";
+            // Limpar marcadores antigos (menos o info-panel)
+            const markers = document.querySelectorAll('.marker');
+            markers.forEach(m => m.remove());
+
+            ofertas.forEach(o => {
+                const matchSearch = o.nome.toLowerCase().includes(search) || o.fazenda.toLowerCase().includes(search);
+                const matchCat = categoriaAtual === "Todos" || o.cat === categoriaAtual;
+
+                if (matchSearch && matchCat) {
+                    // Adicionar à lista lateral
+                    list.innerHTML += `
+                        <div class="offer-item" onclick="showInfo(${o.id})">
+                            <small style="color: var(--primary)">${o.cat}</small>
+                            <div style="font-size:0.9rem">${o.nome}</div>
+                            <small style="color:#64748b">${o.fazenda}</small>
+                        </div>
+                    `;
+
+                    // Adicionar Marcador no Mapa
+                    const m = document.createElement('div');
+                    m.className = 'marker';
+                    m.style.top = o.lat;
+                    m.style.left = o.lng;
+                    m.onclick = () => showInfo(o.id);
+                    map.appendChild(m);
+                }
+            });
         }
 
-        function closeInfo() {
-            document.getElementById('info-panel').style.display = 'none';
+        function filtrar() { renderizar(); }
+
+        function filtrarCategoria(cat, element) {
+            categoriaAtual = cat;
+            // Estilo dos botões
+            document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+            renderizar();
+        }
+
+        function showInfo(id) {
+            const o = ofertas.find(item => item.id === id);
+            const panel = document.getElementById('info-panel');
+            panel.style.display = 'block';
+            document.getElementById('info-title').innerText = o.nome;
+            document.getElementById('info-farm').innerText = o.fazenda + " (" + o.vol + ")";
+            document.getElementById('info-desc').innerText = o.desc;
+            document.getElementById('info-impact').innerText = o.impact + " eq";
         }
     </script>
 </body>
