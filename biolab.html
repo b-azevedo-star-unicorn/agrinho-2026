@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioLab Assist | Inteligência Biológica</title>
+    <style>
+        :root {
+            --lab-green: #aacc00; /* Verde Limão/Biológico */
+            --lab-gray: #343a40;
+            --lab-light: #f8f9fa;
+            --lab-border: #dee2e6;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #e9ecef;
+            color: var(--lab-gray);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        nav {
+            width: 100%;
+            padding: 15px;
+            background: var(--lab-gray);
+            color: var(--lab-green);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-bottom: 4px solid var(--lab-green);
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: white;
+            border: 1px solid white;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 95%;
+            padding: 30px 0;
+        }
+
+        header { text-align: center; margin-bottom: 30px; }
+        header h1 { font-size: 2.2rem; margin: 0; text-transform: uppercase; }
+
+        .lab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .card-lab {
+            background: white;
+            border: 1px solid var(--lab-border);
+            padding: 25px;
+            position: relative;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+        }
+
+        h3 { border-left: 4px solid var(--lab-green); padding-left: 10px; margin-top: 0; }
+
+        .select-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.75rem; font-weight: bold; margin-bottom: 10px; color: #777; }
+        
+        select {
+            width: 100%;
+            padding: 12px;
+            background: var(--lab-light);
+            border: 1px solid var(--lab-border);
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        /* ÁREA DA RECEITA BIOLÓGICA */
+        .recipe-display {
+            background: var(--lab-gray);
+            color: var(--lab-green);
+            padding: 20px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recipe-header { font-size: 0.7rem; color: #aaa; margin-bottom: 10px; border-bottom: 1px solid #444; }
+
+        .target-name { font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; white-space: nowrap; }
+
+        .agent-box {
+            border: 1px dashed var(--lab-green);
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .pulse {
+            width: 10px;
+            height: 10px;
+            background: var(--lab-green);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+            animation: pulse-animation 2s infinite;
+        }
+
+        @keyframes pulse-animation {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(170, 204, 0, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(170, 204, 0, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(170, 204, 0, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="back-btn">← TERMINAL HUB</a>
+        <div style="font-weight: bold; letter-spacing: 2px;">BIOLAB ASSIST v1.0</div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>Diagnóstico Bio-Ativo</h1>
+            <p>Análise de Solo e Prescrição de Agentes Biológicos</p>
+        </header>
+
+        <div class="lab-grid">
+            <div class="card-lab">
+                <h3>Entrada de Amostra</h3>
+                
+                <div class="select-group">
+                    <label>IDENTIFICAR PRAGA/DOENÇA</label>
+                    <select id="praga" onchange="analisar()">
+                        <option value="percevejo">Percevejo-Marrom</option>
+                        <option value="ferrugem">Ferrugem da Soja</option>
+                        <option value="nematoides">Nematoides de Galha</option>
+                        <option value="lagarta">Lagarta do Cartucho</option>
+                    </select>
+                </div>
+
+                <div class="select-group">
+                    <label>CULTURA ATUAL</label>
+                    <select id="cultura" onchange="analisar()">
+                        <option value="Soja">Soja</option>
+                        <option value="Milho">Milho</option>
+                        <option value="Feijão">Feijão</option>
+                    </select>
+                </div>
+                
+                <div style="font-size: 0.7rem; color: #888;">
+                    <p>[SISTEMA] Aguardando seleção de biotipo para processamento de protocolo...</p>
+                </div>
+            </div>
+
+            <div class="card-lab recipe-display" id="quadro">
+                <div class="recipe-header">PROTOCOLO DE MANEJO BIOLÓGICO</div>
+                
+                <div class="target-name" id="nome-praga">CARREGANDO...</div>
+                
+                <div id="agente-container">
+                    <div class="pulse"></div> <strong>Agente Recomendado:</strong>
+                    <div class="agent-box" id="agente-texto">---</div>
+                </div>
+
+                <div style="margin-top: 15px; font-size: 0.8rem;">
+                    <strong>EFICÁCIA ESTIMADA:</strong> <span id="eficacia">0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const bancoDados = {
+            percevejo: { nome: "Percevejo-Marrom", agente: "Beauveria bassiana (Fungo)", efic: "88%" },
+            ferrugem: { nome: "Ferrugem da Soja", agente: "Bacillus subtilis (Bactéria)", efic: "92%" },
+            nematoides: { nome: "Nematoides", agente: "Paecilomyces lilacinus", efic: "85%" },
+            lagarta: { nome: "Lagarta Cartucho", agente: "Baculovírus (Vírus)", efic: "95%" }
+        };
+
+        function analisar() {
+            const pragaKey = document.getElementById('praga').value;
+            const dados = bancoDados[pragaKey];
+
+            const elementoNome = document.getElementById('nome-praga');
+            const elementoAgente = document.getElementById('agente-texto');
+            const elementoEficacia = document.getElementById('eficacia');
+
+            // Atualiza textos
+            elementoNome.innerText = dados.nome.toUpperCase();
+            elementoAgente.innerText = dados.agente;
+            elementoEficacia.innerText = dados.efic;
+
+            // Ajuste de fonte se o nome for muito grande
+            ajustarFonte(elementoNome);
+        }
+
+        function ajustarFonte(el) {
+            let size = 1.5;
+            el.style.fontSize = size + "rem";
+            const limite = el.parentElement.offsetWidth - 40;
+
+            while (el.offsetWidth > limite && size > 0.8) {
+                size -= 0.1;
+                el.style.fontSize = size + "rem";
+            }
+        }
+
+        // Inicia a primeira análise
+        analisar();
+    </script>
+</body>
+</html>
