@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Climate AI | Monitoramento Atmosférico</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Outfit:wght@300;600&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        :root {
+            --sky: #4cc9f0;
+            --storm: #7209b7;
+            --sun: #ffbe0b;
+            --heat: #f72585;
+            --deep: #0b090a;
+            --glass: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ----- AVISO PEDAGÓGICO ----- */
+        #aviso-pedagogico {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(11, 9, 10, 0.95);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 10000; backdrop-filter: blur(10px);
+        }
+
+        .modal-conteudo {
+            background: #16213e;
+            border: 2px solid var(--sky);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(76, 201, 240, 0.2);
+        }
+
+        .btn-entendi {
+            background: var(--sky);
+            color: var(--deep);
+            border: none; padding: 12px 30px;
+            border-radius: 50px; font-weight: bold;
+            cursor: pointer; margin-top: 20px;
+        }
+
+        /* ----- NAVEGAÇÃO ----- */
+        nav {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            display: flex; justify-content: space-between;
+            align-items: center; backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--sky);
+        }
+
+        .back-btn {
+            text-decoration: none; color: var(--sky);
+            border: 2px solid var(--sky);
+            padding: 8px 20px; border-radius: 50px; font-weight: bold;
+        }
+
+        .container {
+            max-width: 1200px; margin: 0 auto; padding: 20px;
+        }
+
+        header h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 3.5rem; text-align: center; color: var(--sky);
+            margin: 10px 0;
+        }
+
+        /* ----- BARRA DE ALERTA (TIPO BIO-RADAR) ----- */
+        .system-alert {
+            background: rgba(0, 0, 0, 0.6);
+            border-left: 5px solid var(--sun);
+            padding: 15px; margin-bottom: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem; display: flex; align-items: center; gap: 15px;
+        }
+
+        .alert-dot {
+            width: 12px; height: 12px; background: var(--sun);
+            border-radius: 50%; animation: blink 1s infinite;
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* ----- GRID E CARDS ----- */
+        .grid { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 20px; }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 25px; padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .main-temp {
+            font-size: 5rem; font-weight: bold; margin: 20px 0;
+            color: var(--sun); text-shadow: 0 0 20px rgba(255, 190, 11, 0.4);
+        }
+
+        .status-icon { font-size: 4rem; margin-bottom: 10px; }
+
+        .data-row {
+            display: flex; justify-content: space-between;
+            background: rgba(0,0,0,0.2);
+            padding: 15px; border-radius: 12px; margin-bottom: 10px;
+        }
+
+        .label { color: var(--sky); font-size: 0.8rem; font-weight: bold; }
+
+        /* BOTAO DE SIMULAÇÃO */
+        .btn-simulate {
+            width: 100%; padding: 15px; border-radius: 15px;
+            border: none; background: var(--storm); color: white;
+            font-weight: bold; cursor: pointer; text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        .btn-simulate:hover { background: var(--heat); }
+
+        /* NUVENS ANIMADAS NO FUNDO */
+        .cloud {
+            position: absolute; background: white; opacity: 0.1;
+            filter: blur(30px); border-radius: 50%; z-index: -1;
+            animation: move linear infinite;
+        }
+
+        @keyframes move {
+            from { transform: translateX(-200px); }
+            to { transform: translateX(120vw); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="aviso-pedagogico">
+        <div class="modal-conteudo">
+            <h2>☁️ Climate AI: Lab</h2>
+            <p>
+                Este módulo é um <b>protótipo de monitoramento climático</b>. 
+                Os dados de temperatura, pressão e alertas são <b>gerados artificialmente</b> 
+                para demonstrar o funcionamento de uma estação meteorológica inteligente.
+            </p>
+            <button class="btn-entendi" onclick="fecharAviso()">INICIAR MONITORAMENTO</button>
+        </div>
+    </div>
+
+    <div id="clouds-bg"></div>
+
+    <nav>
+        <a href="index.html" class="back-btn">← HUB</a>
+        <div style="font-weight: bold; color: var(--sky);">CLIMATE AI v2.1</div>
+    </nav>
+
+    <div class="container">
+        <div class="system-alert" id="radar-alert">
+            <div class="alert-dot"></div>
+            <span id="radar-text">ESTAÇÃO ONLINE // AGUARDANDO SINCRONIZAÇÃO DE SATÉLITE...</span>
+        </div>
+
+        <header>
+            <h1>Climate AI</h1>
+        </header>
+
+        <div class="grid">
+            <div class="card">
+                <h3>🌍 Localização</h3>
+                <select id="regiao" onchange="atualizarClima()" style="width: 100%; padding: 12px; border-radius: 10px; background: #1a1a2e; color: white; border: 1px solid var(--sky);">
+                    <option value="campo1">Setor Norte (Grãos)</option>
+                    <option value="campo2">Setor Sul (Pomar)</option>
+                    <option value="serra">Área de Preservação</option>
+                </select>
+
+                <div style="margin-top: 30px;">
+                    <h3>⚡ Simular Evento</h3>
+                    <button class="btn-simulate" onclick="simularTempestade()">GERAR TEMPESTADE</button>
+                    <button class="btn-simulate" style="margin-top: 10px; background: #fb5607;" onclick="simularOndaCalor()">ONDA DE CALOR</button>
+                </div>
+            </div>
+
+            <div class="card" style="text-align: center;">
+                <div id="icon-clima" class="status-icon">☀️</div>
+                <div id="temp-display" class="main-temp">24°C</div>
+                <div id="desc-clima" style="font-size: 1.2rem; color: var(--sky);">CÉU LIMPO</div>
+                
+                <div style="margin-top: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="data-row" style="flex-direction: column;">
+                        <span class="label">MÍNIMA</span>
+                        <span id="temp-min">18°C</span>
+                    </div>
+                    <div class="data-row" style="flex-direction: column;">
+                        <span class="label">MÁXIMA</span>
+                        <span id="temp-max">29°C</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📡 Sensores de Ar</h3>
+                <div class="data-row">
+                    <span class="label">UMIDADE AR:</span>
+                    <span id="umidade-ar">62%</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">VENTO:</span>
+                    <span id="vento">12 km/h</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">ÍNDICE UV:</span>
+                    <span id="uv" style="color: var(--sun);">Baixo (2)</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">PRESSÃO:</span>
+                    <span>1012 hPa</span>
+                </div>
+
+                <div style="margin-top: 20px; background: rgba(76, 201, 240, 0.1); padding: 15px; border-radius: 15px;">
+                    <small>PREVISÃO IA:</small>
+                    <p id="previsao-ia" style="font-size: 0.8rem; margin: 5px 0;">Condições ideais para aplicação de defensivos naturais nas próximas 4 horas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function fecharAviso() { document.getElementById('aviso-pedagogico').style.display = 'none'; }
+
+        // GERADOR DE NUVENS NO FUNDO
+        const bg = document.getElementById('clouds-bg');
+        for (let i = 0; i < 6; i++) {
+            const c = document.createElement('div');
+            c.className = 'cloud';
+            const size = Math.random() * 200 + 100 + 'px';
+            c.style.width = size; c.style.height = size;
+            c.style.top = Math.random() * 100 + 'vh';
+            c.style.animationDuration = Math.random() * 60 + 30 + 's';
+            c.style.animationDelay = Math.random() * 20 + 's';
+            bg.appendChild(c);
+        }
+
+        function atualizarAviso(msg, cor) {
+            const alertBox = document.getElementById('radar-alert');
+            const text = document.getElementById('radar-text');
+            text.innerText = msg;
+            alertBox.style.borderLeftColor = cor;
+        }
+
+        function atualizarClima() {
+            const regiao = document.getElementById('regiao').value;
+            atualizarAviso(`SINCRO: ${regiao.toUpperCase()} // ATUALIZANDO DADOS...`, "var(--sky)");
+            
+            // Simula pequena variação ao trocar região
+            setTimeout(() => {
+                document.getElementById('temp-display').innerText = (22 + Math.floor(Math.random() * 5)) + "°C";
+                atualizarAviso(`ESTAÇÃO ONLINE // DADOS ATUALIZADOS`, "var(--sky)");
+            }, 500);
+        }
+
+        function simularTempestade() {
+            document.getElementById('icon-clima').innerText = "⛈️";
+            document.getElementById('temp-display').innerText = "19°C";
+            document.getElementById('desc-clima').innerText = "ALERTA DE TEMPESTADE";
+            document.getElementById('umidade-ar').innerText = "92%";
+            document.getElementById('vento').innerText = "48 km/h";
+            document.getElementById('uv').innerText = "Zero (0)";
+            document.getElementById('previsao-ia').innerText = "PERIGO: Tempestade elétrica se aproximando. Recolher equipamentos sensíveis.";
+            atualizarAviso("ALERTA CRÍTICO // FORTE INSTABILIDADE ATMOSFÉRICA DETECTADA", "var(--heat)");
+            document.body.style.background = "#0f0c29";
+        }
+
+        function simularOndaCalor() {
+            document.getElementById('icon-clima').innerText = "🔥";
+            document.getElementById('temp-display').innerText = "38°C";
+            document.getElementById('desc-clima').innerText = "ONDA DE CALOR EXTREMO";
+            document.getElementById('umidade-ar').innerText = "15%";
+            document.getElementById('vento').innerText = "5 km/h";
+            document.getElementById('uv').innerText = "Extremo (11+)";
+            document.getElementById('previsao-ia').innerText = "RISCO: Alta taxa de evapotranspiração. Ativar AquaGuard para irrigação de emergência.";
+            atualizarAviso("ALERTA DE SAÚDE // RADIAÇÃO UV EM NÍVEL CRÍTICO", "var(--sun)");
+            document.body.style.background = "linear-gradient(135deg, #9d0208 0%, #03071e 100%)";
+        }
+    </script>
+</body>
+</html>
