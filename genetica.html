@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BIO-GEN | SEQUENCIAMENTO SUSTENTÁVEL</title>
+    <title>BIO-GEN PRO | LABORATÓRIO VIRTUAL</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;600;800&display=swap');
 
@@ -11,7 +11,7 @@
             --bio-green: #00ff88;
             --dna-cyan: #00e1ff;
             --bg-deep: #010806;
-            --glass: rgba(0, 255, 136, 0.05);
+            --glass: rgba(0, 255, 136, 0.1);
         }
 
         body, html {
@@ -20,190 +20,242 @@
             font-family: 'JetBrains Mono', monospace; overflow: hidden;
         }
 
-        /* FUNDO COM GRID TECNOLÓGICO */
-        body::before {
-            content: ''; position: absolute; width: 100%; height: 100%;
-            background-image: radial-gradient(var(--bio-green) 0.5px, transparent 0.5px);
-            background-size: 30px 30px; opacity: 0.1; pointer-events: none;
-        }
-
+        /* HEADER */
         header {
-            padding: 25px 40px; border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+            padding: 15px 40px; border-bottom: 1px solid rgba(0, 255, 136, 0.2);
             display: flex; justify-content: space-between; align-items: center;
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 100;
         }
 
-        .logo { font-family: 'Outfit'; font-weight: 800; font-size: 1.5rem; color: var(--bio-green); letter-spacing: 2px; }
-        .logo span { color: var(--dna-cyan); }
+        .logo { font-family: 'Outfit'; font-weight: 800; font-size: 1.2rem; color: var(--bio-green); }
 
         main {
-            display: grid; grid-template-columns: 350px 1fr 350px;
-            gap: 20px; padding: 30px; height: calc(100vh - 120px);
+            display: grid; grid-template-columns: 320px 1fr 320px;
+            gap: 20px; padding: 20px; height: calc(100vh - 100px);
         }
 
-        /* PAINÉIS LATERAIS */
         .panel {
-            background: rgba(5, 15, 12, 0.8); border: 1px solid rgba(0, 255, 136, 0.2);
+            background: var(--glass); border: 1px solid rgba(0, 255, 136, 0.2);
             border-radius: 15px; padding: 20px; display: flex; flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
         }
 
-        h2 { font-size: 0.8rem; color: var(--dna-cyan); margin-bottom: 20px; border-left: 3px solid var(--bio-green); padding-left: 10px; }
-
-        .data-item { margin-bottom: 15px; }
-        .data-label { font-size: 0.65rem; color: #6a8a7a; display: block; margin-bottom: 5px; }
-        .data-bar { height: 4px; background: #1a2a25; border-radius: 2px; overflow: hidden; }
-        .progress { height: 100%; background: var(--bio-green); width: 0%; transition: width 0.5s; }
-
-        /* ÁREA CENTRAL - VISUALIZADOR DNA */
-        .visualizer-core {
-            position: relative; display: flex; align-items: center; justify-content: center;
-            background: radial-gradient(circle, #0a201a 0%, transparent 70%);
-            border-radius: 20px; overflow: hidden;
+        /* ÁREA DA AMOSTRA */
+        .sample-viewport {
+            position: relative; background: #000; border-radius: 20px;
+            border: 2px solid #1a2a25; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        .microscope-circle {
-            width: 350px; height: 350px; border: 2px solid rgba(0, 255, 136, 0.2);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            position: relative; box-shadow: 0 0 50px rgba(0, 255, 136, 0.1);
+        #sample-img {
+            max-width: 80%; max-height: 80%; transition: transform 0.5s ease;
+            filter: brightness(0.8);
         }
 
-        /* ANIMAÇÃO DNA */
-        .dna-helix { display: flex; gap: 10px; align-items: center; height: 150px; }
-        .helix-strand {
-            width: 6px; background: var(--dna-cyan); border-radius: 3px;
-            animation: pulse DNA 1.5s infinite ease-in-out;
+        /* EFEITO MICROSCÓPIO */
+        .microscope-lens {
+            position: absolute; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.9) 70%);
+            display: none; pointer-events: none; z-index: 10;
         }
 
-        @keyframes pulseDNA { 0%, 100% { height: 20px; opacity: 0.3; } 50% { height: 100px; opacity: 1; } }
-
-        /* BOTÕES E LOGS */
-        .log-box { flex-grow: 1; font-size: 0.7rem; color: #8a9a95; overflow-y: auto; margin-top: 10px; }
-        .btn-action {
-            background: var(--bio-green); color: black; border: none; padding: 15px;
-            font-family: 'Outfit'; font-weight: bold; border-radius: 8px; cursor: pointer;
-            margin-top: 20px; transition: 0.3s; text-transform: uppercase;
+        .lens-overlay {
+            position: absolute; width: 300px; height: 300px;
+            border: 2px solid var(--bio-green); border-radius: 50%;
+            box-shadow: 0 0 0 9999px rgba(0,0,0,0.7);
+            display: none; z-index: 11;
         }
-        .btn-action:hover { transform: scale(1.02); box-shadow: 0 0 20px var(--bio-green); }
-        .btn-action:disabled { background: #1a2a25; color: #4a5a55; cursor: not-allowed; }
 
-        /* MENSAGEM FINAL */
-        #final-badge {
-            position: absolute; background: var(--bio-green); color: black;
-            padding: 10px 20px; border-radius: 30px; font-weight: 800;
-            top: 20px; display: none; animation: slideDown 0.5s forwards;
+        /* GALERIA DE AMOSTRAS */
+        #gallery-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 1000;
+            display: none; justify-content: center; align-items: center;
         }
-        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .gallery-content {
+            background: #051510; padding: 40px; border: 1px solid var(--bio-green);
+            border-radius: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+        }
+
+        .thumb {
+            cursor: pointer; border: 2px solid #333; border-radius: 10px;
+            padding: 10px; text-align: center; transition: 0.3s;
+        }
+
+        .thumb:hover { border-color: var(--bio-green); background: rgba(0,255,136,0.1); }
+        .thumb img { width: 100px; height: 100px; object-fit: cover; border-radius: 5px; }
+
+        /* BOTÕES */
+        .btn {
+            background: transparent; border: 1px solid var(--bio-green);
+            color: var(--bio-green); padding: 12px; border-radius: 8px;
+            cursor: pointer; font-family: 'Outfit'; font-weight: bold;
+            margin-bottom: 10px; transition: 0.3s;
+        }
+
+        .btn:hover { background: var(--bio-green); color: black; }
+        .btn.active { background: var(--dna-cyan); color: black; border-color: var(--dna-cyan); }
+
+        /* INDICADORES */
+        .stat-box { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .stat-label { font-size: 0.6rem; color: #6a8a7a; }
+        .stat-value { font-size: 0.9rem; color: var(--bio-green); font-weight: bold; display: block; }
+
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">BIO<span>GEN</span></div>
-        <div style="font-size: 0.7rem; opacity: 0.6;">SISTEMA DE SEQUENCIAMENTO DE SOLO V.2.6</div>
+        <div class="logo">BIO-GEN <span>V.3.0</span></div>
+        <div id="status-tag" style="color: var(--dna-cyan);">SISTEMA PRONTO</div>
     </header>
 
     <main>
         <section class="panel">
-            <h2>Comandos de Análise</h2>
-            <div class="log-box" id="log-display">
-                <div>[SISTEMA] Aguardando entrada de amostra...</div>
+            <h3 style="font-size: 0.8rem; color: var(--dna-cyan);">FERRAMENTAS</h3>
+            <button class="btn" onclick="toggleGallery()">📦 SELECIONAR AMOSTRAS</button>
+            <button class="btn" id="micro-btn" onclick="toggleMicroscope()">🔬 ATIVAR MICROSCÓPIO</button>
+            <button class="btn" onclick="runAnalysis()" id="anal-btn">🧪 INICIAR ANÁLISE</button>
+            
+            <div style="margin-top: 20px; font-size: 0.7rem; color: #4a6a5a;">
+                LOG DE OPERAÇÕES:
+                <div id="log-display" style="height: 150px; overflow-y: auto; margin-top: 10px;">
+                    > Aguardando seleção...
+                </div>
             </div>
-            <button class="btn-action" id="start-btn" onclick="runAnalysis()">Iniciar Bioprocesso</button>
-            <button class="btn-action" style="background: transparent; border: 1px solid #333; color: #555; margin-top: 10px;" onclick="window.location.href='agrovr.html'">Voltar ao Hub</button>
+            <button class="btn" style="margin-top: auto; border-color: #444; color: #666;" onclick="window.location.href='agrovr.html'">SAIR</button>
         </section>
 
-        <section class="visualizer-core">
-            <div id="final-badge">✓ SEQUENCIAMENTO CONCLUÍDO</div>
-            <div class="microscope-circle">
-                <div class="dna-helix" id="helix-ui">
-                    </div>
-            </div>
+        <section class="sample-viewport">
+            <div class="lens-overlay" id="lens"></div>
+            <div class="microscope-lens" id="lens-dark"></div>
+            <img src="https://via.placeholder.com/400x400/051510/00ff88?text=Aguardando+Amostra" id="sample-img" alt="Planta">
         </section>
 
         <section class="panel">
-            <h2>Indicadores Genéticos</h2>
+            <h3 style="font-size: 0.8rem; color: var(--dna-cyan);">INDICADORES TÉCNICOS</h3>
             
-            <div class="data-item">
-                <span class="data-label">PUREZA DA AMOSTRA</span>
-                <div class="data-bar"><div class="progress" id="p-pureza"></div></div>
+            <div class="stat-box">
+                <span class="stat-label">NOME CIENTÍFICO</span>
+                <span class="stat-value" id="val-nome">---</span>
             </div>
-            
-            <div class="data-item">
-                <span class="data-label">RESISTÊNCIA TÉRMICA</span>
-                <div class="data-bar"><div class="progress" id="p-resistencia"></div></div>
+            <div class="stat-box">
+                <span class="stat-label">SAÚDE FOLIAR</span>
+                <span class="stat-value" id="val-saude">---</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">HIDRATAÇÃO CELULAR</span>
+                <span class="stat-value" id="val-hidra">---</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">DEFESA NATURAL</span>
+                <span class="stat-value" id="val-defesa">---</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">ESTÁGIO DE CRESCIMENTO</span>
+                <span class="stat-value" id="val-cresc">---</span>
             </div>
 
-            <div class="data-item">
-                <span class="data-label">POTENCIAL NUTRICIONAL</span>
-                <div class="data-bar"><div class="progress" id="p-nutri"></div></div>
-            </div>
-
-            <div style="margin-top: auto; background: rgba(0,255,136,0.1); padding: 15px; border-radius: 10px;">
-                <div style="font-size: 0.6rem; color: var(--bio-green);">RECOMENDAÇÃO:</div>
-                <div id="recom-text" style="font-size: 0.75rem; margin-top: 5px;">Aguardando processamento de dados...</div>
+            <div id="result-badge" style="margin-top: auto; padding: 15px; border-radius: 10px; background: rgba(0,255,136,0.1); display: none;">
+                <span style="font-size: 0.6rem; color: var(--bio-green);">VEREDITO:</span>
+                <p id="veredito-text" style="font-size: 0.7rem; margin: 5px 0 0 0;"></p>
             </div>
         </section>
     </main>
 
-    <script>
-        const helix = document.getElementById('helix-ui');
-        const log = document.getElementById('log-display');
+    <div id="gallery-overlay">
+        <div class="gallery-content">
+            <div class="thumb" onclick="selectSample('Soja', 'Glycine max', 'https://images.unsplash.com/photo-1594904351111-a072f80b1a71?auto=format&fit=crop&q=80&w=400')">
+                <img src="https://images.unsplash.com/photo-1594904351111-a072f80b1a71?auto=format&fit=crop&q=80&w=400" alt="Soja">
+                <p>Soja Premium</p>
+            </div>
+            <div class="thumb" onclick="selectSample('Milho', 'Zea mays', 'https://images.unsplash.com/photo-1551727041-5b347d65b633?auto=format&fit=crop&q=80&w=400')">
+                <img src="https://images.unsplash.com/photo-1551727041-5b347d65b633?auto=format&fit=crop&q=80&w=400" alt="Milho">
+                <p>Milho Híbrido</p>
+            </div>
+            <div class="thumb" onclick="selectSample('Trigo', 'Triticum', 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=400')">
+                <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=400" alt="Trigo">
+                <p>Trigo Sustentável</p>
+            </div>
+            <button class="btn" style="grid-column: span 3;" onclick="toggleGallery()">FECHAR</button>
+        </div>
+    </div>
 
-        // Criar as fibras do DNA
-        for(let i=0; i<12; i++) {
-            const strand = document.createElement('div');
-            strand.className = 'helix-strand';
-            strand.style.animationDelay = (i * 0.1) + 's';
-            helix.appendChild(strand);
+    <script>
+        let microscopeActive = false;
+        let selectedSample = null;
+
+        function toggleGallery() {
+            const gal = document.getElementById('gallery-overlay');
+            gal.style.display = gal.style.display === 'flex' ? 'none' : 'flex';
         }
 
-        function addLog(msg) {
-            const div = document.createElement('div');
-            div.innerHTML = `<span style="color:var(--bio-green)">[OK]</span> ${msg}`;
-            div.style.marginBottom = '5px';
-            log.appendChild(div);
-            log.scrollTop = log.scrollHeight;
+        function selectSample(nome, cientifico, url) {
+            selectedSample = nome;
+            document.getElementById('sample-img').src = url;
+            document.getElementById('val-nome').innerText = cientifico;
+            document.getElementById('log-display').innerHTML += `> Amostra ${nome} carregada.<br>`;
+            toggleGallery();
+            
+            // Reseta indicadores
+            document.getElementById('val-saude').innerText = "---";
+            document.getElementById('val-hidra').innerText = "---";
+            document.getElementById('result-badge').style.display = "none";
+        }
+
+        function toggleMicroscope() {
+            if(!selectedSample) return alert("Selecione uma amostra primeiro!");
+            
+            microscopeActive = !microscopeActive;
+            const lens = document.getElementById('lens');
+            const dark = document.getElementById('lens-dark');
+            const img = document.getElementById('sample-img');
+            const btn = document.getElementById('micro-btn');
+
+            if(microscopeActive) {
+                lens.style.display = 'block';
+                dark.style.display = 'block';
+                img.style.transform = 'scale(2.5)';
+                btn.classList.add('active');
+                btn.innerText = "🔬 DESATIVAR MICROSCÓPIO";
+            } else {
+                lens.style.display = 'none';
+                dark.style.display = 'none';
+                img.style.transform = 'scale(1)';
+                btn.classList.remove('active');
+                btn.innerText = "🔬 ATIVAR MICROSCÓPIO";
+            }
         }
 
         function runAnalysis() {
-            document.getElementById('start-btn').disabled = true;
-            addLog("Extraindo DNA da amostra...");
-
-            let step = 0;
-            const interval = setInterval(() => {
-                step++;
-
-                if(step === 20) {
-                    addLog("Mapeando cadeias nitrogenadas...");
-                    document.getElementById('p-pureza').style.width = '85%';
-                }
-                if(step === 50) {
-                    addLog("Analisando microbioma do solo...");
-                    document.getElementById('p-resistencia').style.width = '92%';
-                }
-                if(step === 80) {
-                    addLog("Calculando eficiência de nitrogênio...");
-                    document.getElementById('p-nutri').style.width = '98%';
-                }
-
-                if(step >= 100) {
-                    clearInterval(interval);
-                    finish();
+            if(!selectedSample) return alert("Nenhuma amostra no compartimento!");
+            
+            document.getElementById('anal-btn').disabled = true;
+            document.getElementById('status-tag').innerText = "ANALISANDO...";
+            
+            let p = 0;
+            const timer = setInterval(() => {
+                p += 5;
+                if(p >= 100) {
+                    clearInterval(timer);
+                    showResults();
                 }
             }, 50);
         }
 
-        function finish() {
-            document.getElementById('final-badge').style.display = 'block';
-            document.getElementById('recom-text').innerText = "Trajeto realizado com sucesso. Solo ideal para plantio de soja orgânica.";
-            addLog("Análise finalizada. Relatório gerado.");
+        function showResults() {
+            document.getElementById('status-tag').innerText = "ANÁLISE CONCLUÍDA";
+            document.getElementById('anal-btn').disabled = false;
             
-            // Efeito visual final nas fibras
-            document.querySelectorAll('.helix-strand').forEach(s => {
-                s.style.background = 'var(--bio-green)';
-                s.style.boxShadow = '0 0 15px var(--bio-green)';
-            });
+            document.getElementById('val-saude').innerText = "94.8% (ÓTIMA)";
+            document.getElementById('val-hidra').innerText = "Normal (Estável)";
+            document.getElementById('val-defesa').innerText = "Alta (Imune)";
+            document.getElementById('val-cresc').innerText = "Fase Vegetativa";
+            
+            const badge = document.getElementById('result-badge');
+            badge.style.display = "block";
+            document.getElementById('veredito-text').innerText = "Trajeto realizado com sucesso. Amostra aprovada para reprodução.";
         }
     </script>
 </body>
