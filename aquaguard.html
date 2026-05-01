@@ -9,10 +9,11 @@
 
         :root {
             --water: #00b4d8;
-            --deep: #03045e;
+            --deep: #000814;
             --foam: #caf0f8;
             --accent: #00f5d4;
             --danger: #ff5a5f;
+            --glass: rgba(255, 255, 255, 0.08);
         }
 
         body {
@@ -60,10 +61,7 @@
             padding: 8px 20px;
             border-radius: 50px;
             font-weight: bold;
-            transition: 0.3s;
         }
-
-        .back-btn:hover { background: var(--accent); color: var(--deep); }
 
         .container {
             position: relative;
@@ -75,37 +73,34 @@
 
         header h1 {
             font-family: 'Fredoka', sans-serif;
-            font-size: 4.5rem;
+            font-size: 4rem;
             text-align: center;
-            margin: 20px 0 10px 0;
+            margin: 10px 0;
             color: var(--foam);
-            text-shadow: 0 0 20px rgba(0, 180, 216, 0.8);
         }
 
-        /* DASHBOARD GRID */
         .grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 20px;
-            margin-top: 30px;
+            margin-top: 20px;
         }
 
         @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
 
         .card {
-            background: rgba(255, 255, 255, 0.08);
+            background: var(--glass);
             backdrop-filter: blur(10px);
             border-radius: 25px;
             padding: 25px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
         }
 
-        /* TANQUE DE ÁGUA */
+        /* TANQUE */
         .tank-wrap {
             width: 140px;
             height: 240px;
-            background: rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.4);
             border: 4px solid var(--foam);
             border-radius: 15px 15px 30px 30px;
             margin: 0 auto;
@@ -118,49 +113,56 @@
             bottom: 0;
             width: 100%;
             background: linear-gradient(180deg, var(--accent) 0%, var(--water) 100%);
-            transition: height 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: height 0.3s linear; /* Transição mais rápida para tempo real */
         }
 
         .wave-top {
             position: absolute;
-            top: -15px;
-            left: 0;
-            width: 200%;
-            height: 25px;
-            background: var(--accent);
-            border-radius: 40%;
+            top: -15px; left: 0; width: 200%; height: 25px;
+            background: var(--accent); border-radius: 40%;
             animation: move-wave 2s infinite linear;
         }
 
         @keyframes move-wave { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        /* INPUTS */
-        select, .btn-main {
+        /* BOTÕES */
+        .btn-main {
             width: 100%;
             padding: 15px;
             border-radius: 15px;
             border: none;
-            font-family: inherit;
-            font-size: 1rem;
-            margin-top: 10px;
-        }
-
-        .btn-main {
-            background: var(--accent);
-            color: var(--deep);
             font-weight: bold;
             cursor: pointer;
-            transition: 0.3s;
+            margin-top: 10px;
             text-transform: uppercase;
         }
 
-        .btn-main:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 245, 212, 0.3); }
+        .btn-chuva { background: var(--accent); color: var(--deep); }
+        .btn-chuva.active { background: var(--danger); color: white; }
 
-        .btn-main.active { background: var(--danger); color: white; animation: pulse 1.5s infinite; }
+        /* NOVO BOTÃO DE VELOCIDADE */
+        .speed-control {
+            display: flex;
+            background: rgba(0,0,0,0.3);
+            border-radius: 50px;
+            padding: 5px;
+            margin-top: 15px;
+        }
 
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        .speed-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            background: transparent;
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
 
-        /* INFO PILLS */
+        .speed-btn.active { background: var(--water); }
+
         .data-row {
             display: flex;
             justify-content: space-between;
@@ -169,21 +171,6 @@
             border-radius: 12px;
             margin-bottom: 8px;
         }
-
-        .data-label { color: var(--water); font-size: 0.8rem; font-weight: bold; }
-        .data-val { font-weight: 600; }
-
-        /* CHUVA VISUAL */
-        #rain-zone {
-            display: none;
-            height: 50px;
-            background-image: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(0,180,216,0.5) 100%);
-            border-radius: 10px;
-            margin-top: 10px;
-            text-align: center;
-            line-height: 50px;
-            font-size: 0.8rem;
-        }
     </style>
 </head>
 <body>
@@ -191,74 +178,55 @@
     <div id="bubble-bg"></div>
 
     <nav>
-        <a href="index.html" class="back-btn">← SAIR DO SISTEMA</a>
-        <div style="font-weight: bold; color: var(--accent);">AQUAGUARD ULTIMATE v5.0</div>
+        <a href="index.html" class="back-btn">← HUB</a>
+        <div style="font-weight: bold; color: var(--accent);">AQUAGUARD ULTIMATE</div>
     </nav>
 
     <div class="container">
         <header>
             <h1>AquaGuard</h1>
-            <p style="text-align:center; color: var(--foam)">Gestão Inteligente de Recursos Hídricos e Irrigação</p>
+            <p style="text-align:center;">Monitoramento Hídrico de Precisão</p>
         </header>
 
         <div class="grid">
             <div class="card">
-                <h3>⚙️ Painel de Controle</h3>
-                <label>PONTO DE COLETA:</label>
-                <select id="setor" onchange="resetSim()">
-                    <option value="pivo">Pivô Central - Soja</option>
-                    <option value="nascente">Preservação - Nascente</option>
-                    <option value="gado">Bebedouro Coletivo</option>
-                </select>
-
-                <div style="margin-top:20px;">
-                    <label>AÇÃO DO SISTEMA:</label>
-                    <button id="btn-chuva" class="btn-main" onclick="toggleChuva()">LIGAR IRRIGAÇÃO</button>
-                    <div id="rain-zone">🚿 IRRIGANDO ÁREA AGORA...</div>
+                <h3>⚙️ Configuração</h3>
+                <label>MODO DE ATUALIZAÇÃO:</label>
+                <div class="speed-control">
+                    <button id="sp-real" class="speed-btn active" onclick="setSpeed('real')">TEMPO REAL</button>
+                    <button id="sp-sim" class="speed-btn" onclick="setSpeed('sim')">SIMULAÇÃO 24H</button>
                 </div>
 
-                <div style="margin-top:20px;">
-                    <h3>📊 Relatório Bio</h3>
-                    <div class="data-row">
-                        <span class="data-label">OXIGÊNIO:</span>
-                        <span class="data-val">8.4 mg/L</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">PH DA ÁGUA:</span>
-                        <span class="data-val">6.8 (Ideal)</span>
-                    </div>
+                <div style="margin-top:25px;">
+                    <button id="btn-chuva" class="btn-main btn-chuva" onclick="toggleChuva()">LIGAR IRRIGAÇÃO</button>
+                </div>
+
+                <div style="margin-top:25px;">
+                    <h3>📊 Sensores</h3>
+                    <div class="data-row"><span>PH:</span><span id="ph">6.8</span></div>
+                    <div class="data-row"><span>PUR.:</span><span>98%</span></div>
                 </div>
             </div>
 
             <div class="card" style="text-align:center;">
-                <h3 id="display-title">Nível Atual</h3>
+                <h3>Status do Reservatório</h3>
                 <div class="tank-wrap">
                     <div id="water-fill" class="water-body" style="height: 80%;">
                         <div class="wave-top"></div>
                     </div>
                 </div>
                 <div style="font-size: 3rem; font-weight: bold; margin-top:10px;" id="txt-perc">80%</div>
-                <p id="txt-status" style="color: var(--accent)">SISTEMA ESTÁVEL</p>
+                <small id="txt-mode" style="color: var(--accent)">LENDO DADOS EM TEMPO REAL...</small>
             </div>
 
             <div class="card">
-                <h3>📈 Inteligência Hídrica</h3>
-                <div class="data-row">
-                    <span class="data-label">UMIDADE SOLO:</span>
-                    <span id="solo-val" class="data-val">45%</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">EVAPORAÇÃO:</span>
-                    <span class="data-val">2.1 mm/dia</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">ECONOMIA (MÊS):</span>
-                    <span class="data-val" style="color: var(--accent)">+ 12.5%</span>
-                </div>
+                <h3>📈 Dashboard</h3>
+                <div class="data-row"><span>UMIDADE SOLO:</span><span id="solo-val">45%</span></div>
+                <div class="data-row"><span>VAZÃO:</span><span id="vazao">0 L/s</span></div>
                 
-                <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
-                    <small style="color: var(--foam)">DICA SUSTENTÁVEL:</small>
-                    <p style="font-size: 0.85rem; line-height: 1.4;">A umidade atual permite reduzir o fluxo em 10% sem perda de produtividade.</p>
+                <div style="margin-top: 20px; background: rgba(0,245,212,0.1); padding: 15px; border-radius: 15px;">
+                    <small>DICA DE IA:</small>
+                    <p style="font-size: 0.8rem; margin: 5px 0;">O solo está com boa retenção. Evite irrigar entre 10h e 16h para reduzir a evaporação.</p>
                 </div>
             </div>
         </div>
@@ -267,50 +235,60 @@
     <script>
         // GERADOR DE BOLHAS
         const bg = document.getElementById('bubble-bg');
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < 15; i++) {
             const b = document.createElement('div');
             b.className = 'bubble';
-            const size = Math.random() * 50 + 10 + 'px';
-            b.style.width = size; b.style.height = size;
+            b.style.width = Math.random() * 30 + 10 + 'px';
+            b.style.height = b.style.width;
             b.style.left = Math.random() * 100 + 'vw';
             b.style.animationDuration = (Math.random() * 5 + 5) + 's';
-            b.style.animationDelay = Math.random() * 5 + 's';
             bg.appendChild(b);
         }
 
-        // LÓGICA DA CHUVA E CONSUMO
         let irrigando = false;
         let nivel = 80;
         let solo = 45;
+        let speedMode = 'real'; // 'real' ou 'sim'
         let intervalo;
 
-        function toggleChuva() {
-            const btn = document.getElementById('btn-chuva');
-            const rain = document.getElementById('rain-zone');
-
-            if (!irrigando) {
-                if (nivel <= 10) { alert("Nível muito baixo para irrigar!"); return; }
-                irrigando = true;
-                btn.innerText = "PARAR IRRIGAÇÃO";
-                btn.classList.add('active');
-                rain.style.display = 'block';
-                iniciarConsumo();
-            } else {
+        function setSpeed(mode) {
+            speedMode = mode;
+            document.getElementById('sp-real').classList.toggle('active', mode === 'real');
+            document.getElementById('sp-sim').classList.toggle('active', mode === 'sim');
+            document.getElementById('txt-mode').innerText = mode === 'real' ? "LENDO DADOS EM TEMPO REAL..." : "PROCESSANDO SIMULAÇÃO 24H...";
+            
+            if(irrigando) { // Reinicia o intervalo se mudar a velocidade enquanto irriga
                 pararIrrigacao();
+                toggleChuva();
             }
         }
 
-        function iniciarConsumo() {
-            intervalo = setInterval(() => {
-                if (nivel > 0) {
-                    nivel -= 0.5; // Água baixando
-                    solo += 0.8;  // Solo molhando
-                    if (solo > 95) solo = 95;
-                    atualizarTela();
-                } else {
-                    pararIrrigacao();
-                }
-            }, 200);
+        function toggleChuva() {
+            const btn = document.getElementById('btn-chuva');
+            if (!irrigando) {
+                if (nivel <= 1) return;
+                irrigando = true;
+                btn.innerText = "PARAR IRRIGAÇÃO";
+                btn.classList.add('active');
+                
+                // Define a velocidade da "descida"
+                // Tempo Real = 0.05 por tick | Simulação = 0.8 por tick
+                const taxaConsumo = speedMode === 'real' ? 0.05 : 0.8;
+                const taxaSolo = speedMode === 'real' ? 0.08 : 1.2;
+
+                intervalo = setInterval(() => {
+                    if (nivel > 0) {
+                        nivel -= taxaConsumo;
+                        solo += taxaSolo;
+                        if (solo > 98) solo = 98;
+                        atualizarTela();
+                    } else {
+                        pararIrrigacao();
+                    }
+                }, 100);
+            } else {
+                pararIrrigacao();
+            }
         }
 
         function pararIrrigacao() {
@@ -319,35 +297,17 @@
             const btn = document.getElementById('btn-chuva');
             btn.innerText = "LIGAR IRRIGAÇÃO";
             btn.classList.remove('active');
-            document.getElementById('rain-zone').style.display = 'none';
+            document.getElementById('vazao').innerText = "0 L/s";
         }
 
         function atualizarTela() {
             document.getElementById('water-fill').style.height = nivel + "%";
             document.getElementById('txt-perc').innerText = Math.floor(nivel) + "%";
             document.getElementById('solo-val').innerText = Math.floor(solo) + "%";
-
-            const status = document.getElementById('txt-status');
-            if (nivel < 25) {
-                status.innerText = "⚠️ NÍVEL CRÍTICO!";
-                status.style.color = "#ff5a5f";
-            } else {
-                status.innerText = "SISTEMA ESTÁVEL";
-                status.style.color = "#00f5d4";
-            }
-        }
-
-        function resetSim() {
-            nivel = 80;
-            solo = 30 + Math.random() * 20;
-            pararIrrigacao();
-            atualizarTela();
+            document.getElementById('vazao').innerText = irrigando ? (speedMode === 'real' ? "2.5 L/s" : "45.0 L/s") : "0 L/s";
             
-            const setor = document.getElementById('setor').value;
-            const title = document.getElementById('display-title');
-            if(setor === 'nascente') title.innerText = "Nível da Reserva";
-            else if(setor === 'gado') title.innerText = "Nível do Bebedouro";
-            else title.innerText = "Nível do Pivô";
+            const fill = document.getElementById('water-fill');
+            fill.style.background = nivel < 20 ? "var(--danger)" : "linear-gradient(180deg, var(--accent) 0%, var(--water) 100%)";
         }
     </script>
 </body>
