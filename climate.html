@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Climate AI | Inteligência Atmosférica</title>
+    <title>Climate AI Pro | Inteligência Preditiva</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Outfit:wght@300;600&family=JetBrains+Mono:wght@400;700&display=swap');
 
@@ -12,227 +12,251 @@
             --storm: #7209b7;
             --sun: #ffbe0b;
             --heat: #f72585;
-            --deep: #0b090a;
-            --glass: rgba(255, 255, 255, 0.08);
             --safe: #00ff88;
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
         body {
             font-family: 'Outfit', sans-serif;
-            background: #0b090a;
+            background: #050505;
             color: white;
             margin: 0;
             min-height: 100vh;
-            transition: background 1s ease;
+            transition: 1s;
         }
 
-        /* AVISO PEDAGÓGICO */
-        #aviso-pedagogico {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.98); display: flex; align-items: center; justify-content: center;
-            z-index: 10000; backdrop-filter: blur(15px);
-        }
-
-        /* NAV */
-        nav {
-            background: rgba(0, 0, 0, 0.5); padding: 20px;
-            display: flex; justify-content: space-between; align-items: center;
+        /* BARRA SUPERIOR BIO-RADAR */
+        .radar-bar {
+            background: rgba(0,0,0,0.9);
             border-bottom: 1px solid var(--sky);
+            padding: 12px 25px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .back-btn { text-decoration: none; color: var(--sky); border: 1px solid var(--sky); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; }
-
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; position: relative; z-index: 2; }
-
-        /* RADAR SYSTEM ALERT */
-        .system-alert {
-            background: rgba(0, 0, 0, 0.8); border-left: 4px solid var(--sky);
-            padding: 15px; margin-bottom: 20px; font-family: 'JetBrains Mono', monospace;
-            display: flex; align-items: center; gap: 15px; border-radius: 5px;
+        .alert-pulse {
+            width: 8px; height: 8px; background: var(--safe);
+            border-radius: 50%; display: inline-block;
+            margin-right: 10px; animation: pulse 1s infinite;
         }
+        @keyframes pulse { 50% { opacity: 0.3; } }
 
-        .alert-dot { width: 10px; height: 10px; background: var(--sky); border-radius: 50%; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
+        .container { max-width: 1300px; margin: 0 auto; padding: 25px; }
 
-        /* GRID */
-        .grid { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 20px; }
-        @media (max-width: 950px) { .grid { grid-template-columns: 1fr; } }
+        /* GRID PRINCIPAL */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr 350px;
+            gap: 20px;
+        }
 
         .card {
-            background: var(--glass); backdrop-filter: blur(10px);
-            border-radius: 24px; padding: 20px; border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 20px;
         }
 
-        .main-temp { font-size: 5rem; font-weight: bold; color: var(--sun); margin: 10px 0; }
-
-        .data-row {
-            display: flex; justify-content: space-between;
-            padding: 12px; background: rgba(0,0,0,0.3);
-            border-radius: 12px; margin-bottom: 8px; font-size: 0.9rem;
+        /* DISPLAY DE TEMPERATURA */
+        .temp-hero {
+            text-align: center;
+            padding: 40px 0;
+            background: radial-gradient(circle at center, rgba(76, 201, 240, 0.1) 0%, transparent 70%);
         }
 
-        .label { color: var(--sky); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; }
-
-        /* BOTÕES */
-        .btn-action {
-            width: 100%; padding: 12px; border-radius: 12px; border: none;
-            margin-top: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase;
+        .big-temp { font-size: 6rem; font-weight: bold; margin: 0; line-height: 1; }
+        
+        /* PREVISÃO DE 3 DIAS */
+        .forecast-mini {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
         }
-        .btn-stop { background: white; color: black; display: none; }
-        .btn-storm { background: var(--storm); color: white; }
-        .btn-heat { background: var(--heat); color: white; }
+        .day-box {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
 
-        /* BARRA DE PROBABILIDADE */
-        .prob-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 5px; }
-        .prob-bar-fill { height: 100%; background: var(--sky); border-radius: 10px; transition: width 0.5s; }
+        /* PAINEL DE INSIGHTS IA */
+        .insight-card {
+            border-left: 4px solid var(--sky);
+            background: rgba(76, 201, 240, 0.05);
+            padding: 15px;
+            margin-bottom: 15px;
+        }
 
-        #clouds-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        /* BOTOES DE PREVISÃO */
+        .btn-predict {
+            width: 100%; padding: 15px; border-radius: 12px; border: none;
+            cursor: pointer; font-weight: bold; text-transform: uppercase;
+            margin-bottom: 10px; transition: 0.3s;
+        }
+        .btn-blue { background: var(--sky); color: #000; }
+        .btn-outline { background: transparent; border: 1px solid var(--sky); color: var(--sky); }
+
+        /* TABELA DE DADOS TECNICOS */
+        .tech-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .tech-table td { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .tech-table td:last-child { text-align: right; font-weight: bold; color: var(--sky); }
+
+        @media (max-width: 1100px) { .main-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-    <div id="aviso-pedagogico">
-        <div style="background: #16213e; padding: 40px; border-radius: 20px; text-align: center; max-width: 450px; border: 1px solid var(--sky);">
-            <h2 style="color: var(--sky);">Nota Pedagógica</h2>
-            <p style="color: #ccc; line-height: 1.6;">Os dados climáticos aqui exibidos são gerados por um algoritmo de simulação para fins didáticos. Este módulo demonstra como a IA ajuda o produtor a tomar decisões seguras.</p>
-            <button onclick="document.getElementById('aviso-pedagogico').style.display='none'" style="background: var(--sky); border: none; padding: 10px 30px; border-radius: 20px; font-weight: bold; cursor: pointer;">ENTRAR NA ESTAÇÃO</button>
-        </div>
+    <div class="radar-bar">
+        <div><span class="alert-pulse" id="dot"></span> <span id="radar-msg">SISTEMA PREDITIVO ATIVO // SATÉLITE EM ÓRBITA</span></div>
+        <div id="clock">12:00:00</div>
     </div>
 
-    <div id="clouds-bg"></div>
-
-    <nav>
-        <a href="index.html" class="back-btn">← HUB</a>
-        <div style="font-weight: bold; color: var(--sky);">CLIMATE AI v2.5</div>
-    </nav>
-
     <div class="container">
-        <div class="system-alert" id="radar-alert">
-            <div class="alert-dot" id="radar-dot"></div>
-            <span id="radar-text">SISTEMA ONLINE // MONITORANDO SATÉLITES GOES-16...</span>
-        </div>
-
-        <div class="grid">
+        <div class="main-grid">
+            
             <div class="card">
-                <h3>🛠️ Centro de Controle</h3>
-                <p style="font-size: 0.8rem; color: #999;">Altere as condições para ver como a IA reage.</p>
+                <h3 style="margin-top:0">🧠 Inteligência Preditiva</h3>
+                <p style="font-size: 0.8rem; color: #888;">Selecione um cenário para projetar o impacto nas próximas 24h.</p>
                 
-                <button class="btn-action btn-storm" onclick="simular('tempestade')">Simular Tempestade</button>
-                <button class="btn-action btn-heat" onclick="simular('calor')">Simular Calor Extremo</button>
-                <button id="btn-reset" class="btn-action btn-stop" onclick="simular('normal')">Parar Simulação / Reset</button>
-
-                <div style="margin-top: 25px; padding: 15px; background: rgba(0,255,136,0.1); border-radius: 15px; border: 1px solid var(--safe);">
-                    <small style="color: var(--safe);">STATUS IRRIGAÇÃO:</small>
-                    <p id="irriga-status" style="font-weight: bold; margin: 5px 0;">✅ SEGURO IRRIGAR</p>
+                <button class="btn-predict btn-blue" onclick="prever('normal')">Atualizar Tempo Real</button>
+                <button class="btn-predict btn-outline" onclick="prever('chuva')">Projetar Frente Fria</button>
+                <button class="btn-predict btn-outline" onclick="prever('seca')">Projetar Veranico</button>
+                
+                <div style="margin-top: 20px;">
+                    <div class="insight-card">
+                        <small style="color: var(--sky)">RECOMENDAÇÃO TÉCNICA:</small>
+                        <p id="ia-advice" style="font-size: 0.85rem; margin: 5px 0;">Janela ideal para semeadura. Ventos calmos permitem pulverização até as 17h.</p>
+                    </div>
+                    <div id="status-irrig" class="insight-card" style="border-color: var(--safe)">
+                        <small style="color: var(--safe)">MANEJO HÍDRICO:</small>
+                        <p id="ia-water" style="font-size: 0.85rem; margin: 5px 0;">Irrigação liberada. Evapotranspiração dentro da média.</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="card" style="text-align: center;">
-                <div id="clima-icon" style="font-size: 4rem;">☀️</div>
-                <div id="temp-val" class="main-temp">26°C</div>
-                <div id="clima-desc" style="color: var(--sky); letter-spacing: 2px;">CÉU LIMPO</div>
+            <div class="card temp-hero">
+                <div id="main-icon" style="font-size: 5rem;">☀️</div>
+                <p id="weather-desc" style="letter-spacing: 5px; color: var(--sky); margin-bottom: 0;">CÉU LIMPO</p>
+                <h1 class="big-temp" id="main-temp">24°C</h1>
                 
-                <div style="margin-top: 30px;">
-                    <div class="label" style="text-align: left;">Probabilidade de Chuva: <span id="prob-txt">5%</span></div>
-                    <div class="prob-bar-bg"><div id="prob-fill" class="prob-bar-fill" style="width: 5%;"></div></div>
+                <div class="forecast-mini">
+                    <div class="day-box">
+                        <div>Amanhã</div>
+                        <div style="font-size: 1.5rem; margin: 5px 0;">⛅</div>
+                        <div style="font-weight: bold;">26° / 19°</div>
+                    </div>
+                    <div class="day-box">
+                        <div>Quarta</div>
+                        <div style="font-size: 1.5rem; margin: 5px 0;">☀️</div>
+                        <div style="font-weight: bold;">29° / 20°</div>
+                    </div>
+                    <div class="day-box">
+                        <div>Quinta</div>
+                        <div style="font-size: 1.5rem; margin: 5px 0;">⛈️</div>
+                        <div style="font-weight: bold;">22° / 17°</div>
+                    </div>
                 </div>
             </div>
 
             <div class="card">
-                <h3>📡 Sensores de Campo</h3>
-                <div class="data-row">
-                    <span class="label">Vento:</span>
-                    <span id="vento-val">12 km/h</span>
-                </div>
-                <div class="data-row">
-                    <span class="label">Umidade Ar:</span>
-                    <span id="umid-ar">45%</span>
-                </div>
-                <div class="data-row">
-                    <span class="label">Evapotranspiração:</span>
-                    <span id="evapo">Baixa</span>
-                </div>
-                <div class="data-row">
-                    <span class="label">Ponto de Orvalho:</span>
-                    <span>14°C</span>
-                </div>
-
-                <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
-                    <small style="color: var(--sun);">ANÁLISE DA IA:</small>
-                    <p id="ia-txt" style="font-size: 0.85rem; color: #ccc; margin-top: 5px;">Condições ótimas para o crescimento. Nenhuma ameaça detectada no radar.</p>
+                <h3 style="margin-top:0">📡 Sensores Estação #04</h3>
+                <table class="tech-table">
+                    <tr><td>Radiação Solar</td><td id="val-rad">780 W/m²</td></tr>
+                    <tr><td>Vel. do Vento</td><td id="val-vento">14 km/h</td></tr>
+                    <tr><td>Umidade Relativa</td><td id="val-umid">58%</td></tr>
+                    <tr><td>Pressão Atm.</td><td id="val-pres">1014 hPa</td></tr>
+                    <tr><td>Índice de Orvalho</td><td id="val-orv">16°C</td></tr>
+                    <tr><td>Delta T</td><td id="val-dt">4.2</td></tr>
+                </table>
+                
+                <div style="margin-top:25px;">
+                    <small style="color: #666;">PROBABILIDADE DE PRECIPITAÇÃO</small>
+                    <div style="display:flex; align-items:center; gap:10px; margin-top:5px;">
+                        <div style="flex:1; height:6px; background:rgba(255,255,255,0.1); border-radius:10px;">
+                            <div id="prob-bar" style="width: 5%; height:100%; background:var(--sky); border-radius:10px; transition: 1s;"></div>
+                        </div>
+                        <span id="prob-val" style="font-size: 0.8rem; font-weight: bold;">5%</span>
+                    </div>
                 </div>
             </div>
+
         </div>
     </div>
 
     <script>
-        function simular(tipo) {
-            const body = document.body;
-            const icon = document.getElementById('clima-icon');
-            const temp = document.getElementById('temp-val');
-            const desc = document.getElementById('clima-desc');
-            const vento = document.getElementById('vento-val');
-            const umid = document.getElementById('umid-ar');
-            const probTxt = document.getElementById('prob-txt');
-            const probFill = document.getElementById('prob-fill');
-            const iaTxt = document.getElementById('ia-txt');
-            const irriga = document.getElementById('irriga-status');
-            const radarTxt = document.getElementById('radar-text');
-            const radarDot = document.getElementById('radar-dot');
-            const btnReset = document.getElementById('btn-reset');
+        // Relógio em tempo real
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+        }, 1000);
 
-            btnReset.style.display = "block";
+        function prever(cenario) {
+            const msg = document.getElementById('radar-msg');
+            const dot = document.getElementById('dot');
+            const temp = document.getElementById('main-temp');
+            const icon = document.getElementById('main-icon');
+            const desc = document.getElementById('weather-desc');
+            const advice = document.getElementById('ia-advice');
+            const water = document.getElementById('ia-water');
+            const waterCard = document.getElementById('status-irrig');
+            const probBar = document.getElementById('prob-bar');
+            const probVal = document.getElementById('prob-val');
 
-            if (tipo === 'tempestade') {
-                body.style.background = "#1a1a2e";
-                icon.innerText = "⛈️";
-                temp.innerText = "18°C";
-                desc.innerText = "TEMPESTADE CHEGANDO";
-                desc.style.color = "var(--storm)";
-                vento.innerText = "55 km/h";
-                umid.innerText = "88%";
-                probTxt.innerText = "95%";
-                probFill.style.width = "95%";
-                iaTxt.innerText = "ALERTA: Ventos fortes podem danificar estufas. Chuva iminente torna a irrigação desnecessária.";
-                irriga.innerText = "❌ ABORTAR IRRIGAÇÃO";
-                irriga.parentElement.style.borderColor = "var(--heat)";
-                radarTxt.innerText = "ALERTA CRÍTICO // CÉLULA DE CHUVA DETECTADA A 5KM";
-                radarDot.style.background = "var(--heat)";
-            } 
-            else if (tipo === 'calor') {
-                body.style.background = "#2d0000";
-                icon.innerText = "🔥";
-                temp.innerText = "39°C";
-                desc.innerText = "ONDA DE CALOR";
-                desc.style.color = "var(--heat)";
-                vento.innerText = "8 km/h";
-                umid.innerText = "12%";
-                probTxt.innerText = "0%";
-                probFill.style.width = "0%";
-                iaTxt.innerText = "PERIGO: Evaporação extrema. Solo perdendo umidade rápido demais. Recomendado ativar AquaGuard.";
-                irriga.innerText = "⚠️ REFORÇAR IRRIGAÇÃO";
-                irriga.parentElement.style.borderColor = "var(--sun)";
-                radarTxt.innerText = "ALERTA TÉRMICO // RISCO DE ESTRESSE HÍDRICO NAS PLANTAS";
-                radarDot.style.background = "var(--sun)";
-            }
-            else {
-                // RESET / NORMAL
-                body.style.background = "#0b090a";
-                icon.innerText = "☀️";
-                temp.innerText = "26°C";
-                desc.innerText = "CÉU LIMPO";
-                desc.style.color = "var(--sky)";
-                vento.innerText = "12 km/h";
-                umid.innerText = "45%";
-                probTxt.innerText = "5%";
-                probFill.style.width = "5%";
-                iaTxt.innerText = "Condições ótimas para o crescimento. Nenhuma ameaça detectada no radar.";
-                irriga.innerText = "✅ SEGURO IRRIGAR";
-                irriga.parentElement.style.borderColor = "var(--safe)";
-                radarTxt.innerText = "SISTEMA ONLINE // MONITORANDO SATÉLITES GOES-16...";
-                radarDot.style.background = "var(--sky)";
-                btnReset.style.display = "none";
-            }
+            // Efeito de processamento
+            msg.innerText = "PROCESSANDO MODELOS METEOROLÓGICOS...";
+            dot.style.background = "var(--sun)";
+
+            setTimeout(() => {
+                if (cenario === 'chuva') {
+                    document.body.style.background = "#0a0f1a";
+                    temp.innerText = "19°C";
+                    icon.innerText = "⛈️";
+                    desc.innerText = "FRENTE FRIA";
+                    desc.style.color = "#7209b7";
+                    advice.innerText = "⚠️ Atenção: Ventos de 45km/h detectados. Abortar qualquer pulverização nas próximas 12h.";
+                    water.innerText = "🛑 Irrigação suspensa. Chuva acumulada prevista: 15mm.";
+                    waterCard.style.borderColor = "#7209b7";
+                    probBar.style.width = "90%";
+                    probVal.innerText = "90%";
+                    msg.innerText = "ALERTA: INSTABILIDADE SE APROXIMANDO DO SETOR SUL";
+                    dot.style.background = "#7209b7";
+                } 
+                else if (cenario === 'seca') {
+                    document.body.style.background = "#1a0f05";
+                    temp.innerText = "36°C";
+                    icon.innerText = "🔥";
+                    desc.innerText = "ONDAS DE CALOR";
+                    desc.style.color = "var(--heat)";
+                    advice.innerText = "🚨 Alerta: Umidade do ar abaixo de 20%. Risco de estresse térmico severo na cultura.";
+                    water.innerText = "⚡ Ativar AquaGuard em modo contínuo para resfriamento do solo.";
+                    waterCard.style.borderColor = "var(--heat)";
+                    probBar.style.width = "0%";
+                    probVal.innerText = "0%";
+                    msg.innerText = "ALERTA TÉRMICO: BLOQUEIO ATMOSFÉRICO DETECTADO";
+                    dot.style.background = "var(--heat)";
+                }
+                else {
+                    document.body.style.background = "#050505";
+                    temp.innerText = "24°C";
+                    icon.innerText = "☀️";
+                    desc.innerText = "CÉU LIMPO";
+                    desc.style.color = "var(--sky)";
+                    advice.innerText = "Janela ideal para semeadura. Ventos calmos permitem pulverização até as 17h.";
+                    water.innerText = "Irrigação liberada. Evapotranspiração dentro da média.";
+                    waterCard.style.borderColor = "var(--safe)";
+                    probBar.style.width = "5%";
+                    probVal.innerText = "5%";
+                    msg.innerText = "SISTEMA PREDITIVO ATIVO // SATÉLITE EM ÓRBITA";
+                    dot.style.background = "var(--safe)";
+                }
+            }, 800);
         }
     </script>
 </body>
