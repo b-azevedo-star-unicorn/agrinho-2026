@@ -9,27 +9,22 @@
 
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background: #050a05; color: #00ff88;
+            background: #051005; color: #00ff88;
             font-family: 'JetBrains Mono', monospace; overflow: hidden;
         }
 
-        /* MAPA INFINITO (TILED BACKGROUND) */
+        /* MAPA INFINITO - AGORA COM IMAGEM REAL DE PLANTAÇÃO */
         #feed {
             position: fixed; 
             top: 0; left: 0;
-            /* Tamanho gigante para não mostrar bordas durante o movimento */
-            width: 400vw; height: 400vh;
-            /* Imagem de plantação que permite repetição (tiling) */
-            background-image: url('https://www.transparenttextures.com/patterns/grass.png'), 
-                              url('https://images.unsplash.com/photo-1589923188900-85dae523342b?auto=format&fit=crop&q=80&w=800');
+            width: 100vw; height: 100vh;
+            /* Imagem de plantação de soja/milho vista de cima */
+            background-image: url('https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&q=80&w=1000');
             background-repeat: repeat;
-            background-size: 300px; /* Ajusta o tamanho da repetição */
+            background-size: 800px; /* Tamanho da textura para parecer escala de drone */
             z-index: 1;
-            /* Começa centralizado */
-            margin-left: -150vw;
-            margin-top: -150vh;
-            transition: transform 0.1s linear;
-            filter: saturate(1.2) brightness(0.8);
+            transition: background-position 0.1s linear, transform 0.2s ease-out;
+            filter: saturate(1.3) brightness(0.9);
         }
 
         /* HUD E ELEMENTOS FIXOS */
@@ -54,7 +49,6 @@
             position: absolute; background: rgba(0, 0, 0, 0.85);
             padding: 20px; border: 1px solid #00ff88;
             backdrop-filter: blur(10px); z-index: 20;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
         }
 
         .left-panel { top: 40px; left: 40px; width: 220px; border-radius: 0 20px 20px 20px; }
@@ -73,7 +67,7 @@
 
         h2 { font-family: 'Outfit'; margin: 0 0 10px 0; font-size: 0.9rem; text-transform: uppercase; color: #fff; letter-spacing: 2px; }
         .stat { margin-bottom: 8px; font-size: 0.75rem; }
-        .stat-val { color: #fff; float: right; font-weight: bold; font-family: 'JetBrains Mono'; }
+        .stat-val { color: #fff; float: right; font-weight: bold; }
 
         .scanner-line {
             position: fixed; top: 0; left: 0; width: 100%; height: 4px;
@@ -147,9 +141,8 @@
 
         // Controle de Voo
         document.addEventListener('keydown', (e) => {
-            const step = 30; // Passo do movimento
+            const step = 40; // Sensibilidade do movimento
             
-            // Simula movimento infinito movendo o background-position
             switch(e.key) {
                 case "ArrowUp":    posY += step; break;
                 case "ArrowDown":  posY -= step; break;
@@ -166,9 +159,9 @@
         });
 
         function updateFlight() {
-            // Em vez de mover o objeto, movemos a posição da imagem de fundo
-            // Isso cria o efeito de mapa infinito
+            // Move o background da imagem de plantação
             feed.style.backgroundPosition = `${posX}px ${posY}px`;
+            // Aplica o zoom (W/S)
             feed.style.transform = `scale(${zoom})`;
             
             document.getElementById('alt').innerText = altitude + "m";
@@ -176,6 +169,7 @@
             document.getElementById('pos-x').innerText = Math.floor(posX);
             document.getElementById('pos-y').innerText = Math.floor(posY);
             
+            // Simula desaceleração
             clearTimeout(window.velTimeout);
             window.velTimeout = setTimeout(() => {
                 document.getElementById('vel').innerText = "0km/h";
