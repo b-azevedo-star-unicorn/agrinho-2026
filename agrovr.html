@@ -23,14 +23,14 @@
             overflow: hidden;
         }
 
-        /* EFEITO DE LENTE VR (VIGNETTE) */
+        /* EFEITO DE LENTE VR */
         .vr-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.8) 100%);
             pointer-events: none; z-index: 10;
         }
 
-        /* FUNDO DINÂMICO (SIMULANDO AMBIENTE 3D) */
+        /* FUNDO DINÂMICO */
         .world-bg {
             position: fixed; top: 0; left: 0; width: 110%; height: 110%;
             background: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=2000') no-repeat center center;
@@ -41,99 +41,106 @@
             z-index: 1;
         }
 
-        /* SCANLINE E RUÍDO DIGITAL */
         .scanlines {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
             background-size: 100% 2px, 3px 100%;
-            pointer-events: none; z-index: 11;
+            pointer-events: none; z-index: 100; /* Garante que as linhas fiquem por cima de tudo */
         }
 
         .interface {
-            position: relative; z-index: 20;
+            position: relative; z-index: 50; /* Aumentado para ficar à frente do fundo */
             height: 100vh; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
         }
 
-        /* HUD ELEMENTS */
+        /* HUD HEADER - CORRIGIDO */
         .hud-header {
-            position: absolute; top: 40px; text-align: center;
+            position: absolute; 
+            top: 60px; 
+            text-align: center;
             font-family: 'JetBrains Mono', monospace;
+            z-index: 60; /* Maior que a grid para nunca ficar atrás */
+            pointer-events: none; /* Permite clicar no que estiver atrás se necessário */
         }
 
         .hud-header h1 {
-            font-family: 'Fredoka', sans-serif; font-size: 3rem; margin: 0;
-            letter-spacing: 5px; color: var(--vr-blue);
-            text-shadow: 0 0 20px rgba(0, 245, 212, 0.5);
+            font-family: 'Fredoka', sans-serif; font-size: 3.5rem; margin: 0;
+            letter-spacing: 8px; color: var(--vr-blue);
+            text-shadow: 0 0 30px rgba(0, 245, 212, 0.6);
+            text-transform: uppercase;
         }
 
         .status-bar {
-            display: flex; gap: 20px; font-size: 0.7rem; color: var(--vr-blue);
-            margin-top: 10px; text-transform: uppercase;
+            display: flex; gap: 20px; font-size: 0.8rem; color: var(--vr-blue);
+            margin-top: 15px; text-transform: uppercase;
+            justify-content: center;
+            background: rgba(0,0,0,0.3);
+            padding: 5px 20px;
+            border-radius: 20px;
         }
 
-        /* CARDS DE TREINAMENTO */
+        /* GRID DE TREINAMENTO */
         .training-grid {
-            display: flex; gap: 30px; padding: 20px;
-            perspective: 1000px;
+            display: flex; gap: 35px; padding: 20px;
+            perspective: 1500px;
+            margin-top: 100px; /* Espaço para o título não encavalar */
         }
 
         .vr-card {
-            width: 300px; height: 400px;
-            background: var(--glass);
-            border: 1px solid var(--vr-blue);
-            border-radius: 20px;
-            padding: 30px;
+            width: 320px; height: 420px;
+            background: rgba(0, 245, 212, 0.03);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 245, 212, 0.3);
+            border-radius: 24px;
+            padding: 35px;
             display: flex; flex-direction: column; align-items: center; text-align: center;
-            backdrop-filter: blur(10px);
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
             cursor: pointer;
             position: relative;
+            z-index: 55;
         }
 
         .vr-card:hover {
-            transform: translateZ(50px) scale(1.05);
-            background: rgba(0, 245, 212, 0.15);
-            box-shadow: 0 0 30px rgba(0, 245, 212, 0.3);
+            transform: translateY(-20px) rotateX(10deg);
+            border-color: var(--vr-blue);
+            background: rgba(0, 245, 212, 0.1);
+            box-shadow: 0 20px 50px rgba(0, 245, 212, 0.2);
         }
 
-        .vr-card i { font-size: 4rem; margin-bottom: 20px; display: block; }
-        .vr-card h3 { font-family: 'Fredoka'; font-size: 1.5rem; margin: 10px 0; color: var(--vr-blue); }
-        .vr-card p { font-size: 0.9rem; color: #ccc; line-height: 1.6; }
+        .vr-card i { font-size: 4.5rem; margin-bottom: 25px; filter: drop-shadow(0 0 10px var(--vr-blue)); }
+        .vr-card h3 { font-family: 'Fredoka'; font-size: 1.6rem; margin: 15px 0; color: #fff; }
+        .vr-card p { font-size: 0.95rem; color: #aaa; line-height: 1.6; }
 
         .btn-start {
-            margin-top: auto; width: 100%; padding: 12px;
+            margin-top: auto; width: 100%; padding: 15px;
             background: transparent; border: 1px solid var(--vr-blue);
-            color: var(--vr-blue); border-radius: 50px;
+            color: var(--vr-blue); border-radius: 12px;
             font-weight: bold; text-transform: uppercase; cursor: pointer;
             transition: 0.3s;
         }
 
-        .vr-card:hover .btn-start {
-            background: var(--vr-blue); color: #000;
-        }
+        .vr-card:hover .btn-start { background: var(--vr-blue); color: #000; }
 
-        /* MENSAGEM DE RODAPÉ */
         .hud-footer {
-            position: absolute; bottom: 40px; width: 80%;
+            position: absolute; bottom: 40px; width: 90%;
             display: flex; justify-content: space-between;
-            font-family: 'JetBrains Mono'; font-size: 0.7rem; color: rgba(255,255,255,0.4);
+            font-family: 'JetBrains Mono'; font-size: 0.75rem; color: rgba(255,255,255,0.4);
+            z-index: 60;
         }
 
-        /* BOTÃO VOLTAR */
         .back-btn {
             position: absolute; top: 40px; left: 40px;
             color: white; text-decoration: none; font-size: 0.8rem;
-            border: 1px solid rgba(255,255,255,0.3); padding: 10px 20px;
-            border-radius: 50px; transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.2); padding: 10px 20px;
+            border-radius: 50px; transition: 0.3s; z-index: 100;
         }
-        .back-btn:hover { background: white; color: black; }
+        .back-btn:hover { background: var(--vr-red); border-color: var(--vr-red); }
 
-        /* CURSOR VR */
         #cursor {
-            width: 20px; height: 20px; border: 2px solid white;
+            width: 25px; height: 25px; border: 2px solid var(--vr-blue);
             border-radius: 50%; position: fixed; pointer-events: none;
-            z-index: 100; transition: 0.1s; mix-blend-mode: difference;
+            z-index: 1000; transition: 0.05s;
         }
     </style>
 </head>
@@ -144,47 +151,47 @@
     <div class="scanlines"></div>
     <div class="world-bg" id="bg"></div>
 
-    <a href="index.html" class="back-btn">EXIT VR_MODE</a>
+    <a href="index.html" class="back-btn">← EXIT SIMULATION</a>
 
     <div class="interface">
-        <div class="hud-header">
-            <h1>AgroVR ACADEMY</h1>
+        <header class="hud-header">
+            <h1>AgroVR Academy</h1>
             <div class="status-bar">
-                <span>● NEURAL_LINK: ESTABLISHED</span>
-                <span>● LATENCY: 2ms</span>
-                <span>● USER: ADMIN_AGRINHO</span>
+                <span>● SYSTEM_OS: V2.0</span>
+                <span>● NEURAL_SYNC: 98%</span>
+                <span>● AREA: EXPERIMENTAL_FARM</span>
             </div>
-        </div>
+        </header>
 
         <div class="training-grid">
             <div class="vr-card" onclick="startSim('Drones')">
-                <div style="font-size: 0.7rem; color: var(--vr-blue); margin-bottom: 10px;">MODULE_01</div>
+                <div style="font-size: 0.7rem; color: var(--vr-blue); margin-bottom: 10px; font-family: 'JetBrains Mono';">DRONE_PILOT_V1</div>
                 <i>🛸</i>
                 <h3>Pilotagem de Drones</h3>
-                <p>Aprenda a mapear falhas de plantio e aplicar defensivos com precisão milimétrica.</p>
-                <button class="btn-start">INICIAR SIMULAÇÃO</button>
+                <p>Mapeamento térmico e aplicação de insumos com visão computacional de alta precisão.</p>
+                <button class="btn-start">INICIAR SESSÃO</button>
             </div>
 
-            <div class="vr-card" onclick="startSim('Manutenção')">
-                <div style="font-size: 0.7rem; color: var(--vr-blue); margin-bottom: 10px;">MODULE_02</div>
+            <div class="vr-card" onclick="startSim('Maquinário')">
+                <div style="font-size: 0.7rem; color: var(--vr-blue); margin-bottom: 10px; font-family: 'JetBrains Mono';">MECH_ENG_V4</div>
                 <i>🚜</i>
-                <h3>Manutenção Autônoma</h3>
-                <p>Conserte tratores de última geração usando realidade aumentada e diagramas 3D.</p>
-                <button class="btn-start">INICIAR SIMULAÇÃO</button>
+                <h3>Sistemas Autônomos</h3>
+                <p>Configuração de plantadeiras robóticas e calibração de sensores LiDAR em tempo real.</p>
+                <button class="btn-start">INICIAR SESSÃO</button>
             </div>
 
-            <div class="vr-card" onclick="startSim('Solo')">
-                <div style="font-size: 0.7rem; color: var(--vr-blue); margin-bottom: 10px;">MODULE_03</div>
-                <i>🔬</i>
-                <h3>Análise Microbiana</h3>
-                <p>Mergulhe no solo em nível microscópico para entender a saúde das raízes.</p>
-                <button class="btn-start">INICIAR SIMULAÇÃO</button>
+            <div class="vr-card" onclick="startSim('Bio')">
+                <div style="font-size: 0.7rem; color: var(--vr-blue); margin-bottom: 10px; font-family: 'JetBrains Mono';">BIO_LAB_V2</div>
+                <i>🧬</i>
+                <h3>Genética Sustentável</h3>
+                <p>Análise de DNA do solo para otimização de nutrientes sem uso de aditivos químicos.</p>
+                <button class="btn-start">INICIAR SESSÃO</button>
             </div>
         </div>
 
         <div class="hud-footer">
-            <div>POS_X: <span id="posx">0</span> // POS_Y: <span id="posy">0</span></div>
-            <div>AGRINHO 2026 // TECNOLOGIA IMERSIVA PARA EDUCAÇÃO RURAL</div>
+            <div>COORDINATES: <span id="posx">0</span>, <span id="posy">0</span></div>
+            <div>AGRINHO 2026 // EDUCATION_PLATFORM</div>
             <div id="clock">00:00:00</div>
         </div>
     </div>
@@ -195,32 +202,26 @@
         const posx = document.getElementById('posx');
         const posy = document.getElementById('posy');
 
-        // Efeito de movimento do fundo e HUD baseado no mouse (Efeito VR)
         document.addEventListener('mousemove', (e) => {
             const x = e.clientX;
             const y = e.clientY;
+            cursor.style.left = x - 12 + 'px';
+            cursor.style.top = y - 12 + 'px';
 
-            // Move o cursor customizado
-            cursor.style.left = x + 'px';
-            cursor.style.top = y + 'px';
-
-            // Move o fundo levemente para dar profundidade
-            const moveX = (x / window.innerWidth - 0.5) * 20;
-            const moveY = (y / window.innerHeight - 0.5) * 20;
+            const moveX = (x / window.innerWidth - 0.5) * 30;
+            const moveY = (y / window.innerHeight - 0.5) * 30;
             bg.style.transform = `translate(calc(-5% + ${-moveX}px), calc(-5% + ${-moveY}px))`;
 
-            // Atualiza coordenadas no HUD
             posx.innerText = Math.floor(x);
             posy.innerText = Math.floor(y);
         });
 
-        // Relógio
         setInterval(() => {
             document.getElementById('clock').innerText = new Date().toLocaleTimeString();
         }, 1000);
 
         function startSim(tipo) {
-            alert(`Iniciando Imersão em ${tipo}...\n\nPrepare seu headset AgroVR.`);
+            alert(`Sincronizando interface neural para: ${tipo}.\n\nPor favor, aguarde o carregamento do ambiente imersivo.`);
         }
     </script>
 </body>
