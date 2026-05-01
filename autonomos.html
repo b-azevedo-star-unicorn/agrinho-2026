@@ -11,6 +11,8 @@
             --neon-blue: #00e1ff;
             --neon-green: #00ff88;
             --neon-red: #ff3e3e;
+            --field-width: 750px;
+            --field-height: 550px;
         }
 
         body, html {
@@ -19,12 +21,13 @@
             font-family: 'JetBrains Mono', monospace; overflow: hidden;
         }
 
+        /* CONTEINER DO CAMPO - TAMANHO FIXO PARA ALINHAMENTO */
         #field-container {
             position: absolute; top: 50%; left: 45%;
-            width: 750px; height: 550px;
+            width: var(--field-width); height: var(--field-height);
             transform: translate(-50%, -50%);
             background-image: url('Gemini_Generated_Image_y5jyp5y5jyp5y5jy.png');
-            background-size: cover; /* Volta ao normal sem distorção */
+            background-size: cover;
             background-position: center;
             border: 4px solid #222;
             border-radius: 8px; z-index: 2;
@@ -38,15 +41,23 @@
         }
 
         .unit {
-            position: absolute; width: 45px; height: 60px;
+            position: absolute; 
+            /* Ajuste para alinhar o emoji exatamente no ponto de pixels */
+            width: 45px; height: 60px;
+            margin-left: -22.5px; /* Metade da largura */
+            margin-top: -30px; /* Metade da altura */
+            
             background: var(--neon-blue); border-radius: 4px;
-            top: 88%; left: 5%; 
+            /* Início no primeiro Waypoint */
+            top: 520px; left: 20px; 
+            
             transition: all 0s linear;
             box-shadow: 0 0 20px var(--neon-blue);
             display: flex; align-items: center; justify-content: center; font-size: 24px;
             z-index: 10;
         }
 
+        /* PAINÉIS */
         .panel {
             position: absolute; background: rgba(0, 10, 15, 0.95);
             border: 1px solid var(--neon-blue); padding: 20px;
@@ -94,12 +105,12 @@
     </div>
 
     <div class="panel log-panel" id="log-box">
-        <div class="log-entry">> Sistema carregado. Mapeie o trajeto.</div>
+        <div class="log-entry">> Central Online. Sincronize o GPS.</div>
     </div>
 
     <div class="panel command-panel">
         <h2>Operações</h2>
-        <button class="btn btn-scan" id="btn-scan" onclick="escanearTrajeto()">Escanear Trajeto</button>
+        <button class="btn btn-scan" id="btn-scan" onclick="escanearTrajeto()">Sincronizar GPS</button>
         <button class="btn" id="btn-start" onclick="iniciarMissao()" disabled>Iniciar Missão</button>
         <button class="btn btn-stop" onclick="abortarMissao()">Abortar</button>
     </div>
@@ -114,7 +125,7 @@
         let routeScanned = false;
         let timeoutId;
 
-        // WAYPOINTS INVERTIDOS: AGORA CONTORNA POR CIMA DA ROCHA
+        // WAYPOINTS EXATOS EM PIXELS (Contornando por cima da rocha)
         const waypoints = [
             {x: 20, y: 520},   // Entrada inferior esquerda
             {x: 400, y: 280},  // Sobe a diagonal principal
@@ -134,7 +145,7 @@
 
         function escanearTrajeto() {
             if(routeScanned) return;
-            addLog("Mapeando relevo e obstáculos...");
+            addLog("Mapeando estrada e rocha (via IA)...");
             document.getElementById('btn-scan').disabled = true;
             
             let i = 0;
@@ -153,7 +164,7 @@
                     i++;
                 } else {
                     clearInterval(drawInterval);
-                    addLog("Trajeto superior validado (Desvio: ROCHA).");
+                    addLog("Trajeto validado e contorno superior calibrado.");
                     routeScanned = true;
                     document.getElementById('btn-start').disabled = false;
                     document.getElementById('gps-stat').innerText = "READY";
@@ -162,10 +173,11 @@
             }, 500);
         }
 
-        function setTractorPos(top, left, duration) {
+        // NOVA FUNÇÃO: MOVE USANDO PIXELS EXATOS PARA ALINHAMENTO PERFEITO
+        function setTractorPosPx(y, x, duration) {
             tractor.style.transition = `all ${duration}s linear`;
-            tractor.style.top = top;
-            tractor.style.left = left;
+            tractor.style.top = y + 'px';
+            tractor.style.left = x + 'px';
         }
 
         function iniciarMissao() {
@@ -173,30 +185,43 @@
             missionActive = true;
             document.getElementById('btn-start').disabled = true;
             
-            addLog("Executando navegação autônoma...");
+            addLog("Seguindo linha de GPS...");
             document.getElementById('mode').innerText = "AUTÔNOMO";
             document.getElementById('speed').innerText = "6.2 km/h";
 
-            // MOVIMENTO SINCRONIZADO: POR CIMA DA ROCHA
-            setTractorPos("45%", "48%", 4); // Sobe a diagonal principal
+            // MOVIMENTO UTILIZANDO OS WAYPOINTS EM PIXELS (x, y)
+            // 1. Vai até o Waypoint 1 (Meio da diagonal)
+            setTractorPosPx(waypoints[1].y, waypoints[1].x, 4);
 
             timeoutId = setTimeout(() => {
                 if(!missionActive) return;
-                addLog("Iniciando contorno superior...");
-                setTractorPos("15%", "65%", 3); // Curva por cima
-
+                addLog("Iniciando contorno superior (Desvio IA)...");
+                // 2. Passa pelo Waypoint 2 e 3 (Contorno da rocha)
+                setTractorPosPx(waypoints[2].y, waypoints[2].x, 1.5);
+                
                 timeoutId = setTimeout(() => {
                     if(!missionActive) return;
-                    addLog("Retomando trilha lateral.");
-                    setTractorPos("80%", "92%", 4); // Desce pela estrada lateral
-                    
+                    setTractorPosPx(waypoints[3].y, waypoints[3].x, 1.5);
+
                     timeoutId = setTimeout(() => {
-                        addLog("Operação concluída.");
-                        missionActive = false;
-                        document.getElementById('mode').innerText = "IDLE";
-                        document.getElementById('speed').innerText = "0.0 km/h";
-                    }, 4000);
-                }, 3000);
+                        if(!missionActive) return;
+                        addLog("Retomando trilha lateral.");
+                        // 3. Desce até o final (Waypoint 4 e 5)
+                        setTractorPosPx(waypoints[4].y, waypoints[4].x, 3);
+                        
+                        timeoutId = setTimeout(() => {
+                            if(!missionActive) return;
+                            setTractorPosPx(waypoints[5].y, waypoints[5].x, 2);
+
+                            timeoutId = setTimeout(() => {
+                                addLog("Alvo alcançado. Operação finalizada.");
+                                missionActive = false;
+                                document.getElementById('mode').innerText = "IDLE";
+                                document.getElementById('speed').innerText = "0.0 km/h";
+                            }, 2000);
+                        }, 3000);
+                    }, 1500);
+                }, 1500);
             }, 4000);
         }
 
@@ -207,8 +232,8 @@
             tractor.style.transition = "none";
             tractor.style.top = computedStyle.top;
             tractor.style.left = computedStyle.left;
-            document.getElementById('mode').innerText = "STOPPED";
-            addLog("PARADA DE EMERGÊNCIA.");
+            document.getElementById('mode').innerText = "PARADO";
+            addLog("ABORTADO MANUALMENTE.");
         }
     </script>
 </body>
