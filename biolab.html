@@ -3,217 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BioLab Assist | Inteligência Biológica</title>
+    <title>BioLab Assist | Diagnóstico Avançado</title>
     <style>
         :root {
-            --lab-green: #aacc00; /* Verde Limão/Biológico */
-            --lab-gray: #343a40;
-            --lab-light: #f8f9fa;
-            --lab-border: #dee2e6;
+            --neon-green: #39ff14;
+            --dark-bg: #0d1b2a;
+            --glass: rgba(255, 255, 255, 0.1);
+            --text-light: #e0e1dd;
         }
 
         body {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: #e9ecef;
-            color: var(--lab-gray);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--dark-bg);
+            background-image: radial-gradient(circle at center, #1b263b 0%, #0d1b2a 100%);
+            color: var(--text-light);
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
         }
 
         nav {
             width: 100%;
-            padding: 15px;
-            background: var(--lab-gray);
-            color: var(--lab-green);
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
             display: flex;
             justify-content: space-around;
             align-items: center;
-            border-bottom: 4px solid var(--lab-green);
+            border-bottom: 1px solid var(--neon-green);
         }
 
         .back-btn {
             text-decoration: none;
-            color: white;
-            border: 1px solid white;
-            padding: 5px 10px;
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-transform: uppercase;
             font-size: 0.8rem;
         }
 
         .container {
-            max-width: 900px;
-            width: 95%;
-            padding: 30px 0;
+            max-width: 1100px;
+            width: 90%;
+            padding: 40px 0;
         }
 
-        header { text-align: center; margin-bottom: 30px; }
-        header h1 { font-size: 2.2rem; margin: 0; text-transform: uppercase; }
+        header { text-align: center; margin-bottom: 40px; }
+        header h1 { 
+            font-size: 3rem; 
+            margin: 0; 
+            color: var(--neon-green);
+            text-shadow: 0 0 15px rgba(57, 255, 20, 0.5);
+        }
 
-        .lab-grid {
+        .lab-layout {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 20px;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 30px;
         }
 
-        .card-lab {
-            background: white;
-            border: 1px solid var(--lab-border);
-            padding: 25px;
-            position: relative;
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+        @media (max-width: 850px) { .lab-layout { grid-template-columns: 1fr; } }
+
+        .control-panel {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
-        h3 { border-left: 4px solid var(--lab-green); padding-left: 10px; margin-top: 0; }
+        .input-group { margin-bottom: 25px; }
+        label { 
+            display: block; 
+            color: var(--neon-green); 
+            font-size: 0.9rem; 
+            margin-bottom: 10px; 
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
 
-        .select-group { margin-bottom: 20px; }
-        label { display: block; font-size: 0.75rem; font-weight: bold; margin-bottom: 10px; color: #777; }
-        
         select {
             width: 100%;
-            padding: 12px;
-            background: var(--lab-light);
-            border: 1px solid var(--lab-border);
-            font-family: inherit;
+            padding: 15px;
+            background: #1b263b;
+            color: white;
+            border: 1px solid var(--neon-green);
+            border-radius: 10px;
+            font-size: 1.1rem;
             cursor: pointer;
         }
 
-        /* ÁREA DA RECEITA BIOLÓGICA */
-        .recipe-display {
-            background: var(--lab-gray);
-            color: var(--lab-green);
-            padding: 20px;
-            min-height: 200px;
+        /* QUADRO DE RESULTADOS AMPLIADO */
+        .display-panel {
+            background: rgba(0,0,0,0.4);
+            border: 2px solid var(--neon-green);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            position: relative;
+            box-shadow: inset 0 0 30px rgba(57, 255, 20, 0.1);
             overflow: hidden;
         }
 
-        .recipe-header { font-size: 0.7rem; color: #aaa; margin-bottom: 10px; border-bottom: 1px solid #444; }
-
-        .target-name { font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; white-space: nowrap; }
-
-        .agent-box {
-            border: 1px dashed var(--lab-green);
-            padding: 10px;
-            margin-top: 10px;
-            font-size: 0.9rem;
+        .label-scan {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 0.7rem;
+            color: var(--neon-green);
+            opacity: 0.6;
         }
 
-        .pulse {
-            width: 10px;
+        #nome-alvo {
+            font-size: 3.5rem; /* FONTE BEM GRANDE */
+            font-weight: 800;
+            color: #fff;
+            margin: 10px 0;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .info-box {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(57, 255, 20, 0.05);
+            border-left: 5px solid var(--neon-green);
+        }
+
+        .info-title { font-size: 1rem; color: var(--neon-green); margin-bottom: 5px; font-weight: bold;}
+        
+        .info-value { 
+            font-size: 1.8rem; /* FONTE GRANDE E LEGÍVEL */
+            font-weight: 500;
+        }
+
+        .eficacia-bar {
+            margin-top: 20px;
             height: 10px;
-            background: var(--lab-green);
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 10px;
-            animation: pulse-animation 2s infinite;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            overflow: hidden;
         }
 
-        @keyframes pulse-animation {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(170, 204, 0, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(170, 204, 0, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(170, 204, 0, 0); }
+        #bar-fill {
+            height: 100%;
+            background: var(--neon-green);
+            width: 0%;
+            transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 10px var(--neon-green);
         }
     </style>
 </head>
 <body>
 
     <nav>
-        <a href="index.html" class="back-btn">← TERMINAL HUB</a>
-        <div style="font-weight: bold; letter-spacing: 2px;">BIOLAB ASSIST v1.0</div>
+        <a href="index.html" class="back-btn">← SAIR DO LABORATÓRIO</a>
+        <div style="color: var(--neon-green); font-weight: bold;">BIOLAB SCANNER v2.0</div>
     </nav>
 
     <div class="container">
         <header>
-            <h1>Diagnóstico Bio-Ativo</h1>
-            <p>Análise de Solo e Prescrição de Agentes Biológicos</p>
+            <h1>BioLab Assist</h1>
+            <p>Inteligência Artificial para Manejo Biológico de Precisão</p>
         </header>
 
-        <div class="lab-grid">
-            <div class="card-lab">
-                <h3>Entrada de Amostra</h3>
-                
-                <div class="select-group">
-                    <label>IDENTIFICAR PRAGA/DOENÇA</label>
-                    <select id="praga" onchange="analisar()">
-                        <option value="percevejo">Percevejo-Marrom</option>
-                        <option value="ferrugem">Ferrugem da Soja</option>
-                        <option value="nematoides">Nematoides de Galha</option>
-                        <option value="lagarta">Lagarta do Cartucho</option>
-                    </select>
-                </div>
-
-                <div class="select-group">
-                    <label>CULTURA ATUAL</label>
+        <div class="lab-layout">
+            <div class="control-panel">
+                <div class="input-group">
+                    <label>CULTURA / PLANTAÇÃO</label>
                     <select id="cultura" onchange="analisar()">
                         <option value="Soja">Soja</option>
                         <option value="Milho">Milho</option>
-                        <option value="Feijão">Feijão</option>
+                        <option value="Cafe">Café</option>
+                        <option value="Cana">Cana-de-Açúcar</option>
+                        <option value="Hortifruti">Hortifruti (Tomate/Alface)</option>
                     </select>
                 </div>
-                
-                <div style="font-size: 0.7rem; color: #888;">
-                    <p>[SISTEMA] Aguardando seleção de biotipo para processamento de protocolo...</p>
+
+                <div class="input-group">
+                    <label>DETECÇÃO DE PATÓGENO</label>
+                    <select id="praga" onchange="analisar()">
+                        <option value="percevejo">Percevejo-Marrom</option>
+                        <option value="ferrugem">Ferrugem Asiática</option>
+                        <option value="lagarta">Lagarta-do-Cartucho</option>
+                        <option value="cigarrinha">Cigarrinha-do-Milho</option>
+                        <option value="broca">Broca-do-Café</option>
+                        <option value="bicho_mineiro">Bicho-Mineiro</option>
+                        <option value="broca_cana">Broca-da-Cana</option>
+                        <option value="nematoide">Nematoides de Solo</option>
+                        <option value="mosca_branca">Mosca-Branca</option>
+                    </select>
                 </div>
+                <p style="font-size: 0.8rem; color: #888;">*O sistema cruza dados genéticos do patógeno com agentes de biocontrole registrados.</p>
             </div>
 
-            <div class="card-lab recipe-display" id="quadro">
-                <div class="recipe-header">PROTOCOLO DE MANEJO BIOLÓGICO</div>
+            <div class="display-panel">
+                <div class="label-scan">MODO: ANÁLISE DE BIO-DNA</div>
                 
-                <div class="target-name" id="nome-praga">CARREGANDO...</div>
+                <div id="nome-alvo">SELECIONE...</div>
                 
-                <div id="agente-container">
-                    <div class="pulse"></div> <strong>Agente Recomendado:</strong>
-                    <div class="agent-box" id="agente-texto">---</div>
+                <div class="info-box">
+                    <div class="info-title">AGENTE DE COMBATE BIOLÓGICO:</div>
+                    <div class="info-value" id="agente-nome">---</div>
                 </div>
 
-                <div style="margin-top: 15px; font-size: 0.8rem;">
-                    <strong>EFICÁCIA ESTIMADA:</strong> <span id="eficacia">0%</span>
+                <div class="info-box" style="border-color: #fff;">
+                    <div class="info-title" style="color: #fff;">TAXA DE SUPRESSÃO (EFICÁCIA):</div>
+                    <div class="info-value" id="eficacia-txt">0%</div>
+                    <div class="eficacia-bar"><div id="bar-fill"></div></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const bancoDados = {
-            percevejo: { nome: "Percevejo-Marrom", agente: "Beauveria bassiana (Fungo)", efic: "88%" },
-            ferrugem: { nome: "Ferrugem da Soja", agente: "Bacillus subtilis (Bactéria)", efic: "92%" },
-            nematoides: { nome: "Nematoides", agente: "Paecilomyces lilacinus", efic: "85%" },
-            lagarta: { nome: "Lagarta Cartucho", agente: "Baculovírus (Vírus)", efic: "95%" }
+        const db = {
+            percevejo: { n: "Percevejo", a: "Telenomus podisi", e: 85 },
+            ferrugem: { n: "Ferrugem", a: "Bacillus pumilus", e: 78 },
+            lagarta: { n: "Lagarta", a: "Baculovirus spodoptera", e: 95 },
+            cigarrinha: { n: "Cigarrinha", a: "Beauveria bassiana", e: 82 },
+            broca: { n: "Broca do Café", a: "Beauveria bassiana", e: 80 },
+            bicho_mineiro: { n: "Bicho Mineiro", a: "Vespa Predadora", e: 88 },
+            broca_cana: { n: "Broca da Cana", a: "Cotesia flavipes", e: 92 },
+            nematoide: { n: "Nematoide", a: "Paecilomyces lilacinus", e: 75 },
+            mosca_branca: { n: "Mosca Branca", a: "Cordyceps fumosorosea", e: 90 }
         };
 
         function analisar() {
             const pragaKey = document.getElementById('praga').value;
-            const dados = bancoDados[pragaKey];
+            const dados = db[pragaKey];
 
-            const elementoNome = document.getElementById('nome-praga');
-            const elementoAgente = document.getElementById('agente-texto');
-            const elementoEficacia = document.getElementById('eficacia');
+            const elNome = document.getElementById('nome-alvo');
+            const elAgente = document.getElementById('agente-nome');
+            const elEficTxt = document.getElementById('eficacia-txt');
+            const elBar = document.getElementById('bar-fill');
 
             // Atualiza textos
-            elementoNome.innerText = dados.nome.toUpperCase();
-            elementoAgente.innerText = dados.agente;
-            elementoEficacia.innerText = dados.efic;
+            elNome.innerText = dados.n.toUpperCase();
+            elAgente.innerText = dados.a;
+            elEficTxt.innerText = dados.e + "%";
+            elBar.style.width = dados.e + "%";
 
-            // Ajuste de fonte se o nome for muito grande
-            ajustarFonte(elementoNome);
+            // Lógica de diminuir fonte caso o nome seja muito longo
+            ajustarFonte(elNome, 3.5);
+            ajustarFonte(elAgente, 1.8);
         }
 
-        function ajustarFonte(el) {
-            let size = 1.5;
+        function ajustarFonte(el, max) {
+            let size = max;
             el.style.fontSize = size + "rem";
-            const limite = el.parentElement.offsetWidth - 40;
+            const limite = el.parentElement.offsetWidth - 20;
 
-            while (el.offsetWidth > limite && size > 0.8) {
+            while (el.offsetWidth > limite && size > 1) {
                 size -= 0.1;
                 el.style.fontSize = size + "rem";
             }
         }
 
-        // Inicia a primeira análise
+        // Inicia
         analisar();
     </script>
 </body>
