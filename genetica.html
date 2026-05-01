@@ -20,6 +20,17 @@
             font-family: 'JetBrains Mono', monospace; overflow: hidden;
         }
 
+        /* AVISO PEDAGÓGICO INICIAL */
+        #aviso-pedagogico {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .aviso-content {
+            background: #051510; border: 2px solid var(--bio-green); padding: 40px;
+            border-radius: 20px; text-align: center; max-width: 500px;
+        }
+
         header {
             padding: 15px 40px; border-bottom: 1px solid rgba(0, 255, 136, 0.2);
             display: flex; justify-content: space-between; align-items: center;
@@ -39,7 +50,7 @@
             backdrop-filter: blur(5px);
         }
 
-        /* VIEWPORT E LINHA DE SCANNER */
+        /* ÁREA DA IMAGEM E SCANNER */
         .sample-viewport {
             position: relative; background: #000; border-radius: 20px;
             border: 2px solid #1a2a25; overflow: hidden;
@@ -47,10 +58,10 @@
         }
 
         #scan-line {
-            position: absolute; width: 100%; height: 4px;
+            position: absolute; width: 100%; height: 5px;
             background: var(--bio-green);
-            box-shadow: 0 0 15px var(--bio-green);
-            top: -10px; left: 0; z-index: 20;
+            box-shadow: 0 0 20px var(--bio-green), 0 0 40px var(--bio-green);
+            top: -10px; left: 0; z-index: 50;
             display: none;
         }
 
@@ -112,7 +123,15 @@
         .stat-value { font-size: 0.9rem; color: var(--bio-green); font-weight: bold; display: block; }
     </style>
 </head>
-<body onload="avisoPedagogico()">
+<body>
+
+    <div id="aviso-pedagogico">
+        <div class="aviso-content">
+            <h2 style="color: var(--bio-green); font-family: 'Outfit';">CONTROLE DE ACESSO</h2>
+            <p style="color: #ccc; line-height: 1.6;">Este sistema é um simulador de laboratório virtual para fins estritamente <strong>pedagógicos e educacionais</strong>.</p>
+            <button class="btn" style="width: 100%; margin-top: 20px;" onclick="fecharAviso()">ENTRAR NO SISTEMA</button>
+        </div>
+    </div>
 
     <header>
         <div class="logo">BIO-GEN <span>V.3.0</span></div>
@@ -184,9 +203,9 @@
         let microscopeActive = false;
         let selectedSample = null;
 
-        // AVISO INICIAL
-        function avisoPedagogico() {
-            alert("AVISO: Este simulador é para fins estritamente pedagógicos e educacionais.");
+        // FUNÇÃO DO AVISO
+        function fecharAviso() {
+            document.getElementById('aviso-pedagogico').style.display = 'none';
         }
 
         function toggleGallery() {
@@ -233,7 +252,7 @@
         }
 
         function runAnalysis() {
-            if(!selectedSample) return alert("Selecione uma amostra!");
+            if(!selectedSample) return alert("Selecione uma amostra primeiro!");
             
             const btn = document.getElementById('anal-btn');
             const status = document.getElementById('status-tag');
@@ -243,18 +262,18 @@
             btn.disabled = true;
             status.innerText = "ANALISANDO...";
             status.style.color = "yellow";
-            log.innerHTML += `> Iniciando escaneamento molecular...<br>`;
+            log.innerHTML += `> Iniciando escaneamento...<br>`;
 
-            // Ativa a linha de scan com animação
+            // ATIVA A LINHA DE SCAN
             scanLine.style.display = "block";
             scanLine.style.animation = "scanning 2s linear infinite";
 
             setTimeout(() => {
-                // Finaliza o scan
+                // DESATIVA SCAN
                 scanLine.style.display = "none";
                 scanLine.style.animation = "none";
                 
-                // Mostra resultados
+                // RESULTADOS
                 status.innerText = "ANÁLISE CONCLUÍDA";
                 status.style.color = "var(--bio-green)";
                 document.getElementById('val-saude').innerText = "96.4% (EXCELENTE)";
@@ -262,15 +281,15 @@
                 document.getElementById('val-defesa').innerText = "Ativa";
                 document.getElementById('val-cresc').innerText = "Maturação";
                 document.getElementById('result-badge').style.display = "block";
-                document.getElementById('veredito-text').innerText = "Amostra validada. Nenhuma anomalia genética detectada.";
+                document.getElementById('veredito-text').innerText = "Amostra validada para reprodução.";
                 
-                log.innerHTML += `> Análise da amostra ${selectedSample} concluída.<br>`;
+                log.innerHTML += `> Amostra ${selectedSample} analisada com sucesso.<br>`;
                 btn.disabled = false;
 
-                // Alerta de conclusão
-                alert("Análise concluída com sucesso!");
+                // AVISO DE CONCLUSÃO
+                alert("Análise Finalizada!");
                 
-            }, 4000); // 4 segundos de análise
+            }, 4000); 
         }
     </script>
 </body>
