@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIO-GEN | LAB DE GENÉTICA SUSTENTÁVEL</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;600;800&display=swap');
+
+        :root {
+            --bio-green: #00ff88;
+            --dna-cyan: #00e1ff;
+            --alert-yellow: #f4ea1a;
+            --bg-lab: #010a08;
+            --glass-green: rgba(0, 255, 136, 0.05);
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: var(--bg-lab); color: white;
+            font-family: 'Outfit', sans-serif; overflow: hidden;
+        }
+
+        /* HEADER BIOTECH */
+        header {
+            position: absolute; top: 0; left: 0; width: 100%;
+            padding: 20px 40px; box-sizing: border-box;
+            background: linear-gradient(to bottom, rgba(0, 255, 136, 0.1), transparent);
+            border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100; backdrop-filter: blur(8px);
+        }
+
+        .main-title {
+            font-weight: 800; font-size: 1.4rem;
+            color: var(--bio-green); text-transform: uppercase;
+            letter-spacing: 3px; display: flex; align-items: center; gap: 15px;
+        }
+
+        .main-title span {
+            font-size: 0.6rem; font-family: 'JetBrains Mono';
+            border: 1px solid var(--bio-green); color: var(--bio-green);
+            padding: 2px 8px; border-radius: 20px;
+        }
+
+        /* ÁREA DE ANÁLISE CENTRAL */
+        #lab-container {
+            position: absolute; top: 55%; left: 42%;
+            width: 800px; height: 500px;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle at center, #051a15 0%, #010a08 100%);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 20px; z-index: 2;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; box-shadow: 0 0 60px rgba(0, 255, 136, 0.1);
+        }
+
+        /* ANIMAÇÃO DNA */
+        #dna-visualizer {
+            display: flex; gap: 8px; align-items: flex-end; height: 200px;
+        }
+
+        .dna-bar {
+            width: 12px; background: var(--bio-green);
+            border-radius: 10px; transition: height 0.3s ease;
+            box-shadow: 0 0 15px var(--bio-green);
+        }
+
+        /* INFOGRÁFICOS LATERAIS */
+        .panel {
+            position: absolute; background: rgba(5, 20, 15, 0.9);
+            border: 1px solid rgba(0, 255, 136, 0.2); padding: 20px;
+            backdrop-filter: blur(10px); z-index: 20;
+        }
+
+        .genome-stats { top: 100px; right: 40px; width: 300px; }
+        .seed-info { top: 350px; right: 40px; width: 300px; }
+        .log-panel { bottom: 40px; left: 40px; width: 400px; height: 120px; font-family: 'JetBrains Mono'; font-size: 0.7rem; }
+
+        h2 { font-size: 0.8rem; color: var(--dna-cyan); margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 2px; }
+        .data-row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid rgba(0, 255, 136, 0.1); padding-bottom: 5px; }
+        .val { font-weight: bold; color: var(--bio-green); }
+
+        /* BOTÕES DE OPERAÇÃO */
+        .controls { position: absolute; bottom: 180px; left: 40px; width: 220px; }
+        .btn {
+            background: transparent; border: 1px solid var(--bio-green);
+            color: var(--bio-green); padding: 12px; width: 100%;
+            cursor: pointer; font-weight: bold; margin-bottom: 10px;
+            text-transform: uppercase; font-size: 0.7rem; transition: 0.3s;
+        }
+        .btn:hover:not(:disabled) { background: var(--bio-green); color: #000; box-shadow: 0 0 20px var(--bio-green); }
+        .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        /* OVERLAY DE SUCESSO */
+        #analysis-complete {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: var(--bio-green); color: #000; padding: 30px;
+            border-radius: 15px; text-align: center; font-weight: 800;
+            display: none; z-index: 100; box-shadow: 0 0 50px var(--bio-green);
+        }
+
+        .scanner-line {
+            position: absolute; width: 100%; height: 2px;
+            background: var(--dna-cyan); top: 0; left: 0;
+            box-shadow: 0 0 20px var(--dna-cyan);
+            display: none; animation: scanMove 2s infinite linear;
+        }
+        @keyframes scanMove { from { top: 0%; } to { top: 100%; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="main-title">🧬 BIO-GEN <span>SISTEMA DE ANÁLISE</span></div>
+        <div style="font-size: 0.8rem; color: #4a6a5a;">LAB_REF: #SUSTAIN-2026</div>
+    </header>
+
+    <div id="lab-container">
+        <div class="scanner-line" id="scanner"></div>
+        <div id="dna-visualizer">
+            </div>
+        
+        <div id="analysis-complete">
+            <div style="font-size: 40px;">🧪</div>
+            SEQUENCIAMENTO CONCLUÍDO<br>
+            <small>Semente Estável: 99.8% de Pureza</small>
+        </div>
+    </div>
+
+    <div class="panel genome-stats">
+        <h2>Sequenciamento Genômico</h2>
+        <div class="data-row"><span>ESTABILIDADE</span><span class="val" id="stab">--</span></div>
+        <div class="data-row"><span>RESISTÊNCIA</span><span class="val" id="res">--</span></div>
+        <div class="data-row"><span>PONTO DE NUTRIÇÃO</span><span class="val" id="nutri">--</span></div>
+    </div>
+
+    <div class="panel seed-info">
+        <h2>Dados da Amostra</h2>
+        <div class="data-row"><span>ESPÉCIE</span><span class="val">Soja-Premium_V4</span></div>
+        <div class="data-row"><span>LOTE</span><span class="val">BR-MT-2026</span></div>
+        <div class="data-row"><span>ID ANALISTA</span><span class="val">#AI-BIO-07</span></div>
+    </div>
+
+    <div class="panel log-panel" id="log-box">
+        <div style="color: #6a8a7a;">[SISTEMA] Aguardando amostra biológica...</div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" id="btn-scan" onclick="iniciarAnalise()">Iniciar Sequenciamento</button>
+        <button class="btn" onclick="location.reload()" style="border-color: #444; color: #444;">Nova Amostra</button>
+    </div>
+
+    <script>
+        const visualizer = document.getElementById('dna-visualizer');
+        const logBox = document.getElementById('log-box');
+        const scanner = document.getElementById('scanner');
+        const success = document.getElementById('analysis-complete');
+        
+        // Criar 15 barras para o visualizador de DNA
+        for(let i=0; i<15; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'dna-bar';
+            bar.style.height = '20px';
+            visualizer.appendChild(bar);
+        }
+
+        function addLog(text) {
+            const entry = document.createElement('div');
+            entry.style.marginBottom = '5px';
+            entry.innerText = `> ${text}`;
+            logBox.appendChild(entry);
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        function iniciarAnalise() {
+            document.getElementById('btn-scan').disabled = true;
+            scanner.style.display = 'block';
+            addLog("Injetando amostra no sequenciador...");
+            
+            let progress = 0;
+            const bars = document.querySelectorAll('.dna-bar');
+
+            const interval = setInterval(() => {
+                progress++;
+                
+                // Anima as barras de DNA aleatoriamente
+                bars.forEach(bar => {
+                    const h = Math.random() * 180 + 20;
+                    bar.style.height = h + 'px';
+                    bar.style.background = progress > 80 ? 'var(--bio-green)' : 'var(--dna-cyan)';
+                });
+
+                if(progress === 30) addLog("Cruzando dados genéticos...");
+                if(progress === 60) addLog("Identificando marcadores de resistência...");
+                if(progress === 90) addLog("Finalizando relatório biotecnológico...");
+
+                if(progress >= 100) {
+                    clearInterval(interval);
+                    finalizar();
+                }
+            }, 50);
+        }
+
+        function finalizar() {
+            scanner.style.display = 'none';
+            success.style.display = 'block';
+            
+            // Preenche dados finais
+            document.getElementById('stab').innerText = "99.2%";
+            document.getElementById('res').innerText = "MÁXIMA";
+            document.getElementById('nutri').innerText = "OTIMIZADO";
+            
+            addLog("Análise concluída com sucesso.");
+            addLog("Amostra pronta para germinação controlada.");
+        }
+    </script>
+</body>
+</html>
