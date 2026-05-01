@@ -17,15 +17,13 @@
         #feed {
             position: fixed; 
             top: 0; left: 0;
-            /* Tamanho gigante para não mostrar bordas durante o movimento */
             width: 400vw; height: 400vh;
-            /* Imagem de plantação que permite repetição (tiling) */
+            /* Mantendo sua imagem e configuração */
             background-image: url('Captura de tela 2026-05-01 131221.png'), 
                               url('https://images.unsplash.com/photo-1589923188900-85dae523342b?auto=format&fit=crop&q=80&w=800');
             background-repeat: repeat;
-            background-size: 300px; /* Ajusta o tamanho da repetição */
+            background-size: 300px;
             z-index: 1;
-            /* Começa centralizado */
             margin-left: -150vw;
             margin-top: -150vh;
             transition: transform 0.1s linear;
@@ -60,10 +58,11 @@
         .left-panel { top: 40px; left: 40px; width: 220px; border-radius: 0 20px 20px 20px; }
         .right-panel { top: 40px; right: 40px; width: 260px; border-radius: 20px 0 20px 20px; }
         
-        .controls-help {
-            position: absolute; bottom: 120px; right: 40px;
-            font-size: 0.7rem; color: #00ff88;
-            background: rgba(0,0,0,0.7); padding: 10px; border: 1px solid #00ff88;
+        /* NOVO QUADRO DE INSTRUÇÕES */
+        .help-panel { 
+            top: 240px; left: 40px; width: 220px; 
+            font-size: 0.7rem; line-height: 1.4;
+            border-color: rgba(0, 255, 136, 0.4);
         }
 
         .bottom-panel { 
@@ -83,11 +82,13 @@
         @keyframes scan { from { top: 0; } to { top: 100%; } }
 
         .btn {
-            background: #00ff88; color: #000; border: none; padding: 12px;
+            background: #00ff88; color: #000; border: none; padding: 10px;
             font-weight: bold; cursor: pointer; width: 100%; font-family: 'JetBrains Mono';
-            margin-top: 10px; text-transform: uppercase;
+            margin-top: 10px; text-transform: uppercase; font-size: 0.7rem;
+            transition: 0.2s;
         }
         .btn:hover { background: #fff; }
+        .btn-active { background: #ff2581 !important; color: white; }
 
         .back-btn {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
@@ -114,42 +115,53 @@
         <button class="btn" onclick="toggleScan()">Deep Scan</button>
     </div>
 
+    <div class="panel help-panel">
+        <h2>Commands</h2>
+        <div class="stat">SETAS: <span class="stat-val">VOAR</span></div>
+        <div class="stat">W / S: <span class="stat-val">ALTURA</span></div>
+        <div class="stat" style="margin-top: 10px; opacity: 0.7;">Botoes de Acao:</div>
+        <div class="stat">SCAN: <span class="stat-val">ANALISAR</span></div>
+        <div class="stat">SPRAY: <span class="stat-val">APLICAR</span></div>
+    </div>
+
     <div class="panel right-panel">
-        <h2>Field Data</h2>
-        <div id="status-analise">SYSTEM READY.</div>
-        <div id="results" style="display:none; margin-top: 10px; border-top: 1px solid #00ff88; padding-top: 10px;">
+        <h2>Agro Control</h2>
+        <div class="stat">TANK: <span class="stat-val" id="tank-level">100%</span></div>
+        <div class="stat">PRESSURE: <span class="stat-val">2.4 bar</span></div>
+        
+        <button class="btn" id="sprayBtn" onclick="toggleSpray()">Liberar Agrotóxico</button>
+        
+        <div id="results" style="display:none; margin-top: 15px; border-top: 1px solid #00ff88; padding-top: 10px;">
             <div class="stat">PLANT HEALTH: <span class="stat-val">98%</span></div>
             <div class="stat">NITROGEN: <span class="stat-val">OPTIMAL</span></div>
             <div class="stat">PESTS: <span class="stat-val" style="color:#ffbe0b">NONE</span></div>
         </div>
     </div>
 
-    <div class="controls-help">
-        ARROWS: Fly | W: Up | S: Down
-    </div>
-
     <div class="panel bottom-panel">
         <div class="stat">X: <span id="pos-x">0</span></div>
         <div class="stat">Y: <span id="pos-y">0</span></div>
-        <div class="stat">MODE: <span style="color:#00ff88">MANUAL_FLIGHT</span></div>
+        <div class="stat">STATUS: <span id="flight-status" style="color:#00ff88">READY</span></div>
     </div>
 
     <script>
         const feed = document.getElementById('feed');
         const scanner = document.getElementById('scanner');
-        const statusAnalise = document.getElementById('status-analise');
         const results = document.getElementById('results');
+        const sprayBtn = document.getElementById('sprayBtn');
+        const tankDisplay = document.getElementById('tank-level');
 
         let posX = 0;
         let posY = 0;
         let zoom = 1;
         let altitude = 50;
+        let isSpraying = false;
+        let tankLevel = 100;
 
         // Controle de Voo
         document.addEventListener('keydown', (e) => {
-            const step = 30; // Passo do movimento
+            const step = 30;
             
-            // Simula movimento infinito movendo o background-position
             switch(e.key) {
                 case "ArrowUp":    posY += step; break;
                 case "ArrowDown":  posY -= step; break;
@@ -166,8 +178,6 @@
         });
 
         function updateFlight() {
-            // Em vez de mover o objeto, movemos a posição da imagem de fundo
-            // Isso cria o efeito de mapa infinito
             feed.style.backgroundPosition = `${posX}px ${posY}px`;
             feed.style.transform = `scale(${zoom})`;
             
@@ -185,15 +195,41 @@
         function toggleScan() {
             if (scanner.style.display === 'block') {
                 scanner.style.display = 'none';
-                statusAnalise.innerText = "SYSTEM READY.";
                 results.style.display = 'none';
             } else {
                 scanner.style.display = 'block';
-                statusAnalise.innerHTML = "<span style='color:#00ff88'>SCANNING BIOMASS...</span>";
                 setTimeout(() => {
-                    statusAnalise.innerHTML = "ANALYSIS COMPLETE.";
                     results.style.display = 'block';
-                }, 2000);
+                }, 1500);
+            }
+        }
+
+        // Nova funcionalidade: Spray de Insumos
+        function toggleSpray() {
+            isSpraying = !isSpraying;
+            if(isSpraying) {
+                sprayBtn.innerText = "SISTEMA ATIVO";
+                sprayBtn.classList.add('btn-active');
+                document.getElementById('flight-status').innerText = "SPRAYING...";
+                document.getElementById('flight-status').style.color = "#ff2581";
+                startTankDrain();
+            } else {
+                sprayBtn.innerText = "Liberar Agrotóxico";
+                sprayBtn.classList.remove('btn-active');
+                document.getElementById('flight-status').innerText = "READY";
+                document.getElementById('flight-status').style.color = "#00ff88";
+            }
+        }
+
+        function startTankDrain() {
+            if(isSpraying && tankLevel > 0) {
+                tankLevel -= 1;
+                tankDisplay.innerText = tankLevel + "%";
+                setTimeout(startTankDrain, 500);
+            } else if (tankLevel <= 0) {
+                toggleSpray();
+                sprayBtn.innerText = "TANQUE VAZIO";
+                sprayBtn.disabled = true;
             }
         }
     </script>
