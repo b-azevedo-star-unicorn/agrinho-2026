@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAT-LINK | AGRO-CONTROL UNIT</title>
+    <title>SAT-LINK | CENTRAL DE CONTROLE AGRO</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@600;800&display=swap');
 
@@ -21,7 +21,7 @@
             font-family: 'JetBrains Mono', monospace; overflow: hidden;
         }
 
-        /* TÍTULO PRINCIPAL (HEADER) */
+        /* CABEÇALHO */
         header {
             position: absolute; top: 0; left: 0; width: 100%;
             padding: 20px 40px; box-sizing: border-box;
@@ -35,8 +35,7 @@
             font-family: 'Outfit', sans-serif;
             font-weight: 800; font-size: 1.5rem;
             color: var(--neon-blue); text-transform: uppercase;
-            letter-spacing: 4px; display: flex; align-items: center;
-            gap: 15px;
+            letter-spacing: 4px; display: flex; align-items: center; gap: 15px;
         }
 
         .main-title span {
@@ -44,8 +43,6 @@
             background: var(--neon-blue); color: black;
             padding: 2px 8px; border-radius: 3px; letter-spacing: 1px;
         }
-
-        .op-id { font-size: 0.8rem; color: #4a5a6a; }
 
         /* CONTEINER DO CAMPO */
         #field-container {
@@ -57,10 +54,24 @@
             background-position: center;
             border: 2px solid #1a2a3a;
             border-radius: 12px; z-index: 2;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
         }
 
         #gps-canvas { position: absolute; top: 0; left: 0; z-index: 5; pointer-events: none; }
+
+        /* MENSAGEM DE SUCESSO FINAL */
+        #success-msg {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 255, 136, 0.9);
+            color: black; padding: 20px 40px;
+            border-radius: 10px; font-family: 'Outfit';
+            font-weight: 800; text-align: center;
+            display: none; z-index: 1000;
+            box-shadow: 0 0 50px var(--neon-green);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn { from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
 
         #destination-marker {
             position: absolute; width: 40px; height: 40px;
@@ -69,10 +80,7 @@
             animation: bounce 1.5s infinite;
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 5px var(--neon-green)); }
-            50% { transform: translateY(-10px) scale(1.1); filter: drop-shadow(0 0 15px var(--neon-green)); }
-        }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
         .unit {
             position: absolute; width: 45px; height: 60px;
@@ -89,7 +97,6 @@
             position: absolute; background: var(--glass);
             border: 1px solid rgba(0, 225, 255, 0.2); padding: 15px;
             backdrop-filter: blur(10px); z-index: 20;
-            box-shadow: 10px 10px 20px rgba(0,0,0,0.5);
         }
 
         .status-panel { top: 100px; right: 30px; width: 300px; border-top: 3px solid var(--neon-blue); }
@@ -108,7 +115,7 @@
             text-transform: uppercase; font-size: 0.7rem; transition: 0.3s;
         }
         .btn:hover:not(:disabled) { background: var(--neon-blue); color: #000; }
-        .btn:disabled { border-color: #333; color: #555; cursor: not-allowed; }
+        .btn:disabled { border-color: #333; color: #555; }
         
         .log-entry { margin-bottom: 4px; color: #5a6a7a; font-size: 0.65rem; }
     </style>
@@ -116,40 +123,43 @@
 <body>
 
     <header>
-        <div class="main-title">
-            🛰️ SAT-LINK <span>LIVE</span>
-        </div>
-        <div class="op-id">OP_ID: #TR-800_ALPHA_2024</div>
+        <div class="main-title">🛰️ SAT-LINK <span>AO VIVO</span></div>
+        <div style="font-size: 0.8rem; color: #4a5a6a;">ID_OP: #TR-800_ALFA_BR</div>
     </header>
 
     <div id="field-container">
         <canvas id="gps-canvas" width="750" height="500"></canvas>
         <div id="destination-marker">📍</div>
         <div class="unit" id="tractor">🚜</div>
+        
+        <div id="success-msg">
+            <div style="font-size: 50px;">✓</div>
+            TRAJETO REALIZADO COM SUCESSO
+        </div>
     </div>
 
     <div class="panel status-panel">
-        <h2>System Status</h2>
-        <div class="data-row"><span>MISSION</span><span class="value" id="mode" style="color:var(--neon-green)">STANDBY</span></div>
-        <div class="data-row"><span>UPLINK</span><span class="value" id="gps-stat">STABLE</span></div>
-        <div class="data-row"><span>BATTERY</span><span class="value">94%</span></div>
+        <h2>Status do Sistema</h2>
+        <div class="data-row"><span>MISSÃO</span><span class="value" id="mode" style="color:var(--neon-green)">AGUARDANDO</span></div>
+        <div class="data-row"><span>CONEXÃO</span><span class="value" id="gps-stat">ESTÁVEL</span></div>
+        <div class="data-row"><span>BATERIA</span><span class="value">94%</span></div>
     </div>
 
     <div class="panel telemetry-panel">
-        <h2>Vehicle Telemetry</h2>
-        <div class="data-row"><span>VELOCITY</span><span class="value" id="speed">0.0 km/h</span></div>
-        <div class="data-row"><span>AREA</span><span class="value" id="area">0.00 ha</span></div>
-        <div class="data-row"><span>ENGINE</span><span class="value" id="temp">40°C</span></div>
+        <h2>Telemetria do Veículo</h2>
+        <div class="data-row"><span>VELOCIDADE</span><span class="value" id="speed">0.0 km/h</span></div>
+        <div class="data-row"><span>ÁREA</span><span class="value" id="area">0.00 ha</span></div>
+        <div class="data-row"><span>MOTOR</span><span class="value" id="temp">40°C</span></div>
     </div>
 
     <div class="panel log-panel" id="log-box">
-        <div class="log-entry">[SYSTEM] Satellite link established.</div>
-        <div class="log-entry">[SYSTEM] Terrain mapping ready.</div>
+        <div class="log-entry">[SISTEMA] Link de satélite estabelecido.</div>
+        <div class="log-entry">[SISTEMA] Mapeamento de terreno pronto.</div>
     </div>
 
     <div class="panel command-panel">
-        <button class="btn" id="btn-scan" onclick="escanearTrajeto()">Scan Path</button>
-        <button class="btn" id="btn-start" onclick="iniciarMissao()" disabled>Engage Autopilot</button>
+        <button class="btn" id="btn-scan" onclick="escanearTrajeto()">Escanear Rota</button>
+        <button class="btn" id="btn-start" onclick="iniciarMissao()" disabled>Ativar Piloto Automático</button>
     </div>
 
     <script>
@@ -158,6 +168,7 @@
         const ctx = canvas.getContext('2d');
         const logBox = document.getElementById('log-box');
         const marker = document.getElementById('destination-marker');
+        const successMsg = document.getElementById('success-msg');
         
         let missionActive = false;
         let routePoints = [];
@@ -216,7 +227,7 @@
             ctx.stroke();
 
             marker.style.display = 'block';
-            addLog("Path optimized for terrain.");
+            addLog("Rota otimizada para o terreno.");
             document.getElementById('btn-scan').disabled = true;
             document.getElementById('btn-start').disabled = false;
         }
@@ -224,9 +235,10 @@
         function iniciarMissao() {
             if(missionActive) return;
             missionActive = true;
-            document.getElementById('mode').innerText = "ENGAGED";
+            successMsg.style.display = 'none';
+            document.getElementById('mode').innerText = "EM CURSO";
             document.getElementById('speed').innerText = "5.4 km/h";
-            addLog("Autopilot online. Tracking curve.");
+            addLog("Iniciando tracionamento. Seguindo curva.");
 
             let currentIndex = 0;
             let areaCount = 0;
@@ -254,10 +266,13 @@
                     requestAnimationFrame(animate);
                 } else {
                     missionActive = false;
-                    addLog("Destination reached.");
-                    document.getElementById('mode').innerText = "ARRIVED";
+                    addLog("Trajeto finalizado com sucesso.");
+                    document.getElementById('mode').innerText = "CONCLUÍDO";
                     document.getElementById('speed').innerText = "0.0 km/h";
                     marker.innerText = "🏁";
+                    
+                    // MOSTRAR MENSAGEM DE SUCESSO
+                    successMsg.style.display = 'block';
                 }
             }
             requestAnimationFrame(animate);
