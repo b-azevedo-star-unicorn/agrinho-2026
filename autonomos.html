@@ -3,50 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistemas Autônomos | Central de Frota Pro</title>
+    <title>SAT-LINK | AGRO-CONTROL UNIT</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@600;800&display=swap');
 
         :root {
             --neon-blue: #00e1ff;
             --neon-green: #00ff88;
             --neon-red: #ff3e3e;
-            --neon-yellow: #f4ea1a;
+            --bg-dark: #020508;
+            --glass: rgba(5, 12, 20, 0.85);
         }
 
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background: #020508; color: white;
+            background: var(--bg-dark); color: white;
             font-family: 'JetBrains Mono', monospace; overflow: hidden;
         }
 
-        /* CONTEINER PRINCIPAL */
+        /* TÍTULO PRINCIPAL (HEADER) */
+        header {
+            position: absolute; top: 0; left: 0; width: 100%;
+            padding: 20px 40px; box-sizing: border-box;
+            background: linear-gradient(to bottom, rgba(0, 225, 255, 0.1), transparent);
+            border-bottom: 1px solid rgba(0, 225, 255, 0.2);
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100; backdrop-filter: blur(5px);
+        }
+
+        .main-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800; font-size: 1.5rem;
+            color: var(--neon-blue); text-transform: uppercase;
+            letter-spacing: 4px; display: flex; align-items: center;
+            gap: 15px;
+        }
+
+        .main-title span {
+            font-size: 0.7rem; font-family: 'JetBrains Mono';
+            background: var(--neon-blue); color: black;
+            padding: 2px 8px; border-radius: 3px; letter-spacing: 1px;
+        }
+
+        .op-id { font-size: 0.8rem; color: #4a5a6a; }
+
+        /* CONTEINER DO CAMPO */
         #field-container {
-            position: absolute; top: 50%; left: 42%;
-            width: 750px; height: 550px;
+            position: absolute; top: 55%; left: 42%;
+            width: 750px; height: 500px;
             transform: translate(-50%, -50%);
             background-image: url('Gemini_Generated_Image_y5jyp5y5jyp5y5jy.png');
             background-size: cover;
             background-position: center;
             border: 2px solid #1a2a3a;
             border-radius: 12px; z-index: 2;
-            overflow: hidden;
-            box-shadow: 0 0 40px rgba(0, 225, 255, 0.15);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
         }
 
-        #gps-canvas {
-            position: absolute; top: 0; left: 0;
-            z-index: 5; pointer-events: none;
-        }
+        #gps-canvas { position: absolute; top: 0; left: 0; z-index: 5; pointer-events: none; }
 
-        /* MARCADOR DE DESTINO */
         #destination-marker {
-            position: absolute;
-            width: 40px; height: 40px;
-            top: 510px; left: 580px; /* Alinhado ao ponto final */
-            z-index: 6;
-            display: none; /* Aparece após o scan */
-            font-size: 24px;
+            position: absolute; width: 40px; height: 40px;
+            top: 460px; left: 580px; z-index: 6;
+            display: none; font-size: 24px;
             animation: bounce 1.5s infinite;
         }
 
@@ -55,79 +74,82 @@
             50% { transform: translateY(-10px) scale(1.1); filter: drop-shadow(0 0 15px var(--neon-green)); }
         }
 
-        /* UNIDADE TRATOR */
         .unit {
             position: absolute; width: 45px; height: 60px;
             margin-left: -22.5px; margin-top: -30px;
             background: var(--neon-blue); border-radius: 4px;
-            top: 520px; left: 20px; 
+            top: 470px; left: 20px; 
             box-shadow: 0 0 20px var(--neon-blue);
             display: flex; align-items: center; justify-content: center; font-size: 24px;
             z-index: 10;
         }
 
-        /* PAINÉIS DE INFORMAÇÃO */
+        /* PAINÉIS */
         .panel {
-            position: absolute; background: rgba(5, 12, 20, 0.9);
-            border: 1px solid #1a2a3a; padding: 15px;
-            backdrop-filter: blur(8px); z-index: 20;
-            border-left: 4px solid var(--neon-blue);
+            position: absolute; background: var(--glass);
+            border: 1px solid rgba(0, 225, 255, 0.2); padding: 15px;
+            backdrop-filter: blur(10px); z-index: 20;
+            box-shadow: 10px 10px 20px rgba(0,0,0,0.5);
         }
 
-        .status-panel { top: 30px; right: 30px; width: 300px; }
-        .telemetry-panel { top: 300px; right: 30px; width: 300px; }
-        .log-panel { bottom: 30px; right: 30px; width: 300px; height: 180px; font-size: 0.7rem; overflow-y: auto; }
-        .command-panel { bottom: 30px; left: 30px; width: 220px; }
+        .status-panel { top: 100px; right: 30px; width: 300px; border-top: 3px solid var(--neon-blue); }
+        .telemetry-panel { top: 320px; right: 30px; width: 300px; border-top: 3px solid var(--neon-green); }
+        .log-panel { bottom: 30px; right: 30px; width: 300px; height: 150px; font-size: 0.7rem; overflow-y: auto; }
+        .command-panel { bottom: 30px; left: 30px; width: 220px; border-bottom: 3px solid var(--neon-blue); }
 
-        h2 { font-family: 'Outfit'; font-size: 0.9rem; color: var(--neon-blue); margin: 0 0 10px 0; letter-spacing: 1px; }
-        .data-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.75rem; border-bottom: 1px solid #1a2a3a; padding-bottom: 4px; }
-        .label { color: #6a7a8a; }
+        h2 { font-family: 'Outfit'; font-size: 0.8rem; color: #8a9aaa; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 2px; }
+        .data-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
         .value { color: #fff; font-weight: bold; }
 
-        /* BOTÕES */
         .btn {
             background: rgba(0, 225, 255, 0.05); border: 1px solid var(--neon-blue);
-            color: var(--neon-blue); padding: 10px; width: 100%;
+            color: var(--neon-blue); padding: 12px; width: 100%;
             cursor: pointer; font-weight: bold; margin-bottom: 8px;
             text-transform: uppercase; font-size: 0.7rem; transition: 0.3s;
         }
-        .btn:hover:not(:disabled) { background: var(--neon-blue); color: #000; box-shadow: 0 0 15px var(--neon-blue); }
-        .btn:disabled { border-color: #333; color: #555; }
+        .btn:hover:not(:disabled) { background: var(--neon-blue); color: #000; }
+        .btn:disabled { border-color: #333; color: #555; cursor: not-allowed; }
         
-        .log-entry { margin-bottom: 4px; padding-left: 5px; color: #8a9aaa; border-left: 1px solid #333; }
+        .log-entry { margin-bottom: 4px; color: #5a6a7a; font-size: 0.65rem; }
     </style>
 </head>
 <body>
 
+    <header>
+        <div class="main-title">
+            🛰️ SAT-LINK <span>LIVE</span>
+        </div>
+        <div class="op-id">OP_ID: #TR-800_ALPHA_2024</div>
+    </header>
+
     <div id="field-container">
-        <canvas id="gps-canvas" width="750" height="550"></canvas>
+        <canvas id="gps-canvas" width="750" height="500"></canvas>
         <div id="destination-marker">📍</div>
         <div class="unit" id="tractor">🚜</div>
     </div>
 
     <div class="panel status-panel">
-        <h2>SISTEMA AUTÔNOMO</h2>
-        <div class="data-row"><span class="label">ESTADO</span><span class="value" id="mode">IDLE</span></div>
-        <div class="data-row"><span class="label">GPS</span><span class="value" id="gps-stat" style="color:var(--neon-red)">NO SIGNAL</span></div>
-        <div class="data-row"><span class="label">PRECISÃO</span><span class="value">0.02m</span></div>
+        <h2>System Status</h2>
+        <div class="data-row"><span>MISSION</span><span class="value" id="mode" style="color:var(--neon-green)">STANDBY</span></div>
+        <div class="data-row"><span>UPLINK</span><span class="value" id="gps-stat">STABLE</span></div>
+        <div class="data-row"><span>BATTERY</span><span class="value">94%</span></div>
     </div>
 
     <div class="panel telemetry-panel">
-        <h2>TELEMETRIA VITAL</h2>
-        <div class="data-row"><span class="label">VELOCIDADE</span><span class="value" id="speed">0.0 km/h</span></div>
-        <div class="data-row"><span class="label">TEMP. MOTOR</span><span class="value" id="temp">42°C</span></div>
-        <div class="data-row"><span class="label">ÓLEO HIDRÁU.</span><span class="value">98%</span></div>
-        <div class="data-row"><span class="label">ÁREA TRAB.</span><span class="value" id="area">0.00 ha</span></div>
+        <h2>Vehicle Telemetry</h2>
+        <div class="data-row"><span>VELOCITY</span><span class="value" id="speed">0.0 km/h</span></div>
+        <div class="data-row"><span>AREA</span><span class="value" id="area">0.00 ha</span></div>
+        <div class="data-row"><span>ENGINE</span><span class="value" id="temp">40°C</span></div>
     </div>
 
     <div class="panel log-panel" id="log-box">
-        <div class="log-entry">> Sistemas operacionais.</div>
+        <div class="log-entry">[SYSTEM] Satellite link established.</div>
+        <div class="log-entry">[SYSTEM] Terrain mapping ready.</div>
     </div>
 
     <div class="panel command-panel">
-        <button class="btn" id="btn-scan" onclick="escanearTrajeto()">Sincronizar Rota</button>
-        <button class="btn" id="btn-start" onclick="iniciarMissao()" disabled>Iniciar Operação</button>
-        <button class="btn" onclick="location.reload()" style="border-color:#444; color:#444">Reset Geral</button>
+        <button class="btn" id="btn-scan" onclick="escanearTrajeto()">Scan Path</button>
+        <button class="btn" id="btn-start" onclick="iniciarMissao()" disabled>Engage Autopilot</button>
     </div>
 
     <script>
@@ -141,24 +163,23 @@
         let routePoints = [];
 
         const points = [
-            {x: 20, y: 520},   // Início
-            {x: 400, y: 280},  // Diagonal
-            {x: 420, y: 130},  // Cume da rocha
-            {x: 630, y: 110},  // Contorno
-            {x: 690, y: 320},  // Descida
-            {x: 600, y: 530}   // Destino
+            {x: 20, y: 470},   
+            {x: 400, y: 250},  
+            {x: 420, y: 100},  
+            {x: 630, y: 80},   
+            {x: 690, y: 290},  
+            {x: 600, y: 480}   
         ];
 
         function addLog(text) {
             const entry = document.createElement('div');
             entry.className = 'log-entry';
-            entry.innerText = `> ${text}`;
+            entry.innerText = `[LOG] ${text}`;
             logBox.appendChild(entry);
             logBox.scrollTop = logBox.scrollHeight;
         }
 
-        // Algoritmo de suavização Catmull-Rom
-        function getCurvePoints(pts, tension = 0.5, numOfSegments = 60) {
+        function getCurvePoints(pts, tension = 0.4, numOfSegments = 60) {
             let res = [];
             let _pts = pts.slice(0);
             _pts.unshift(pts[0]);
@@ -166,17 +187,17 @@
             for (let i = 1; i < _pts.length - 2; i++) {
                 for (let t = 0; t <= numOfSegments; t++) {
                     let st = t / numOfSegments;
-                    let c1 = 2 * Math.pow(st, 3) - 3 * Math.pow(st, 2) + 1;
-                    let c2 = -(2 * Math.pow(st, 3)) + 3 * Math.pow(st, 2);
-                    let c3 = Math.pow(st, 3) - 2 * Math.pow(st, 2) + st;
-                    let c4 = Math.pow(st, 3) - Math.pow(st, 2);
-                    let t1x = (_pts[i + 1].x - _pts[i - 1].x) * tension;
-                    let t2x = (_pts[i + 2].x - _pts[i].x) * tension;
-                    let t1y = (_pts[i + 1].y - _pts[i - 1].y) * tension;
-                    let t2y = (_pts[i + 2].y - _pts[i].y) * tension;
+                    let c1 = 2*Math.pow(st,3)-3*Math.pow(st,2)+1;
+                    let c2 = -(2*Math.pow(st,3))+3*Math.pow(st,2);
+                    let c3 = Math.pow(st,3)-2*Math.pow(st,2)+st;
+                    let c4 = Math.pow(st,3)-Math.pow(st,2);
+                    let t1x = (_pts[i+1].x-_pts[i-1].x)*tension;
+                    let t2x = (_pts[i+2].x-_pts[i].x)*tension;
+                    let t1y = (_pts[i+1].y-_pts[i-1].y)*tension;
+                    let t2y = (_pts[i+2].y-_pts[i].y)*tension;
                     res.push({
-                        x: c1 * _pts[i].x + c2 * _pts[i + 1].x + c3 * t1x + c4 * t2x,
-                        y: c1 * _pts[i].y + c2 * _pts[i + 1].y + c3 * t1y + c4 * t2y
+                        x: c1*_pts[i].x+c2*_pts[i+1].x+c3*t1x+c4*t2x,
+                        y: c1*_pts[i].y+c2*_pts[i+1].y+c3*t1y+c4*t2y
                     });
                 }
             }
@@ -184,20 +205,18 @@
         }
 
         function escanearTrajeto() {
-            routePoints = getCurvePoints(points, 0.4, 40);
+            routePoints = getCurvePoints(points);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = "rgba(0, 225, 255, 0.6)";
-            ctx.lineWidth = 5;
-            ctx.setLineDash([8, 8]);
+            ctx.strokeStyle = "rgba(0, 225, 255, 0.7)";
+            ctx.lineWidth = 4;
+            ctx.setLineDash([5, 5]);
             ctx.beginPath();
             ctx.moveTo(routePoints[0].x, routePoints[0].y);
             routePoints.forEach(p => ctx.lineTo(p.x, p.y));
             ctx.stroke();
 
             marker.style.display = 'block';
-            document.getElementById('gps-stat').innerText = "SIGNAL LOCK";
-            document.getElementById('gps-stat').style.color = "var(--neon-green)";
-            addLog("Rota calculada. Marcador de destino fixado.");
+            addLog("Path optimized for terrain.");
             document.getElementById('btn-scan').disabled = true;
             document.getElementById('btn-start').disabled = false;
         }
@@ -205,16 +224,15 @@
         function iniciarMissao() {
             if(missionActive) return;
             missionActive = true;
-            document.getElementById('mode').innerText = "AUTONOMOUS";
+            document.getElementById('mode').innerText = "ENGAGED";
             document.getElementById('speed').innerText = "5.4 km/h";
-            addLog("Motor ativo. Iniciando deslocamento.");
+            addLog("Autopilot online. Tracking curve.");
 
             let currentIndex = 0;
             let areaCount = 0;
             
             function animate() {
                 if (!missionActive) return;
-
                 if (currentIndex < routePoints.length) {
                     const p = routePoints[currentIndex];
                     tractor.style.left = p.x + 'px';
@@ -226,21 +244,20 @@
                         tractor.style.transform = `rotate(${angle + 90}deg)`;
                     }
 
-                    // Atualizar telemetria falsa
-                    if(currentIndex % 10 === 0) {
-                        areaCount += 0.02;
+                    if(currentIndex % 15 === 0) {
+                        areaCount += 0.03;
                         document.getElementById('area').innerText = areaCount.toFixed(2) + " ha";
-                        document.getElementById('temp').innerText = (45 + Math.random()*5).toFixed(1) + "°C";
+                        document.getElementById('temp').innerText = (50 + Math.random()*3).toFixed(1) + "°C";
                     }
 
                     currentIndex++;
                     requestAnimationFrame(animate);
                 } else {
                     missionActive = false;
-                    addLog("Destino alcançado. Entrando em Standby.");
-                    document.getElementById('mode').innerText = "COMPLETED";
+                    addLog("Destination reached.");
+                    document.getElementById('mode').innerText = "ARRIVED";
                     document.getElementById('speed').innerText = "0.0 km/h";
-                    marker.innerText = "🏁"; // Muda para bandeira de chegada
+                    marker.innerText = "🏁";
                 }
             }
             requestAnimationFrame(animate);
