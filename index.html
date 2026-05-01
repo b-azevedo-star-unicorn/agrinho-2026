@@ -25,7 +25,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
         }
 
         header {
@@ -61,11 +60,10 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            cursor: pointer;
         }
 
         .card:hover {
-            transform: scale(1.05);
+            transform: scale(1.03);
             border-color: var(--primary);
             background: rgba(255, 255, 255, 0.06);
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
@@ -83,9 +81,23 @@
             color: var(--secondary);
         }
 
-        .icon { font-size: 32px; margin-bottom: 15px; }
-        .card h3 { margin: 0 0 10px 0; font-size: 1.25rem; color: #fff; }
-        .card p { font-size: 0.9rem; line-height: 1.5; color: #999; margin-bottom: 20px; }
+        .icon {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.25rem;
+            color: #fff;
+        }
+
+        .card p {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #999;
+            margin-bottom: 20px;
+        }
 
         .btn {
             background: none;
@@ -93,15 +105,23 @@
             color: var(--primary);
             padding: 10px;
             border-radius: 12px;
+            cursor: pointer;
             font-size: 0.8rem;
             font-weight: 600;
             transition: 0.3s;
-            pointer-events: none; /* Deixa o card inteiro ser o botão */
         }
 
-        .card:hover .btn { background: var(--primary); color: #000; }
+        .btn:hover {
+            background: var(--primary);
+            color: #000;
+        }
 
-        footer { margin-top: 60px; color: #555; font-size: 0.8rem; }
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #555;
+        }
     </style>
 </head>
 <body>
@@ -112,7 +132,7 @@
     </header>
 
     <div class="grid-container">
-        <div class="card" onclick="window.location.href='bioradar.html'">
+        <div class="card">
             <div class="badge">Circular</div>
             <div class="icon">🔄</div>
             <h3>Bio-Radar</h3>
@@ -120,32 +140,66 @@
             <button class="btn">Abrir Mapa de Resíduos</button>
         </div>
 
-        <div class="card" onclick="alert('Funcionalidade em desenvolvimento para o Agrinho 2026!')">
+        <div class="card">
             <div class="badge">Finanças</div>
             <div class="icon">🍃</div>
             <h3>Carbon Wallet</h3>
-            <p>Simulador de rentabilidade para áreas de reflorestamento.</p>
+            <p>Simulador de rentabilidade para áreas de reserva legal e reflorestamento.</p>
             <button class="btn">Simular Ganhos</button>
         </div>
 
-        <div class="card" onclick="alert('Funcionalidade em desenvolvimento!')">
+        <div class="card">
             <div class="badge">Sucessão</div>
             <div class="icon">📈</div>
             <h3>Legacy Pro</h3>
-            <p>Projeção de valorização da terra com tecnologias sustentáveis.</p>
+            <p>Projeção de valorização da terra com tecnologias sustentáveis para a próxima geração.</p>
             <button class="btn">Ver Projeção</button>
         </div>
 
-        <div class="card" onclick="alert('Funcionalidade em desenvolvimento!')">
+        <div class="card">
+            <div class="badge">Blockchain</div>
+            <div class="icon">🔗</div>
+            <h3>Rastro Verde</h3>
+            <p>Rastreabilidade total da produção com geração de QR Code para o consumidor final.</p>
+            <button class="btn">Rastrear Lote</button>
+        </div>
+
+        <div class="card">
             <div class="badge">Biotecnologia</div>
             <div class="icon">🧪</div>
             <h3>BioLab Assist</h3>
-            <p>Guia interativo para reduzir químicos usando controle biológico.</p>
-            <button class="btn">Consultar Receitas</button>
+            <p>Guia interativo para reduzir químicos usando controle biológico e adubação verde.</p>
+            <button class="btn">Consultar Bio-Receitas</button>
+        </div>
+
+        <div class="card">
+            <div class="badge">Hidrologia</div>
+            <div class="icon">💧</div>
+            <h3>AquaGuard</h3>
+            <p>Monitoramento remoto de nascentes e qualidade da água em áreas produtivas.</p>
+            <button class="btn">Monitorar Águas</button>
+        </div>
+
+        <div class="card">
+            <div class="badge">Educação</div>
+            <div class="icon">🥽</div>
+            <h3>AgroVR Academy</h3>
+            <p>Treinamentos em Realidade Virtual para operar máquinas com desperdício zero.</p>
+            <button class="btn">Iniciar Treinamento</button>
+        </div>
+
+        <div class="card">
+            <div class="badge">Inteligência</div>
+            <div class="icon">☁️</div>
+            <h3>Climate AI</h3>
+            <p>Previsão climática avançada com alertas para proteção de solo e colheita.</p>
+            <button class="btn">Previsão em Tempo Real</button>
         </div>
     </div>
 
-    <footer>Desenvolvido por Bárbara Azevedo - Agrinho 2026</footer>
+    <footer>
+        Desenvolvido para o Concurso Agrinho 2026 | Tecnologia a serviço do Planeta
+    </footer>
 
 </body>
 </html>
