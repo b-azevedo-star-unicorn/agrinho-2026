@@ -11,67 +11,68 @@
             --neon-blue: #00e1ff;
             --neon-green: #00ff88;
             --neon-red: #ff3e3e;
-            --bg-dark: #0a0a0c;
+            --dirt-brown: #3d2b1f;
         }
 
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background: var(--bg-dark); color: white;
+            background: #050505; color: white;
             font-family: 'JetBrains Mono', monospace; overflow: hidden;
         }
 
-        /* FUNDO COM GRID TÉCNICO */
-        .grid-layer {
-            position: fixed; width: 100%; height: 100%;
-            background-image: linear-gradient(rgba(0, 225, 255, 0.05) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(0, 225, 255, 0.05) 1px, transparent 1px);
-            background-size: 50px 50px; z-index: 1;
-        }
-
-        /* MONITOR PRINCIPAL (MAPA) */
+        /* AMBIENTE DE CAMPO (TALHÃO) */
         #field-container {
             position: absolute; top: 50%; left: 45%;
-            width: 700px; height: 500px;
+            width: 750px; height: 550px;
             transform: translate(-50%, -50%);
-            background: rgba(0, 40, 40, 0.2);
-            border: 2px solid rgba(0, 225, 255, 0.2);
-            border-radius: 10px; z-index: 2;
+            background: var(--dirt-brown);
+            /* Linhas de plantio */
+            background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 30px);
+            border: 4px solid #222;
+            border-radius: 8px; z-index: 2;
             overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
         }
 
-        /* O TRATOR/MÁQUINA */
+        /* IDENTIFICAÇÃO DO OBSTÁCULO */
+        .obstacle-zone {
+            position: absolute; top: 35%; left: 45%;
+            text-align: center; z-index: 3;
+        }
+        .rock {
+            width: 50px; height: 40px; background: #666;
+            border-radius: 40% 60% 50% 50%;
+            box-shadow: inset -5px -5px 10px #333;
+        }
+        .warning-label {
+            font-size: 10px; color: var(--neon-red);
+            background: rgba(0,0,0,0.8); padding: 2px 5px;
+            border: 1px solid var(--neon-red); display: block; margin-top: 5px;
+        }
+
+        /* UNIDADE TRATOR */
         .unit {
-            position: absolute; width: 40px; height: 50px;
-            background: var(--neon-blue); border-radius: 5px;
-            top: 80%; left: 10%; transition: all 1s linear;
-            box-shadow: 0 0 15px var(--neon-blue);
-            display: flex; align-items: center; justify-content: center; font-size: 20px;
+            position: absolute; width: 45px; height: 60px;
+            background: var(--neon-blue); border-radius: 4px;
+            top: 80%; left: 10%; 
+            /* A transição será controlada via JS para permitir interrupção */
+            transition: all 0s linear; 
+            box-shadow: 0 0 20px var(--neon-blue);
+            display: flex; align-items: center; justify-content: center; font-size: 24px;
+            z-index: 10;
         }
 
-        /* RASTRO DE TRABALHO */
-        .trail {
-            position: absolute; width: 40px; height: 40px;
-            background: rgba(0, 255, 136, 0.2); pointer-events: none;
-        }
-
-        /* PAINÉIS LATERAIS - ONDE ESTÃO AS INFORMAÇÕES */
+        /* PAINÉIS (MANTIDOS CONFORME SOLICITADO) */
         .panel {
-            position: absolute; background: rgba(0, 10, 15, 0.9);
+            position: absolute; background: rgba(0, 10, 15, 0.95);
             border: 1px solid var(--neon-blue); padding: 20px;
-            backdrop-filter: blur(10px); z-index: 10;
+            backdrop-filter: blur(10px); z-index: 20;
         }
-
-        /* PAINEL DE STATUS (DIREITA) */
         .status-panel { top: 50px; right: 30px; width: 320px; }
-
-        /* PAINEL DE LOGS (DIREITA BAIXO) */
-        .log-panel { bottom: 50px; right: 30px; width: 320px; height: 200px; font-size: 0.7rem; overflow-y: auto; }
-
-        /* PAINEL DE COMANDOS (ESQUERDA BAIXO) */
+        .log-panel { bottom: 50px; right: 30px; width: 320px; height: 220px; font-size: 0.7rem; overflow-y: auto; }
         .command-panel { bottom: 50px; left: 30px; width: 250px; }
 
-        h2 { font-family: 'Outfit'; font-size: 1rem; color: var(--neon-blue); margin: 0 0 15px 0; border-bottom: 1px solid; }
-
+        h2 { font-family: 'Outfit'; font-size: 1rem; color: var(--neon-blue); margin: 0 0 15px 0; border-bottom: 1px solid; text-transform: uppercase; }
         .data-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.8rem; }
         .label { color: #aaa; }
         .value { color: #fff; font-weight: bold; }
@@ -80,161 +81,152 @@
             background: transparent; border: 1px solid var(--neon-blue);
             color: var(--neon-blue); padding: 12px; width: 100%;
             cursor: pointer; font-weight: bold; margin-bottom: 10px;
-            transition: 0.3s; text-transform: uppercase;
+            font-family: 'JetBrains Mono'; text-transform: uppercase;
         }
         .btn:hover { background: var(--neon-blue); color: #000; }
-        
         .btn-stop { border-color: var(--neon-red); color: var(--neon-red); }
-        .btn-stop:hover { background: var(--neon-red); color: #fff; }
+        .btn-stop:hover { background: var(--neon-red); color: white; }
 
-        .log-entry { margin-bottom: 5px; padding-left: 5px; border-left: 2px solid var(--neon-blue); }
-
-        .back-btn {
-            position: fixed; top: 20px; left: 20px;
-            color: white; text-decoration: none; font-size: 0.7rem;
-            border: 1px solid #333; padding: 10px; border-radius: 5px; z-index: 100;
-        }
-
-        /* OBSTÁCULO ANIMADO */
-        .obstacle {
-            position: absolute; top: 30%; left: 45%;
-            width: 30px; height: 30px; background: var(--neon-red);
-            border-radius: 50%; box-shadow: 0 0 20px var(--neon-red);
-            display: flex; align-items: center; justify-content: center;
-        }
+        .log-entry { margin-bottom: 6px; padding-left: 8px; border-left: 2px solid var(--neon-blue); color: #ccc; }
+        .back-btn { position: fixed; top: 20px; left: 20px; color: white; text-decoration: none; font-size: 0.7rem; border: 1px solid #444; padding: 10px 20px; border-radius: 30px; z-index: 100; background: rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
 
-    <div class="grid-layer"></div>
-    <a href="agrovr.html" class="back-btn">← SAIR DA CENTRAL</a>
+    <a href="agrovr.html" class="back-btn">← EXIT CENTRAL</a>
 
     <div id="field-container">
-        <div class="obstacle">⚠️</div>
+        <div class="obstacle-zone">
+            <div class="rock"></div>
+            <span class="warning-label">OBJECT: LARGE_ROCK</span>
+        </div>
+        
         <div class="unit" id="tractor">🚜</div>
     </div>
 
     <div class="panel status-panel">
-        <h2>STATUS DA UNIDADE TR-800</h2>
-        <div class="data-row">
-            <span class="label">MODO DE OPERAÇÃO:</span>
-            <span class="value" id="mode" style="color:var(--neon-green)">STANDBY</span>
-        </div>
-        <div class="data-row">
-            <span class="label">VELOCIDADE:</span>
-            <span class="value" id="speed">0.0 km/h</span>
-        </div>
-        <div class="data-row">
-            <span class="label">PRECISÃO GPS:</span>
-            <span class="value">RTK (2.2cm)</span>
-        </div>
-        <div class="data-row">
-            <span class="label">COMBUSTÍVEL:</span>
-            <span class="value">88%</span>
-        </div>
-        <div class="data-row">
-            <span class="label">ÁREA TRABALHADA:</span>
-            <span class="value" id="area">0.0 ha</span>
-        </div>
+        <h2>Unidade: TR-800 Autonomy</h2>
+        <div class="data-row"><span class="label">STATUS:</span><span class="value" id="mode">IDLE</span></div>
+        <div class="data-row"><span class="label">VELOCIDADE:</span><span class="value" id="speed">0.0 km/h</span></div>
+        <div class="data-row"><span class="label">SATÉLITES:</span><span class="value">18 (FIX)</span></div>
+        <div class="data-row"><span class="label">BATERIA:</span><span class="value">92%</span></div>
+        <div class="data-row"><span class="label">ÁREA:</span><span class="value" id="area">0.00 ha</span></div>
     </div>
 
-    <div class="panel log-panel" id="log-container">
-        <div class="log-entry">[SISTEMA] Aguardando comando do operador...</div>
+    <div class="panel log-panel" id="log-box">
+        <div class="log-entry">> Sistema iniciado. Aguardando conexão...</div>
+        <div class="log-entry">> Link de satélite estabelecido.</div>
     </div>
 
     <div class="panel command-panel">
-        <h2>COMANDOS</h2>
-        <button class="btn" onclick="iniciarMissao()">Iniciar Semeadura</button>
-        <button class="btn" onclick="retornarBase()">Retornar à Base</button>
-        <button class="btn btn-stop" onclick="abortar()">ABORTAR MISSÃO</button>
+        <h2>Operações</h2>
+        <button class="btn" onclick="iniciarMissao()">Iniciar Trajeto</button>
+        <button class="btn" onclick="resetUnit()">Resetar Posição</button>
+        <button class="btn btn-stop" onclick="abortarMissao()">ABORTAR MISSÃO</button>
     </div>
 
     <script>
         const tractor = document.getElementById('tractor');
-        const modeText = document.getElementById('mode');
-        const speedText = document.getElementById('speed');
-        const areaText = document.getElementById('area');
-        const logContainer = document.getElementById('log-container');
-        const field = document.getElementById('field-container');
+        const mode = document.getElementById('mode');
+        const speed = document.getElementById('speed');
+        const area = document.getElementById('area');
+        const logBox = document.getElementById('log-box');
+        
+        let missionActive = false;
+        let areaVal = 0;
+        let timeoutId;
 
-        let isRunning = false;
-        let areaCovered = 0;
-
-        function addLog(msg) {
-            const time = new Date().toLocaleTimeString();
-            logContainer.innerHTML += `<div class="log-entry">[${time}] ${msg}</div>`;
-            logContainer.scrollTop = logContainer.scrollHeight;
+        function addLog(text) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerText = `> ${text}`;
+            logBox.appendChild(entry);
+            logBox.scrollTop = logBox.scrollHeight;
         }
 
-        function dropTrail(x, y) {
-            const trail = document.createElement('div');
-            trail.className = 'trail';
-            trail.style.left = x + 'px';
-            trail.style.top = y + 'px';
-            field.appendChild(trail);
+        function setTractorPos(top, left, duration) {
+            tractor.style.transition = `all ${duration}s linear`;
+            tractor.style.top = top;
+            tractor.style.left = left;
         }
 
         function iniciarMissao() {
-            if(isRunning) return;
-            isRunning = true;
+            if(missionActive) return;
+            missionActive = true;
             
-            addLog("Iniciando varredura de sensores LiDAR...");
-            modeText.innerText = "CALIBRANDO";
-            
-            setTimeout(() => {
-                addLog("Rota calculada. Iniciando trajeto autônomo.");
-                modeText.innerText = "EM OPERAÇÃO";
-                speedText.innerText = "8.5 km/h";
+            addLog("Iniciando motor elétrico...");
+            mode.innerText = "MOVING";
+            mode.style.color = "var(--neon-green)";
+            speed.innerText = "7.2 km/h";
+
+            // Fase 1: Sobe em direção ao obstáculo
+            setTractorPos("40%", "10%", 3);
+
+            timeoutId = setTimeout(() => {
+                if(!missionActive) return;
+                addLog("SENSOR: Obstáculo detectado (ROCHA)");
+                addLog("IA: Calculando manobra de evasão...");
                 
-                // Animação de movimento
-                moveStep(1);
-            }, 1500);
+                // Fase 2: Desvio lateral
+                setTractorPos("40%", "60%", 2);
+
+                timeoutId = setTimeout(() => {
+                    if(!missionActive) return;
+                    addLog("IA: Obstáculo superado. Retomando linha.");
+                    
+                    // Fase 3: Continua subindo
+                    setTractorPos("10%", "80%", 3);
+                    
+                    timeoutId = setTimeout(() => {
+                        addLog("Missão finalizada com sucesso.");
+                        missionActive = false;
+                        mode.innerText = "COMPLETED";
+                        speed.innerText = "0.0 km/h";
+                    }, 3000);
+                }, 2000);
+            }, 3000);
+
+            // Contador de área
+            const areaInterval = setInterval(() => {
+                if(!missionActive) { clearInterval(areaInterval); return; }
+                areaVal += 0.01;
+                area.innerText = areaVal.toFixed(2) + " ha";
+            }, 500);
         }
 
-        function moveStep(step) {
-            if(!isRunning) return;
-
-            if(step === 1) {
-                tractor.style.top = "30%";
-                tractor.style.left = "20%";
-                addLog("Executando linha A-12.");
-            } else if(step === 2) {
-                addLog("ALERTA: Obstáculo detectado à frente.");
-                addLog("IA recalculando desvio lateral...");
-                tractor.style.left = "60%";
-            } else if(step === 3) {
-                addLog("Retomando linha original.");
-                tractor.style.top = "10%";
-                tractor.style.left = "80%";
-            }
-
-            // Simula contagem de área
-            areaCovered += 1.2;
-            areaText.innerText = areaCovered.toFixed(1) + " ha";
+        function abortarMissao() {
+            missionActive = false;
+            clearTimeout(timeoutId);
             
-            if(step < 3) {
-                setTimeout(() => moveStep(step + 1), 3000);
-            } else {
-                addLog("Missão concluída com sucesso.");
-                modeText.innerText = "FINALIZADO";
-                speedText.innerText = "0.0 km/h";
-                isRunning = false;
-            }
+            // Pega a posição atual exata para parar onde está
+            const computedStyle = window.getComputedStyle(tractor);
+            const stopTop = computedStyle.top;
+            const stopLeft = computedStyle.left;
+
+            // Remove a transição e fixa o trator no lugar
+            tractor.style.transition = "none";
+            tractor.style.top = stopTop;
+            tractor.style.left = stopLeft;
+
+            mode.innerText = "EMERGENCY STOP";
+            mode.style.color = "var(--neon-red)";
+            speed.innerText = "0.0 km/h";
+            addLog("COMANDO: Missão abortada pelo operador.");
+            addLog("ALERTA: Motores travados.");
         }
 
-        function abortar() {
-            isRunning = false;
-            modeText.innerText = "INTERROMPIDO";
-            modeText.style.color = "var(--neon-red)";
-            speedText.innerText = "0.0 km/h";
-            addLog("!!! PARADA DE EMERGÊNCIA ATIVADA !!!");
-            alert("SISTEMA BLOQUEADO. Verifique a unidade TR-800.");
-        }
-
-        function retornarBase() {
-            addLog("Retornando para hangar de reabastecimento...");
+        function resetUnit() {
+            missionActive = false;
+            clearTimeout(timeoutId);
+            tractor.style.transition = "all 0.5s ease-out";
             tractor.style.top = "80%";
             tractor.style.left = "10%";
+            areaVal = 0;
+            area.innerText = "0.00 ha";
+            mode.innerText = "IDLE";
+            mode.style.color = "white";
+            speed.innerText = "0.0 km/h";
+            addLog("Sistema resetado para posição inicial.");
         }
     </script>
 </body>
