@@ -11,7 +11,6 @@
             --neon-blue: #00e1ff;
             --neon-green: #00ff88;
             --neon-red: #ff3e3e;
-            --dirt-brown: #3d2b1f;
         }
 
         body, html {
@@ -20,66 +19,39 @@
             font-family: 'JetBrains Mono', monospace; overflow: hidden;
         }
 
-        /* AMBIENTE DE CAMPO (TALHÃO) COM A IMAGEM DE FUNDO */
+        /* CONTEINER DO CAMPO */
         #field-container {
             position: absolute; top: 50%; left: 45%;
             width: 750px; height: 550px;
             transform: translate(-50%, -50%);
-            /* UTILIZANDO A IMAGEM SALVA COMO FUNDO */
             background-image: url('Gemini_Generated_Image_y5jyp5y5jyp5y5jy.png');
             background-size: cover;
             background-position: center;
-            
             border: 4px solid #222;
             border-radius: 8px; z-index: 2;
             overflow: hidden;
             box-shadow: 0 0 50px rgba(0,0,0,0.5);
         }
 
-        /* IDENTIFICAÇÃO DO OBSTÁCULO VIRTUAL - SOBREPOSTO ÀS ROCHAS DA IMAGEM */
-        .obstacle-zone {
-            position: absolute; 
-            top: 38%; /* Ajustado para coincidir com as rochas na imagem */
-            left: 58%; /* Ajustado para coincidir com as rochas na imagem */
-            text-align: center; z-index: 3;
-            pointer-events: none; /* Não atrapalha o clique */
-        }
-        
-        /* Marcador visual da IA para a rocha */
-        .ai-marker {
-            width: 80px; height: 60px;
-            border: 2px solid var(--neon-red);
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(255, 62, 62, 0.5);
-            background: rgba(255, 62, 62, 0.1);
-            animation: pulse 2s infinite;
+        /* CANVAS PARA A LINHA DO GPS */
+        #gps-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            z-index: 5;
+            pointer-events: none;
         }
 
-        .warning-label {
-            font-size: 10px; color: var(--neon-red);
-            background: rgba(0,0,0,0.8); padding: 2px 5px;
-            border: 1px solid var(--neon-red); display: block; margin-top: 5px;
-            font-weight: bold;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 15px rgba(255, 62, 62, 0.5); }
-            50% { box-shadow: 0 0 30px rgba(255, 62, 62, 0.8); border-color: #ff6b6b; }
-            100% { box-shadow: 0 0 15px rgba(255, 62, 62, 0.5); }
-        }
-
-        /* UNIDADE TRATOR (🚜) */
         .unit {
             position: absolute; width: 45px; height: 60px;
             background: var(--neon-blue); border-radius: 4px;
             top: 80%; left: 10%; 
-            transition: all 0s linear; /* Controlado via JS */
+            transition: all 0s linear;
             box-shadow: 0 0 20px var(--neon-blue);
             display: flex; align-items: center; justify-content: center; font-size: 24px;
             z-index: 10;
         }
 
-        /* PAINÉIS (MANTIDOS CONFORME SOLICITADO) */
+        /* PAINÉIS */
         .panel {
             position: absolute; background: rgba(0, 10, 15, 0.95);
             border: 1px solid var(--neon-blue); padding: 20px;
@@ -99,10 +71,13 @@
             color: var(--neon-blue); padding: 12px; width: 100%;
             cursor: pointer; font-weight: bold; margin-bottom: 10px;
             font-family: 'JetBrains Mono'; text-transform: uppercase;
+            transition: 0.3s;
         }
-        .btn:hover { background: var(--neon-blue); color: #000; }
-        .btn-stop { border-color: var(--neon-red); color: var(--neon-red); }
-        .btn-stop:hover { background: var(--neon-red); color: white; }
+        .btn:hover:not(:disabled) { background: var(--neon-blue); color: #000; }
+        .btn:disabled { border-color: #444; color: #444; cursor: not-allowed; }
+        
+        .btn-scan { border-color: var(--neon-green); color: var(--neon-green); }
+        .btn-scan:hover:not(:disabled) { background: var(--neon-green); color: #000; }
 
         .log-entry { margin-bottom: 6px; padding-left: 8px; border-left: 2px solid var(--neon-blue); color: #ccc; }
         .back-btn { position: fixed; top: 20px; left: 20px; color: white; text-decoration: none; font-size: 0.7rem; border: 1px solid #444; padding: 10px 20px; border-radius: 30px; z-index: 100; background: rgba(0,0,0,0.5); }
@@ -113,45 +88,48 @@
     <a href="agrovr.html" class="back-btn">← EXIT CENTRAL</a>
 
     <div id="field-container">
-        <div class="obstacle-zone">
-            <div class="ai-marker"></div>
-            <span class="warning-label">IA: ROCK_DETECTION</span>
-        </div>
-        
+        <canvas id="gps-canvas" width="750" height="550"></canvas>
         <div class="unit" id="tractor">🚜</div>
     </div>
 
     <div class="panel status-panel">
         <h2>Unidade: TR-800 Autonomy</h2>
-        <div class="data-row"><span class="label">STATUS:</span><span class="value" id="mode">IDLE</span></div>
+        <div class="data-row"><span class="label">STATUS:</span><span class="value" id="mode">STANDBY</span></div>
         <div class="data-row"><span class="label">VELOCIDADE:</span><span class="value" id="speed">0.0 km/h</span></div>
-        <div class="data-row"><span class="label">SATÉLITES:</span><span class="value">18 (FIX)</span></div>
-        <div class="data-row"><span class="label">BATERIA:</span><span class="value">92%</span></div>
+        <div class="data-row"><span class="label">GPS:</span><span class="value" id="gps-stat">LOCKING...</span></div>
         <div class="data-row"><span class="label">ÁREA:</span><span class="value" id="area">0.00 ha</span></div>
     </div>
 
     <div class="panel log-panel" id="log-box">
-        <div class="log-entry">> Sistema iniciado. Aguardando conexão...</div>
-        <div class="log-entry">> Link de satélite estabelecido.</div>
+        <div class="log-entry">> Central Online. Aguardando escaneamento...</div>
     </div>
 
     <div class="panel command-panel">
         <h2>Operações</h2>
-        <button class="btn" onclick="iniciarMissao()">Iniciar Trajeto</button>
-        <button class="btn" onclick="resetUnit()">Resetar Posição</button>
-        <button class="btn btn-stop" onclick="abortarMissao()">ABORTAR MISSÃO</button>
+        <button class="btn btn-scan" id="btn-scan" onclick="escanearTrajeto()">Escanear Trajeto</button>
+        <button class="btn" id="btn-start" onclick="iniciarMissao()" disabled>Iniciar Missão</button>
+        <button class="btn btn-stop" onclick="abortarMissao()">Abortar</button>
     </div>
 
     <script>
         const tractor = document.getElementById('tractor');
-        const mode = document.getElementById('mode');
-        const speed = document.getElementById('speed');
-        const area = document.getElementById('area');
+        const canvas = document.getElementById('gps-canvas');
+        const ctx = canvas.getContext('2d');
         const logBox = document.getElementById('log-box');
         
         let missionActive = false;
-        let areaVal = 0;
+        let routeScanned = false;
         let timeoutId;
+
+        // Pontos do trajeto para bater com a imagem (x, y em pixels)
+        const waypoints = [
+            {x: 80, y: 450},  // Início
+            {x: 250, y: 300}, // Subida
+            {x: 450, y: 250}, // Curva rocha 1
+            {x: 550, y: 280}, // Contorno rocha
+            {x: 650, y: 150}, // Subida final
+            {x: 600, y: 50}   // Fim
+        ];
 
         function addLog(text) {
             const entry = document.createElement('div');
@@ -161,6 +139,36 @@
             logBox.scrollTop = logBox.scrollHeight;
         }
 
+        function escanearTrajeto() {
+            if(routeScanned) return;
+            addLog("Iniciando escaneamento de terreno...");
+            document.getElementById('btn-scan').disabled = true;
+            
+            let i = 0;
+            const drawInterval = setInterval(() => {
+                if (i < waypoints.length - 1) {
+                    ctx.beginPath();
+                    ctx.moveTo(waypoints[i].x, waypoints[i].y);
+                    ctx.lineTo(waypoints[i+1].x, waypoints[i+1].y);
+                    ctx.strokeStyle = "#00e1ff";
+                    ctx.lineWidth = 3;
+                    ctx.setLineDash([5, 5]);
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = "#00e1ff";
+                    ctx.stroke();
+                    i++;
+                } else {
+                    clearInterval(drawInterval);
+                    addLog("Trajeto mais acessível identificado.");
+                    addLog("Obstáculos mapeados. Pronto para iniciar.");
+                    routeScanned = true;
+                    document.getElementById('btn-start').disabled = false;
+                    document.getElementById('gps-stat').innerText = "READY";
+                    document.getElementById('gps-stat').style.color = "var(--neon-green)";
+                }
+            }, 400);
+        }
+
         function setTractorPos(top, left, duration) {
             tractor.style.transition = `all ${duration}s linear`;
             tractor.style.top = top;
@@ -168,82 +176,49 @@
         }
 
         function iniciarMissao() {
-            if(missionActive) return;
+            if(!routeScanned || missionActive) return;
             missionActive = true;
+            document.getElementById('btn-start').disabled = true;
             
-            addLog("Iniciando motor elétrico...");
-            mode.innerText = "MOVING";
-            mode.style.color = "var(--neon-green)";
-            speed.innerText = "7.2 km/h";
+            addLog("Motores iniciados. Seguindo linha de GPS...");
+            document.getElementById('mode').innerText = "AUTÔNOMO";
+            document.getElementById('speed').innerText = "6.5 km/h";
 
-            // Fase 1: Sobe em direção ao obstáculo seguindo o trajeto na imagem
-            setTractorPos("40%", "20%", 3);
+            // Sequência de movimentos baseada nos waypoints
+            setTractorPos("50%", "28%", 3); // Vai até o meio
 
             timeoutId = setTimeout(() => {
                 if(!missionActive) return;
-                addLog("SENSOR: Obstáculo detectado (ROCHA)");
-                addLog("IA: Recalculando evasão para a direita...");
-                
-                // Fase 2: Desvio lateral seguindo a curva da imagem
-                setTractorPos("40%", "70%", 2);
+                addLog("Contornando formação rochosa...");
+                setTractorPos("48%", "68%", 2); // Faz a curva da rocha
 
                 timeoutId = setTimeout(() => {
                     if(!missionActive) return;
-                    addLog("IA: Obstáculo superado. Retomando trajeto B.");
-                    
-                    // Fase 3: Continua subindo para o final
-                    setTractorPos("10%", "80%", 3);
+                    addLog("Retomando alinhamento de plantio.");
+                    setTractorPos("5%", "75%", 4); // Vai até o topo
                     
                     timeoutId = setTimeout(() => {
-                        addLog("Missão finalizada com sucesso.");
+                        addLog("Destino alcançado. Desligando...");
                         missionActive = false;
-                        mode.innerText = "COMPLETED";
-                        speed.innerText = "0.0 km/h";
-                    }, 3000);
+                        document.getElementById('mode').innerText = "FINALIZADO";
+                        document.getElementById('speed').innerText = "0.0 km/h";
+                    }, 4000);
                 }, 2000);
             }, 3000);
-
-            // Contador de área
-            const areaInterval = setInterval(() => {
-                if(!missionActive) { clearInterval(areaInterval); return; }
-                areaVal += 0.01;
-                area.innerText = areaVal.toFixed(2) + " ha";
-            }, 500);
         }
 
         function abortarMissao() {
             missionActive = false;
             clearTimeout(timeoutId);
-            
-            // Pega a posição atual exata para parar onde está
             const computedStyle = window.getComputedStyle(tractor);
-            const stopTop = computedStyle.top;
-            const stopLeft = computedStyle.left;
-
-            // Remove a transição e fixa o trator no lugar
             tractor.style.transition = "none";
-            tractor.style.top = stopTop;
-            tractor.style.left = stopLeft;
+            tractor.style.top = computedStyle.top;
+            tractor.style.left = computedStyle.left;
 
-            mode.innerText = "EMERGENCY STOP";
-            mode.style.color = "var(--neon-red)";
-            speed.innerText = "0.0 km/h";
-            addLog("COMANDO: Missão abortada pelo operador.");
-            addLog("ALERTA: Motores travados.");
-        }
-
-        function resetUnit() {
-            missionActive = false;
-            clearTimeout(timeoutId);
-            tractor.style.transition = "all 0.5s ease-out";
-            tractor.style.top = "80%";
-            tractor.style.left = "10%";
-            areaVal = 0;
-            area.innerText = "0.00 ha";
-            mode.innerText = "IDLE";
-            mode.style.color = "white";
-            speed.innerText = "0.0 km/h";
-            addLog("Sistema resetado para posição inicial.");
+            document.getElementById('mode').innerText = "PARADA CRÍTICA";
+            document.getElementById('mode').style.color = "var(--neon-red)";
+            document.getElementById('speed').innerText = "0.0 km/h";
+            addLog("ALERTA: Movimento interrompido manualmente.");
         }
     </script>
 </body>
