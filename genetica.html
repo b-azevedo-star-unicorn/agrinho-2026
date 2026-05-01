@@ -39,10 +39,24 @@
             backdrop-filter: blur(5px);
         }
 
+        /* VIEWPORT E LINHA DE SCANNER */
         .sample-viewport {
             position: relative; background: #000; border-radius: 20px;
             border: 2px solid #1a2a25; overflow: hidden;
             display: flex; align-items: center; justify-content: center;
+        }
+
+        #scan-line {
+            position: absolute; width: 100%; height: 4px;
+            background: var(--bio-green);
+            box-shadow: 0 0 15px var(--bio-green);
+            top: -10px; left: 0; z-index: 20;
+            display: none;
+        }
+
+        @keyframes scanning {
+            0% { top: 0%; }
+            100% { top: 100%; }
         }
 
         #sample-img {
@@ -98,7 +112,7 @@
         .stat-value { font-size: 0.9rem; color: var(--bio-green); font-weight: bold; display: block; }
     </style>
 </head>
-<body>
+<body onload="avisoPedagogico()">
 
     <header>
         <div class="logo">BIO-GEN <span>V.3.0</span></div>
@@ -122,6 +136,7 @@
         </section>
 
         <section class="sample-viewport">
+            <div id="scan-line"></div>
             <div class="lens-overlay" id="lens"></div>
             <div class="microscope-lens" id="lens-dark"></div>
             <img src="https://via.placeholder.com/400x400/051510/00ff88?text=Aguardando+Amostra" id="sample-img">
@@ -169,6 +184,11 @@
         let microscopeActive = false;
         let selectedSample = null;
 
+        // AVISO INICIAL
+        function avisoPedagogico() {
+            alert("AVISO: Este simulador é para fins estritamente pedagógicos e educacionais.");
+        }
+
         function toggleGallery() {
             const gal = document.getElementById('gallery-overlay');
             gal.style.display = gal.style.display === 'flex' ? 'none' : 'flex';
@@ -180,9 +200,17 @@
             document.getElementById('val-nome').innerText = cientifico;
             document.getElementById('log-display').innerHTML += `> Amostra ${nome} carregada.<br>`;
             toggleGallery();
+            resetResultados();
+        }
+
+        function resetResultados() {
             document.getElementById('val-saude').innerText = "---";
             document.getElementById('val-hidra').innerText = "---";
+            document.getElementById('val-defesa').innerText = "---";
+            document.getElementById('val-cresc').innerText = "---";
             document.getElementById('result-badge').style.display = "none";
+            document.getElementById('status-tag').innerText = "SISTEMA PRONTO";
+            document.getElementById('status-tag').style.color = "var(--dna-cyan)";
         }
 
         function toggleMicroscope() {
@@ -206,16 +234,43 @@
 
         function runAnalysis() {
             if(!selectedSample) return alert("Selecione uma amostra!");
-            document.getElementById('status-tag').innerText = "ANALISANDO...";
+            
+            const btn = document.getElementById('anal-btn');
+            const status = document.getElementById('status-tag');
+            const scanLine = document.getElementById('scan-line');
+            const log = document.getElementById('log-display');
+
+            btn.disabled = true;
+            status.innerText = "ANALISANDO...";
+            status.style.color = "yellow";
+            log.innerHTML += `> Iniciando escaneamento molecular...<br>`;
+
+            // Ativa a linha de scan com animação
+            scanLine.style.display = "block";
+            scanLine.style.animation = "scanning 2s linear infinite";
+
             setTimeout(() => {
-                document.getElementById('status-tag').innerText = "CONCLUÍDO";
-                document.getElementById('val-saude').innerText = "94.8%";
-                document.getElementById('val-hidra').innerText = "Estável";
-                document.getElementById('val-defesa').innerText = "Alta";
-                document.getElementById('val-cresc').innerText = "Fase 2";
+                // Finaliza o scan
+                scanLine.style.display = "none";
+                scanLine.style.animation = "none";
+                
+                // Mostra resultados
+                status.innerText = "ANÁLISE CONCLUÍDA";
+                status.style.color = "var(--bio-green)";
+                document.getElementById('val-saude').innerText = "96.4% (EXCELENTE)";
+                document.getElementById('val-hidra').innerText = "Equilibrada";
+                document.getElementById('val-defesa').innerText = "Ativa";
+                document.getElementById('val-cresc').innerText = "Maturação";
                 document.getElementById('result-badge').style.display = "block";
-                document.getElementById('veredito-text').innerText = "Amostra saudável.";
-            }, 1000);
+                document.getElementById('veredito-text').innerText = "Amostra validada. Nenhuma anomalia genética detectada.";
+                
+                log.innerHTML += `> Análise da amostra ${selectedSample} concluída.<br>`;
+                btn.disabled = false;
+
+                // Alerta de conclusão
+                alert("Análise concluída com sucesso!");
+                
+            }, 4000); // 4 segundos de análise
         }
     </script>
 </body>
