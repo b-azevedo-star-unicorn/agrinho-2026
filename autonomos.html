@@ -19,7 +19,6 @@
             font-family: 'JetBrains Mono', monospace; overflow: hidden;
         }
 
-        /* CONTEINER DO CAMPO */
         #field-container {
             position: absolute; top: 50%; left: 45%;
             width: 750px; height: 550px;
@@ -33,7 +32,6 @@
             box-shadow: 0 0 50px rgba(0,0,0,0.5);
         }
 
-        /* CANVAS PARA A LINHA DO GPS */
         #gps-canvas {
             position: absolute;
             top: 0; left: 0;
@@ -44,14 +42,13 @@
         .unit {
             position: absolute; width: 45px; height: 60px;
             background: var(--neon-blue); border-radius: 4px;
-            top: 80%; left: 10%; 
+            top: 85%; left: 3%; /* Início ajustado para a entrada da estrada */
             transition: all 0s linear;
             box-shadow: 0 0 20px var(--neon-blue);
             display: flex; align-items: center; justify-content: center; font-size: 24px;
             z-index: 10;
         }
 
-        /* PAINÉIS */
         .panel {
             position: absolute; background: rgba(0, 10, 15, 0.95);
             border: 1px solid var(--neon-blue); padding: 20px;
@@ -75,7 +72,6 @@
         }
         .btn:hover:not(:disabled) { background: var(--neon-blue); color: #000; }
         .btn:disabled { border-color: #444; color: #444; cursor: not-allowed; }
-        
         .btn-scan { border-color: var(--neon-green); color: var(--neon-green); }
         .btn-scan:hover:not(:disabled) { background: var(--neon-green); color: #000; }
 
@@ -121,14 +117,14 @@
         let routeScanned = false;
         let timeoutId;
 
-        // Pontos do trajeto para bater com a imagem (x, y em pixels)
+        // WAYPOINTS AJUSTADOS PARA A ESTRADA NA IMAGEM (Evitando a rocha no centro)
         const waypoints = [
-            {x: 80, y: 450},  // Início
-            {x: 250, y: 300}, // Subida
-            {x: 450, y: 250}, // Curva rocha 1
-            {x: 550, y: 280}, // Contorno rocha
-            {x: 650, y: 150}, // Subida final
-            {x: 600, y: 50}   // Fim
+            {x: 50, y: 500},   // Entrada inferior esquerda
+            {x: 350, y: 350},  // Meio da estrada diagonal
+            {x: 600, y: 350},  // Início da curva (contornando a rocha por baixo/lado)
+            {x: 680, y: 250},  // Curva fechada na direita
+            {x: 630, y: 100},  // Subida final
+            {x: 650, y: 20}    // Saída superior
         ];
 
         function addLog(text) {
@@ -141,32 +137,36 @@
 
         function escanearTrajeto() {
             if(routeScanned) return;
-            addLog("Iniciando escaneamento de terreno...");
+            addLog("Mapeando estrada de terra...");
             document.getElementById('btn-scan').disabled = true;
             
             let i = 0;
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpa se houver algo
+
             const drawInterval = setInterval(() => {
                 if (i < waypoints.length - 1) {
                     ctx.beginPath();
                     ctx.moveTo(waypoints[i].x, waypoints[i].y);
                     ctx.lineTo(waypoints[i+1].x, waypoints[i+1].y);
-                    ctx.strokeStyle = "#00e1ff";
-                    ctx.lineWidth = 3;
-                    ctx.setLineDash([5, 5]);
-                    ctx.shadowBlur = 10;
+                    
+                    // LINHA MAIS GROSSA E BRILHANTE
+                    ctx.strokeStyle = "rgba(0, 225, 255, 0.8)";
+                    ctx.lineWidth = 6; // Espessura aumentada
+                    ctx.lineCap = "round";
+                    ctx.setLineDash([10, 15]); // Tracejado maior
+                    ctx.shadowBlur = 15;
                     ctx.shadowColor = "#00e1ff";
                     ctx.stroke();
                     i++;
                 } else {
                     clearInterval(drawInterval);
-                    addLog("Trajeto mais acessível identificado.");
-                    addLog("Obstáculos mapeados. Pronto para iniciar.");
+                    addLog("Trajeto validado. Estrada identificada.");
                     routeScanned = true;
                     document.getElementById('btn-start').disabled = false;
                     document.getElementById('gps-stat').innerText = "READY";
                     document.getElementById('gps-stat').style.color = "var(--neon-green)";
                 }
-            }, 400);
+            }, 500);
         }
 
         function setTractorPos(top, left, duration) {
@@ -180,27 +180,30 @@
             missionActive = true;
             document.getElementById('btn-start').disabled = true;
             
-            addLog("Motores iniciados. Seguindo linha de GPS...");
+            addLog("Seguindo rota GPS-1...");
             document.getElementById('mode').innerText = "AUTÔNOMO";
             document.getElementById('speed').innerText = "6.5 km/h";
 
-            // Sequência de movimentos baseada nos waypoints
-            setTractorPos("50%", "28%", 3); // Vai até o meio
+            // MOVIMENTOS SINCRONIZADOS COM OS WAYPOINTS (em % do container)
+            // 1. Diagonal inicial
+            setTractorPos("60%", "45%", 3); 
 
             timeoutId = setTimeout(() => {
                 if(!missionActive) return;
-                addLog("Contornando formação rochosa...");
-                setTractorPos("48%", "68%", 2); // Faz a curva da rocha
+                addLog("Realizando curva de desvio (ROCHA)...");
+                // 2. Curva na direita
+                setTractorPos("60%", "85%", 2); 
 
                 timeoutId = setTimeout(() => {
                     if(!missionActive) return;
-                    addLog("Retomando alinhamento de plantio.");
-                    setTractorPos("5%", "75%", 4); // Vai até o topo
+                    addLog("Subindo para saída Norte.");
+                    // 3. Subida final
+                    setTractorPos("5%", "82%", 4); 
                     
                     timeoutId = setTimeout(() => {
-                        addLog("Destino alcançado. Desligando...");
+                        addLog("Trajeto finalizado.");
                         missionActive = false;
-                        document.getElementById('mode').innerText = "FINALIZADO";
+                        document.getElementById('mode').innerText = "IDLE";
                         document.getElementById('speed').innerText = "0.0 km/h";
                     }, 4000);
                 }, 2000);
@@ -214,11 +217,9 @@
             tractor.style.transition = "none";
             tractor.style.top = computedStyle.top;
             tractor.style.left = computedStyle.left;
-
-            document.getElementById('mode').innerText = "PARADA CRÍTICA";
+            document.getElementById('mode').innerText = "ABORTADO";
             document.getElementById('mode').style.color = "var(--neon-red)";
-            document.getElementById('speed').innerText = "0.0 km/h";
-            addLog("ALERTA: Movimento interrompido manualmente.");
+            addLog("PARADA MANUAL ATIVADA.");
         }
     </script>
 </body>
