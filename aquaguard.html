@@ -25,7 +25,6 @@
             min-height: 100vh;
         }
 
-        /* ANIMAÇÃO DE BOLHAS */
         .bubble {
             position: absolute;
             background: rgba(255, 255, 255, 0.2);
@@ -96,7 +95,6 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* TANQUE */
         .tank-wrap {
             width: 140px;
             height: 240px;
@@ -125,17 +123,23 @@
 
         @keyframes move-wave { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        /* CONTROLES REORGANIZADOS */
-        label { font-size: 0.8rem; color: var(--accent); font-weight: bold; margin-top: 10px; display: block; }
+        label { font-size: 0.8rem; color: var(--accent); font-weight: bold; margin-top: 12px; display: block; }
         
+        /* CORREÇÃO DOS SELECTS */
         select {
             width: 100%;
             padding: 12px;
             border-radius: 12px;
-            background: rgba(255,255,255,0.1);
+            background: #1b263b; /* Fundo sólido para leitura */
             color: white;
             border: 1px solid var(--water);
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+
+        select option {
+            background: #0d1b2a; /* Garante que as opções sejam legíveis */
+            color: white;
         }
 
         .speed-control {
@@ -143,7 +147,7 @@
             background: rgba(0,0,0,0.3);
             border-radius: 12px;
             padding: 4px;
-            margin-bottom: 20px;
+            margin-bottom: 5px;
         }
 
         .speed-btn {
@@ -170,6 +174,7 @@
             cursor: pointer;
             text-transform: uppercase;
             transition: 0.3s;
+            margin-top: 15px;
         }
 
         .btn-chuva { background: var(--accent); color: var(--deep); }
@@ -217,7 +222,13 @@
                     <button id="sp-sim" class="speed-btn" onclick="setSpeed('sim')">SIMULAÇÃO 24H</button>
                 </div>
 
-                <label>AÇÃO MANUAL:</label>
+                <label>TIPO DE PULSO DE IRRIGAÇÃO:</label>
+                <select id="tipo-pulso">
+                    <option value="curto">⚡ Pulso Curto (Economia)</option>
+                    <option value="longo">🌊 Pulso Longo (Profundo)</option>
+                    <option value="intermitente">🔄 Intermitente (Vazão Alternada)</option>
+                </select>
+
                 <button id="btn-chuva" class="btn-main btn-chuva" onclick="toggleChuva()">LIGAR IRRIGAÇÃO</button>
             </div>
 
@@ -240,14 +251,13 @@
                 
                 <div style="margin-top: 20px; background: rgba(0,245,212,0.1); padding: 15px; border-radius: 15px;">
                     <small>IA SUGERE:</small>
-                    <p style="font-size: 0.8rem; margin: 5px 0;">O nível está estável. Recomendamos irrigação em pulsos curtos para economizar energia.</p>
+                    <p id="sugestao-ia" style="font-size: 0.8rem; margin: 5px 0;">O nível está estável. Recomendamos irrigação em pulsos curtos para economizar energia.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // GERADOR DE BOLHAS
         const bg = document.getElementById('bubble-bg');
         for (let i = 0; i < 15; i++) {
             const b = document.createElement('div');
@@ -279,14 +289,21 @@
 
         function toggleChuva() {
             const btn = document.getElementById('btn-chuva');
+            const pulso = document.getElementById('tipo-pulso').value;
+
             if (!irrigando) {
                 if (nivel <= 1) return;
                 irrigando = true;
                 btn.innerText = "PARAR IRRIGAÇÃO";
                 btn.classList.add('active');
                 
-                const taxaConsumo = speedMode === 'real' ? 0.05 : 0.8;
-                const taxaSolo = speedMode === 'real' ? 0.08 : 1.2;
+                // Base de consumo
+                let taxaConsumo = speedMode === 'real' ? 0.05 : 0.8;
+                let taxaSolo = speedMode === 'real' ? 0.08 : 1.2;
+
+                // Modifica taxas baseado no pulso
+                if (pulso === 'longo') { taxaConsumo *= 2; taxaSolo *= 2; }
+                if (pulso === 'curto') { taxaConsumo *= 0.5; taxaSolo *= 0.5; }
 
                 intervalo = setInterval(() => {
                     if (nivel > 0) {
@@ -316,7 +333,13 @@
             document.getElementById('water-fill').style.height = nivel + "%";
             document.getElementById('txt-perc').innerText = Math.floor(nivel) + "%";
             document.getElementById('solo-val').innerText = Math.floor(solo) + "%";
-            document.getElementById('vazao').innerText = irrigando ? (speedMode === 'real' ? "2.5 L/s" : "45.0 L/s") : "0 L/s";
+            
+            const pulso = document.getElementById('tipo-pulso').value;
+            let vazaoBase = (speedMode === 'real' ? 2.5 : 45.0);
+            if (pulso === 'longo') vazaoBase *= 2;
+            if (pulso === 'curto') vazaoBase *= 0.5;
+
+            document.getElementById('vazao').innerText = irrigando ? vazaoBase.toFixed(1) + " L/s" : "0 L/s";
             
             const fill = document.getElementById('water-fill');
             fill.style.background = nivel < 20 ? "var(--danger)" : "linear-gradient(180deg, var(--accent) 0%, var(--water) 100%)";
@@ -330,9 +353,18 @@
             
             const setor = document.getElementById('setor').value;
             const title = document.getElementById('display-title');
-            if(setor === 'nascente') title.innerText = "Nível da Reserva";
-            else if(setor === 'estufa') title.innerText = "Nível Hidropônico";
-            else title.innerText = "Nível do Reservatório";
+            const sugestao = document.getElementById('sugestao-ia');
+
+            if(setor === 'nascente') {
+                title.innerText = "Nível da Reserva";
+                sugestao.innerText = "Área de Preservação: Mantenha a irrigação desligada a menos que haja seca severa detectada.";
+            } else if(setor === 'estufa') {
+                title.innerText = "Nível Hidropônico";
+                sugestao.innerText = "Estufa exige pulsos curtos e constantes (Intermitente) para manter as raízes oxigenadas.";
+            } else {
+                title.innerText = "Nível do Reservatório";
+                sugestao.innerText = "O nível está estável. Recomendamos irrigação em pulsos curtos para economizar energia.";
+            }
         }
     </script>
 </body>
