@@ -45,23 +45,22 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
             background-size: 100% 2px, 3px 100%;
-            pointer-events: none; z-index: 100; /* Garante que as linhas fiquem por cima de tudo */
+            pointer-events: none; z-index: 100;
         }
 
         .interface {
-            position: relative; z-index: 50; /* Aumentado para ficar à frente do fundo */
+            position: relative; z-index: 50;
             height: 100vh; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
         }
 
-        /* HUD HEADER - CORRIGIDO */
         .hud-header {
             position: absolute; 
             top: 60px; 
             text-align: center;
             font-family: 'JetBrains Mono', monospace;
-            z-index: 60; /* Maior que a grid para nunca ficar atrás */
-            pointer-events: none; /* Permite clicar no que estiver atrás se necessário */
+            z-index: 60;
+            pointer-events: none;
         }
 
         .hud-header h1 {
@@ -84,8 +83,11 @@
         .training-grid {
             display: flex; gap: 35px; padding: 20px;
             perspective: 1500px;
-            margin-top: 100px; /* Espaço para o título não encavalar */
+            margin-top: 100px;
         }
+
+        /* AJUSTE PARA O CARD SER UM LINK */
+        .card-link { text-decoration: none; color: inherit; display: block; }
 
         .vr-card {
             width: 320px; height: 420px;
@@ -99,6 +101,7 @@
             cursor: pointer;
             position: relative;
             z-index: 55;
+            box-sizing: border-box;
         }
 
         .vr-card:hover {
@@ -164,13 +167,15 @@
         </header>
 
         <div class="training-grid">
-            <div class="vr-card" onclick="startSim('Drones')">
-                <div style="font-size: 0.7rem; color: var(--vr-blue); margin-bottom: 10px; font-family: 'JetBrains Mono';">DRONE_PILOT_V1</div>
-                <i>🛸</i>
-                <h3>Pilotagem de Drones</h3>
-                <p>Mapeamento térmico e aplicação de insumos com visão computacional de alta precisão.</p>
-                <button class="btn-start">INICIAR SESSÃO</button>
-            </div>
+            <a href="drones.html" class="card-link">
+                <div class="vr-card">
+                    <div style="font-size: 0.7rem; color: var(--vr-blue); margin-bottom: 10px; font-family: 'JetBrains Mono';">DRONE_PILOT_V1</div>
+                    <i>🛸</i>
+                    <h3>Pilotagem de Drones</h3>
+                    <p>Mapeamento térmico e aplicação de insumos com visão computacional de alta precisão.</p>
+                    <button class="btn-start">INICIAR SESSÃO</button>
+                </div>
+            </a>
 
             <div class="vr-card" onclick="startSim('Maquinário')">
                 <div style="font-size: 0.7rem; color: var(--vr-blue); margin-bottom: 10px; font-family: 'JetBrains Mono';">MECH_ENG_V4</div>
