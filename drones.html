@@ -3,73 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drone Pilot Pro | SustentaAgro VR</title>
+    <title>Drone Pilot Infinity | SustentaAgro VR</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@600&display=swap');
 
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background: #000; color: #00ff88;
+            background: #050a05; color: #00ff88;
             font-family: 'JetBrains Mono', monospace; overflow: hidden;
         }
 
-        /* VISTA DA FAZENDA (BACKGROUND DINÂMICO) */
-        .camera-feed {
+        /* MAPA INFINITO (TILED BACKGROUND) */
+        #feed {
             position: fixed; 
-            top: 50%; left: 50%; 
-            width: 150%; height: 150%;
-            background: url('https://images.unsplash.com/photo-1624720114708-0cbd6ee41f4e?auto=format&fit=crop&q=80&w=2000') no-repeat center center;
-            background-size: cover;
-            filter: saturate(1.1) contrast(1.1);
+            top: 0; left: 0;
+            /* Tamanho gigante para não mostrar bordas durante o movimento */
+            width: 400vw; height: 400vh;
+            /* Imagem de plantação que permite repetição (tiling) */
+            background-image: url('https://www.transparenttextures.com/patterns/grass.png'), 
+                              url('https://images.unsplash.com/photo-1589923188900-85dae523342b?auto=format&fit=crop&q=80&w=800');
+            background-repeat: repeat;
+            background-size: 300px; /* Ajusta o tamanho da repetição */
             z-index: 1;
-            transform: translate(-50%, -50%) scale(1);
-            transition: transform 0.2s cubic-bezier(0.1, 0.7, 0.1, 1);
+            /* Começa centralizado */
+            margin-left: -150vw;
+            margin-top: -150vh;
+            transition: transform 0.1s linear;
+            filter: saturate(1.2) brightness(0.8);
         }
 
-        /* HUD OVERLAY */
+        /* HUD E ELEMENTOS FIXOS */
         .hud-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border: 40px solid transparent;
-            border-image: radial-gradient(circle, transparent 70%, rgba(0, 255, 136, 0.2) 100%) 40;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            border: 30px solid transparent;
+            border-image: radial-gradient(circle, transparent 60%, rgba(0, 255, 136, 0.15) 100%) 30;
             box-sizing: border-box; z-index: 10; pointer-events: none;
         }
 
         .crosshair {
             position: fixed; top: 50%; left: 50%;
-            width: 120px; height: 120px;
-            border: 1px solid rgba(0, 255, 136, 0.4);
+            width: 140px; height: 140px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
             transform: translate(-50%, -50%);
             border-radius: 50%; z-index: 15;
         }
-        .crosshair::before { content: ''; position: absolute; top: 50%; left: -30px; width: 180px; height: 1px; background: #00ff88; opacity: 0.5; }
-        .crosshair::after { content: ''; position: absolute; left: 50%; top: -30px; width: 1px; height: 180px; background: #00ff88; opacity: 0.5; }
+        .crosshair::before { content: ''; position: absolute; top: 50%; left: -40px; width: 220px; height: 1px; background: #00ff88; opacity: 0.3; }
+        .crosshair::after { content: ''; position: absolute; left: 50%; top: -40px; width: 1px; height: 220px; background: #00ff88; opacity: 0.3; }
 
-        /* PAINÉIS */
         .panel {
-            position: absolute; background: rgba(0, 0, 0, 0.8);
+            position: absolute; background: rgba(0, 0, 0, 0.85);
             padding: 20px; border: 1px solid #00ff88;
-            backdrop-filter: blur(8px); z-index: 20;
+            backdrop-filter: blur(10px); z-index: 20;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
         }
 
-        .left-panel { top: 40px; left: 40px; width: 220px; }
-        .right-panel { top: 40px; right: 40px; width: 260px; }
+        .left-panel { top: 40px; left: 40px; width: 220px; border-radius: 0 20px 20px 20px; }
+        .right-panel { top: 40px; right: 40px; width: 260px; border-radius: 20px 0 20px 20px; }
         
-        /* CONTROLES HELP */
         .controls-help {
-            position: absolute; bottom: 40px; right: 40px;
-            font-size: 0.7rem; color: rgba(255,255,255,0.5);
-            background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px;
+            position: absolute; bottom: 120px; right: 40px;
+            font-size: 0.7rem; color: #00ff88;
+            background: rgba(0,0,0,0.7); padding: 10px; border: 1px solid #00ff88;
         }
 
-        .bottom-panel { bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; gap: 40px; }
+        .bottom-panel { 
+            bottom: 40px; left: 50%; transform: translateX(-50%); 
+            display: flex; gap: 40px; padding: 10px 40px; border-radius: 50px;
+        }
 
-        h2 { font-family: 'Outfit'; margin: 0 0 10px 0; font-size: 0.9rem; text-transform: uppercase; color: #fff; }
+        h2 { font-family: 'Outfit'; margin: 0 0 10px 0; font-size: 0.9rem; text-transform: uppercase; color: #fff; letter-spacing: 2px; }
         .stat { margin-bottom: 8px; font-size: 0.75rem; }
-        .stat-val { color: #fff; float: right; font-weight: bold; }
+        .stat-val { color: #fff; float: right; font-weight: bold; font-family: 'JetBrains Mono'; }
 
         .scanner-line {
-            position: fixed; top: 0; left: 0; width: 100%; height: 3px;
-            background: #00ff88; box-shadow: 0 0 20px #00ff88;
+            position: fixed; top: 0; left: 0; width: 100%; height: 4px;
+            background: #00ff88; box-shadow: 0 0 30px #00ff88;
             z-index: 12; animation: scan 3s linear infinite; display: none;
         }
         @keyframes scan { from { top: 0; } to { top: 100%; } }
@@ -77,52 +85,53 @@
         .btn {
             background: #00ff88; color: #000; border: none; padding: 12px;
             font-weight: bold; cursor: pointer; width: 100%; font-family: 'JetBrains Mono';
-            margin-top: 10px; transition: 0.3s;
+            margin-top: 10px; text-transform: uppercase;
         }
-        .btn:hover { background: #fff; box-shadow: 0 0 15px #00ff88; }
+        .btn:hover { background: #fff; }
 
         .back-btn {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            color: #fff; text-decoration: none; font-size: 0.7rem; border: 1px solid #fff;
-            padding: 8px 20px; border-radius: 20px; z-index: 100; transition: 0.3s;
+            color: #fff; text-decoration: none; font-size: 0.7rem; border: 1px solid rgba(255,255,255,0.5);
+            padding: 8px 20px; border-radius: 20px; z-index: 100;
         }
-        .back-btn:hover { background: #fff; color: #000; }
     </style>
 </head>
 <body>
 
-    <a href="agrovr.html" class="back-btn">TERMINAR MISSÃO</a>
+    <a href="agrovr.html" class="back-btn">RETURN TO BASE</a>
     <div class="scanner-line" id="scanner"></div>
-    <div class="camera-feed" id="feed"></div>
+    
+    <div id="feed"></div>
+    
     <div class="hud-overlay"></div>
     <div class="crosshair"></div>
 
     <div class="panel left-panel">
-        <h2>Flight Telemetry</h2>
+        <h2>Telemetry</h2>
         <div class="stat">ALTITUDE: <span class="stat-val" id="alt">50m</span></div>
-        <div class="stat">VELOCIDADE: <span class="stat-val" id="vel">0km/h</span></div>
-        <div class="stat">SINAL: <span class="stat-val" style="color:#00ff88">FORTE</span></div>
-        <button class="btn" onclick="toggleScan()">SCANNER DE PRAGAS</button>
+        <div class="stat">SPEED: <span class="stat-val" id="vel">0km/h</span></div>
+        <div class="stat">BATTERY: <span class="stat-val">94%</span></div>
+        <button class="btn" onclick="toggleScan()">Deep Scan</button>
     </div>
 
     <div class="panel right-panel">
-        <h2>Live Analysis</h2>
-        <div id="status-analise">SISTEMA OK.</div>
-        <div id="results" style="display:none; margin-top: 10px; border-top: 1px solid #333; padding-top: 10px;">
-            <div class="stat">CULTURA: <span class="stat-val">SOJA</span></div>
-            <div class="stat">ESTRESSE HÍDRICO: <span class="stat-val">BAIXO</span></div>
-            <div class="stat">ANOMALIAS: <span class="stat-val" style="color:#ffbe0b">DETECTADAS</span></div>
+        <h2>Field Data</h2>
+        <div id="status-analise">SYSTEM READY.</div>
+        <div id="results" style="display:none; margin-top: 10px; border-top: 1px solid #00ff88; padding-top: 10px;">
+            <div class="stat">PLANT HEALTH: <span class="stat-val">98%</span></div>
+            <div class="stat">NITROGEN: <span class="stat-val">OPTIMAL</span></div>
+            <div class="stat">PESTS: <span class="stat-val" style="color:#ffbe0b">NONE</span></div>
         </div>
     </div>
 
     <div class="controls-help">
-        SETAS: Mover | W: Subir | S: Descer
+        ARROWS: Fly | W: Up | S: Down
     </div>
 
     <div class="panel bottom-panel">
-        <div class="stat">LAT: <span id="lat">-24.1289</span></div>
-        <div class="stat">LNG: <span id="lng">-51.4122</span></div>
-        <div class="stat">GPS: <span style="color:#00ff88">FIXED</span></div>
+        <div class="stat">X: <span id="pos-x">0</span></div>
+        <div class="stat">Y: <span id="pos-y">0</span></div>
+        <div class="stat">MODE: <span style="color:#00ff88">MANUAL_FLIGHT</span></div>
     </div>
 
     <script>
@@ -131,58 +140,60 @@
         const statusAnalise = document.getElementById('status-analise');
         const results = document.getElementById('results');
 
-        let posX = -50;
-        let posY = -50;
+        let posX = 0;
+        let posY = 0;
         let zoom = 1;
         let altitude = 50;
 
-        // Controle de Voo por Teclado
+        // Controle de Voo
         document.addEventListener('keydown', (e) => {
-            const step = 2; // Velocidade do movimento
+            const step = 30; // Passo do movimento
             
+            // Simula movimento infinito movendo o background-position
             switch(e.key) {
                 case "ArrowUp":    posY += step; break;
                 case "ArrowDown":  posY -= step; break;
                 case "ArrowLeft":  posX += step; break;
                 case "ArrowRight": posX -= step; break;
                 case "w": case "W": 
-                    if(zoom < 1.5) { zoom += 0.05; altitude += 1; } 
+                    if(zoom < 2) { zoom += 0.05; altitude += 2; } 
                     break;
                 case "s": case "S": 
-                    if(zoom > 0.8) { zoom -= 0.05; altitude -= 1; } 
+                    if(zoom > 0.5) { zoom -= 0.05; altitude -= 2; } 
                     break;
             }
             updateFlight();
         });
 
         function updateFlight() {
-            feed.style.transform = `translate(${posX}%, ${posY}%) scale(${zoom})`;
+            // Em vez de mover o objeto, movemos a posição da imagem de fundo
+            // Isso cria o efeito de mapa infinito
+            feed.style.backgroundPosition = `${posX}px ${posY}px`;
+            feed.style.transform = `scale(${zoom})`;
+            
             document.getElementById('alt').innerText = altitude + "m";
-            document.getElementById('vel').innerText = "24km/h";
+            document.getElementById('vel').innerText = "42km/h";
+            document.getElementById('pos-x').innerText = Math.floor(posX);
+            document.getElementById('pos-y').innerText = Math.floor(posY);
             
-            // Coordenadas mudam conforme move
-            document.getElementById('lat').innerText = (-24.1289 + (posY/5000)).toFixed(4);
-            document.getElementById('lng').innerText = (-51.4122 + (posX/5000)).toFixed(4);
-            
-            // Resetar velocidade após parar
             clearTimeout(window.velTimeout);
             window.velTimeout = setTimeout(() => {
                 document.getElementById('vel').innerText = "0km/h";
-            }, 500);
+            }, 300);
         }
 
         function toggleScan() {
             if (scanner.style.display === 'block') {
                 scanner.style.display = 'none';
-                statusAnalise.innerText = "SISTEMA OK.";
+                statusAnalise.innerText = "SYSTEM READY.";
                 results.style.display = 'none';
             } else {
                 scanner.style.display = 'block';
-                statusAnalise.innerHTML = "<span style='color:#00ff88'>SCANNING...</span>";
+                statusAnalise.innerHTML = "<span style='color:#00ff88'>SCANNING BIOMASS...</span>";
                 setTimeout(() => {
-                    statusAnalise.innerHTML = "ANÁLISE COMPLETA.";
+                    statusAnalise.innerHTML = "ANALYSIS COMPLETE.";
                     results.style.display = 'block';
-                }, 2500);
+                }, 2000);
             }
         }
     </script>
