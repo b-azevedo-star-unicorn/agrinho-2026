@@ -3,139 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AquaGuard Hub | Gestão Agrícola</title>
+    <title>AgroTech Hub v2.0 | Agrinho 2026</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Outfit:wght@300;600&display=swap');
-
         :root {
-            --primary: #00f5d4;
-            --accent: #00b4d8;
-            --bg: #000814;
+            --primary: #00ff88;
+            --secondary: #00d4ff;
+            --dark: #0a0a0a;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --text: #e0e0e0;
         }
 
         body {
-            font-family: 'Outfit', sans-serif;
-            background: var(--bg);
-            color: white;
+            font-family: 'Inter', sans-serif;
+            background: #050505;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(0, 255, 136, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 212, 255, 0.05) 0px, transparent 50%);
+            color: var(--text);
             margin: 0;
+            padding: 40px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            /* Se você tiver o vídeo, ele rodará ao fundo aqui */
-            background: linear-gradient(135deg, #000814 0%, #023e8a 100%);
         }
 
-        .overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1;
-        }
-
-        .content {
-            position: relative;
-            z-index: 2;
+        header {
             text-align: center;
-            width: 90%;
-            max-width: 1100px;
-        }
-
-        h1 {
-            font-family: 'Fredoka', sans-serif;
-            font-size: 4.5rem;
-            margin-bottom: 10px;
-            letter-spacing: -1px;
-        }
-
-        .subtitle {
-            font-size: 1.2rem;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 4px;
+            max-width: 800px;
             margin-bottom: 50px;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
+        header h1 {
+            font-size: 3rem;
+            letter-spacing: -1px;
+            margin-bottom: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        @media (max-width: 850px) {
-            .grid { grid-template-columns: 1fr; }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1300px;
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 30px;
-            padding: 45px 20px;
-            text-decoration: none;
-            color: white;
-            transition: all 0.3s ease;
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 25px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
             flex-direction: column;
-            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            text-decoration: none;
         }
 
         .card:hover {
-            transform: translateY(-10px);
-            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.03);
             border-color: var(--primary);
-            box-shadow: 0 15px 30px rgba(0, 245, 212, 0.2);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
-        .card i {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
+        .badge {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 50px;
+            background: rgba(255,255,255,0.1);
+            width: fit-content;
+            margin-bottom: 15px;
+            color: var(--secondary);
         }
 
-        .card h2 {
-            font-family: 'Fredoka', sans-serif;
-            font-size: 1.8rem;
-            margin: 10px 0;
+        .icon {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.25rem;
+            color: #fff;
         }
 
         .card p {
             font-size: 0.9rem;
-            color: #aaa;
-            margin: 0;
+            line-height: 1.5;
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background: none;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: 0.3s;
+            text-align: center;
+        }
+
+        .card:hover .btn {
+            background: var(--primary);
+            color: #000;
+        }
+
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #555;
         }
     </style>
 </head>
 <body>
 
-    <div class="overlay"></div>
+    <header>
+        <h1>SustentaAgro <span style="font-weight: 300;">OS</span></h1>
+        <p>Sistema Operacional para o Campo Sustentável do Futuro</p>
+    </header>
 
-    <div class="content">
-        <header>
-            <h1>AquaGuard</h1>
-            <div class="subtitle">Smart Farming Solutions</div>
-        </header>
+    <div class="grid-container">
+        
+        <a href="bioradar.html" class="card">
+            <div class="badge">Circular</div>
+            <div class="icon">🔄</div>
+            <h3>Bio-Radar</h3>
+            <p>Marketplace para troca e venda de resíduos orgânicos entre fazendas vizinhas.</p>
+            <div class="btn">Abrir Mapa de Resíduos</div>
+        </a>
 
-        <div class="grid">
-            <a href="aquaguard.html" class="card">
-                <i>💧</i>
-                <h2>AquaGuard</h2>
-                <p>Gestão Hídrica & Tanques</p>
-            </a>
+        <a href="carbono.html" class="card">
+            <div class="badge">Finanças</div>
+            <div class="icon">🍃</div>
+            <h3>Carbon Wallet</h3>
+            <p>Simulador de rentabilidade para áreas de reserva legal e reflorestamento.</p>
+            <div class="btn">Simular Ganhos</div>
+        </a>
 
-            <a href="climate.html" class="card">
-                <i>☁️</i>
-                <h2>Climate AI</h2>
-                <p>Previsão & Sensores Ar</p>
-            </a>
+        <a href="legacy.html" class="card">
+            <div class="badge">Sucessão</div>
+            <div class="icon">📈</div>
+            <h3>Legacy Pro</h3>
+            <p>Projeção de valorização da terra com tecnologias sustentáveis para a próxima geração.</p>
+            <div class="btn">Ver Projeção</div>
+        </a>
 
-            <a href="#" class="card">
-                <i>🥽</i>
-                <h2>BioVR 360</h2>
-                <p>Tour Virtual na Fazenda</p>
-            </a>
+        <a href="rastroverde.html" class="card">
+            <div class="badge">Blockchain</div>
+            <div class="icon">🔗</div>
+            <h3>Rastro Verde</h3>
+            <p>Rastreabilidade total da produção com geração de QR Code para o consumidor final.</p>
+            <div class="btn">Rastrear Lote</div>
+        </a>
+
+        <a href="biolab.html" class="card">
+            <div class="badge">Biotecnologia</div>
+            <div class="icon">🧪</div>
+            <h3>BioLab Assist</h3>
+            <p>Guia interativo para reduzir químicos usando controle biológico e biopesticidas.</p>
+            <div class="btn">Consultar Bio-Receitas</div>
+        </a>
+
+        <a href="aquaguard.html" class="card">
+            <div class="badge">Hidrologia</div>
+            <div class="icon">💧</div>
+            <h3>AquaGuard</h3>
+            <p>Monitoramento remoto de nascentes e qualidade da água em tempo real.</p>
+            <div class="btn">Monitorar Águas</div>
+        </a>
+
+        <div class="card" onclick="alert('Módulo em desenvolvimento')">
+            <div class="badge">Educação</div>
+            <div class="icon">🥽</div>
+            <h3>AgroVR Academy</h3>
+            <p>Treinamentos em Realidade Virtual para desperdício zero.</p>
+            <div class="btn">Iniciar Treinamento</div>
         </div>
+
+        <a href="climate.html" class="card">
+            <div class="badge">Inteligência</div>
+            <div class="icon">☁️</div>
+            <h3>Climate AI</h3>
+            <p>Previsão climática avançada para proteção de solo.</p>
+            <div class="btn">Previsão em Tempo Real</div>
+        </a>
     </div>
 
+    <footer>
+        Desenvolvido para o Concurso Agrinho 2026 | Tecnologia a serviço do Planeta
+    </footer>
 </body>
 </html>
