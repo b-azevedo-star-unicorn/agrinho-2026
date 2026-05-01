@@ -11,11 +11,11 @@
             --bio-green: #00ff88;
             --dna-cyan: #00e1ff;
             --bg-deep: #010806;
-            --glass: rgba(0, 255, 136, 0.15);
+            --glass: rgba(0, 255, 136, 0.1);
         }
 
         body, html {
-            margin: 0; padding: 0; width: 100vw; height: 100vh;
+            margin: 0; padding: 0; width: 100%; height: 100vh;
             background: var(--bg-deep); color: white;
             font-family: 'JetBrains Mono', monospace; overflow: hidden;
         }
@@ -23,49 +23,48 @@
         /* AVISO PEDAGÓGICO */
         #aviso-pedagogico {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 9999;
+            background: rgba(0,0,0,0.9); z-index: 9999;
             display: flex; justify-content: center; align-items: center;
         }
         .aviso-content {
-            background: #051510; border: 2px solid var(--bio-green); padding: 40px;
-            border-radius: 20px; text-align: center; max-width: 500px;
-            box-shadow: 0 0 50px rgba(0, 255, 136, 0.2);
+            background: #051510; border: 2px solid var(--bio-green); padding: 30px;
+            border-radius: 15px; text-align: center; max-width: 450px;
         }
 
         header {
-            height: 70px; padding: 0 50px; border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+            height: 65px; padding: 0 40px; border-bottom: 1px solid rgba(0, 255, 136, 0.2);
             display: flex; justify-content: space-between; align-items: center;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
         }
 
-        .logo { font-family: 'Outfit'; font-weight: 800; font-size: 1.6rem; color: var(--bio-green); }
+        .logo { font-family: 'Outfit'; font-weight: 800; font-size: 1.4rem; color: var(--bio-green); }
 
         main {
             display: grid; 
-            grid-template-columns: 380px 1fr 380px; /* COLUNAS LATERAIS LARGAS */
-            gap: 30px; padding: 30px; height: calc(100vh - 70px);
+            grid-template-columns: 350px 1fr 350px; /* Colunas laterais maiores para não sufocar o texto */
+            gap: 25px; padding: 25px; height: calc(100vh - 65px);
             box-sizing: border-box;
         }
 
         .panel {
             background: var(--glass); border: 1px solid rgba(0, 255, 136, 0.2);
-            border-radius: 20px; padding: 30px; display: flex; flex-direction: column;
-            backdrop-filter: blur(10px); height: 100%; box-sizing: border-box;
+            border-radius: 15px; padding: 25px; display: flex; flex-direction: column;
+            backdrop-filter: blur(5px); height: 100%; box-sizing: border-box;
         }
 
-        /* ÁREA DA IMAGEM CENTRAL - GRANDE */
+        /* ÁREA DA IMAGEM AMPLIADA */
         .sample-viewport {
-            position: relative; background: radial-gradient(circle, #0a1a15 0%, #000 100%);
-            border-radius: 25px; border: 2px solid #1a2a25; overflow: hidden;
+            position: relative; background: #000; border-radius: 20px;
+            border: 2px solid #1a2a25; overflow: hidden;
             display: flex; align-items: center; justify-content: center;
-            height: 100%;
+            height: 100%; box-shadow: inset 0 0 50px rgba(0,0,0,1);
         }
 
         #scan-line {
-            position: absolute; width: 100%; height: 6px;
+            position: absolute; width: 100%; height: 4px;
             background: var(--bio-green);
-            box-shadow: 0 0 25px var(--bio-green), 0 0 50px var(--bio-green);
-            top: -20px; left: 0; z-index: 100; display: none;
+            box-shadow: 0 0 20px var(--bio-green);
+            top: -10px; left: 0; z-index: 50; display: none;
         }
 
         @keyframes scanning {
@@ -74,103 +73,103 @@
         }
 
         #sample-img {
-            max-width: 98%; /* IMAGEM QUASE CHEIA */
-            max-height: 95%; 
-            transition: transform 0.6s cubic-bezier(0.2, 1, 0.3, 1);
-            filter: drop-shadow(0 0 20px rgba(0,255,136,0.2));
-            object-fit: contain;
+            max-width: 95%; /* Imagem maior na tela */
+            max-height: 90%; 
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: brightness(0.9); object-fit: contain;
         }
 
-        /* MICROSCÓPIO */
+        /* LENTE DO MICROSCÓPIO */
         .lens-overlay {
-            position: absolute; width: 400px; height: 400px;
-            border: 3px solid var(--bio-green); border-radius: 50%;
-            box-shadow: 0 0 0 9999px rgba(0,0,0,0.8);
-            display: none; z-index: 50; pointer-events: none;
+            position: absolute; width: 350px; height: 350px;
+            border: 2px solid var(--bio-green); border-radius: 50%;
+            box-shadow: 0 0 0 9999px rgba(0,0,0,0.75);
+            display: none; z-index: 11; pointer-events: none;
         }
 
-        /* GALERIA ESPAÇOSA */
+        /* GALERIA MAIS LARGA */
         #gallery-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.96); z-index: 1000;
+            background: rgba(0,0,0,0.95); z-index: 1000;
             display: none; justify-content: center; align-items: center;
         }
 
         .gallery-content {
-            background: #051510; padding: 50px; border: 2px solid var(--bio-green);
-            border-radius: 30px; display: grid; grid-template-columns: repeat(3, 220px); gap: 30px;
+            background: #051510; padding: 40px; border: 1px solid var(--bio-green);
+            border-radius: 20px; display: grid; grid-template-columns: repeat(3, 180px); gap: 20px;
         }
 
         .thumb {
-            cursor: pointer; border: 2px solid #333; border-radius: 15px;
-            padding: 20px; text-align: center; transition: 0.3s; background: rgba(255,255,255,0.03);
+            cursor: pointer; border: 2px solid #333; border-radius: 12px;
+            padding: 15px; text-align: center; transition: 0.3s; background: rgba(255,255,255,0.02);
         }
-        .thumb:hover { border-color: var(--bio-green); background: rgba(0,255,136,0.2); transform: scale(1.05); }
-        .thumb img { width: 150px; height: 150px; object-fit: cover; border-radius: 10px; margin-bottom: 15px; }
+        .thumb:hover { border-color: var(--bio-green); background: rgba(0,255,136,0.15); transform: translateY(-5px); }
+        .thumb img { width: 120px; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; }
 
+        /* BOTÕES */
         .btn {
             background: transparent; border: 1px solid var(--bio-green);
-            color: var(--bio-green); padding: 16px; border-radius: 10px;
-            cursor: pointer; font-family: 'Outfit'; font-weight: 800;
-            margin-bottom: 15px; transition: 0.3s; width: 100%;
-            text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem;
+            color: var(--bio-green); padding: 14px; border-radius: 8px;
+            cursor: pointer; font-family: 'Outfit'; font-weight: bold;
+            margin-bottom: 12px; transition: 0.3s; width: 100%;
+            text-transform: uppercase; letter-spacing: 1px;
         }
-        .btn:hover { background: var(--bio-green); color: black; box-shadow: 0 0 20px var(--bio-green); }
+        .btn:hover { background: var(--bio-green); color: black; box-shadow: 0 0 15px var(--bio-green); }
         .btn.active { background: var(--dna-cyan); color: black; border-color: var(--dna-cyan); }
 
-        .stat-box { margin-bottom: 25px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .stat-label { font-size: 0.75rem; color: #6a8a7a; text-transform: uppercase; }
-        .stat-value { font-size: 1.1rem; color: var(--bio-green); font-weight: bold; display: block; margin-top: 5px; }
+        .stat-box { margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .stat-label { font-size: 0.7rem; color: #6a8a7a; text-transform: uppercase; }
+        .stat-value { font-size: 1rem; color: var(--bio-green); font-weight: bold; display: block; margin-top: 4px; }
     </style>
 </head>
 <body>
 
     <div id="aviso-pedagogico">
         <div class="aviso-content">
-            <h2 style="color: var(--bio-green); font-family: 'Outfit'; margin-bottom: 10px;">AVISO IMPORTANTE</h2>
-            <p style="font-size: 1rem; line-height: 1.6; color: #eee;">Este sistema é um simulador virtual para fins <strong>pedagógicos e educacionais</strong>.</p>
-            <button class="btn" onclick="fecharAviso()" style="margin-top: 20px;">ACESSAR LABORATÓRIO</button>
+            <h2 style="color: var(--bio-green); font-family: 'Outfit'; margin-top: 0;">BIO-GEN V.3</h2>
+            <p style="font-size: 0.9rem; line-height: 1.5;">Este sistema é um simulador de laboratório avançado para fins <strong>pedagógicos e educacionais</strong>.</p>
+            <button class="btn" onclick="fecharAviso()">INICIAR LABORATÓRIO</button>
         </div>
     </div>
 
     <header>
-        <div class="logo">BIO-GEN <span>PRO V.3</span></div>
-        <div id="status-tag" style="color: var(--dna-cyan); font-weight: bold; letter-spacing: 1px;">SISTEMA ONLINE</div>
+        <div class="logo">BIO-GEN <span>V.3.0</span></div>
+        <div id="status-tag" style="color: var(--dna-cyan); font-weight: bold;">SISTEMA PRONTO</div>
     </header>
 
     <main>
         <section class="panel">
-            <h3 style="font-size: 1rem; color: var(--dna-cyan); margin-bottom: 25px; border-left: 4px solid var(--dna-cyan); padding-left: 10px;">MÓDULO DE COMANDO</h3>
+            <h3 style="font-size: 0.9rem; color: var(--dna-cyan); margin-bottom: 20px;">CONTROLES ANALÍTICOS</h3>
             <button class="btn" onclick="toggleGallery()">📦 SELECIONAR AMOSTRA</button>
-            <button class="btn" id="micro-btn" onclick="toggleMicroscope()">🔬 MODO MICROSCÓPIO</button>
-            <button class="btn" onclick="runAnalysis()" id="anal-btn" style="border-color: #fff; color: #fff;">🧪 EXECUTAR ANÁLISE</button>
+            <button class="btn" id="micro-btn" onclick="toggleMicroscope()">🔬 MICROSCÓPIO</button>
+            <button class="btn" onclick="runAnalysis()" id="anal-btn">🧪 INICIAR ANÁLISE</button>
             
-            <div style="margin-top: 30px; flex-grow: 1;">
-                <span style="font-size: 0.7rem; color: #4a6a5a;">TERMINAL DE DADOS:</span>
-                <div id="log-display" style="height: 180px; overflow-y: auto; margin-top: 10px; border-top: 1px solid #222; padding-top: 10px; font-size: 0.75rem; line-height: 1.8; color: #888;">
-                    > Carregando nucleotídeos...<br>> Aguardando amostra biológica...
+            <div style="margin-top: 20px; font-size: 0.75rem; color: #4a6a5a; flex-grow: 1;">
+                SISTEMA LOG:
+                <div id="log-display" style="height: 150px; overflow-y: auto; margin-top: 10px; border-top: 1px solid #222; padding-top: 10px; line-height: 1.6;">
+                    > Sistema online...<br>> Aguardando entrada...
                 </div>
             </div>
-            <button class="btn" style="border-color: #444; color: #666;" onclick="window.location.href='agrovr.html'">FECHAR SISTEMA</button>
+            <button class="btn" style="border-color: #444; color: #666; margin-top: 10px;" onclick="window.location.href='agrovr.html'">ENCERRAR SESSÃO</button>
         </section>
 
         <section class="sample-viewport">
             <div id="scan-line"></div>
             <div class="lens-overlay" id="lens"></div>
-            <img src="https://via.placeholder.com/800x800/051510/00ff88?text=AGUARDANDO+MATERIAL" id="sample-img">
+            <img src="https://via.placeholder.com/600x600/051510/00ff88?text=INSIRA+UMA+AMOSTRA" id="sample-img">
         </section>
 
         <section class="panel">
-            <h3 style="font-size: 1rem; color: var(--dna-cyan); margin-bottom: 25px; border-left: 4px solid var(--dna-cyan); padding-left: 10px;">BIO-MÉTRICAS</h3>
-            <div class="stat-box"><span class="stat-label">ESPÉCIE CLASSIFICADA</span><span class="stat-value" id="val-nome">---</span></div>
-            <div class="stat-box"><span class="stat-label">VIGOR FOLIAR</span><span class="stat-value" id="val-saude">---</span></div>
-            <div class="stat-box"><span class="stat-label">POTENCIAL HÍDRICO</span><span class="stat-value" id="val-hidra">---</span></div>
-            <div class="stat-box"><span class="stat-label">SISTEMA IMUNOLÓGICO</span><span class="stat-value" id="val-defesa">---</span></div>
-            <div class="stat-box"><span class="stat-label">ESTÁGIO ATUAL</span><span class="stat-value" id="val-cresc">---</span></div>
+            <h3 style="font-size: 0.9rem; color: var(--dna-cyan); margin-bottom: 20px;">BIO-MÉTRICAS</h3>
+            <div class="stat-box"><span class="stat-label">ESPÉCIE</span><span class="stat-value" id="val-nome">---</span></div>
+            <div class="stat-box"><span class="stat-label">ÍNDICE DE CLOROFILA</span><span class="stat-value" id="val-saude">---</span></div>
+            <div class="stat-box"><span class="stat-label">TURGÊNCIA CELULAR</span><span class="stat-value" id="val-hidra">---</span></div>
+            <div class="stat-box"><span class="stat-label">SISTEMA IMUNE</span><span class="stat-value" id="val-defesa">---</span></div>
+            <div class="stat-box"><span class="stat-label">FENOLOGIA</span><span class="stat-value" id="val-cresc">---</span></div>
             
-            <div id="result-badge" style="margin-top: auto; padding: 20px; border-radius: 15px; background: rgba(0,255,136,0.1); border: 2px dashed var(--bio-green); display: none;">
-                <span style="font-size: 0.7rem; color: var(--bio-green); font-weight: bold;">RELATÓRIO FINAL:</span>
-                <p id="veredito-text" style="font-size: 0.85rem; margin: 10px 0 0 0; color: #fff; line-height: 1.4;"></p>
+            <div id="result-badge" style="margin-top: auto; padding: 15px; border-radius: 10px; background: rgba(0,255,136,0.15); border: 1px solid var(--bio-green); display: none;">
+                <span style="font-size: 0.7rem; color: var(--bio-green); font-weight: bold;">VEREDITO FINAL:</span>
+                <p id="veredito-text" style="font-size: 0.8rem; margin: 8px 0 0 0; color: #fff;"></p>
             </div>
         </section>
     </main>
@@ -195,7 +194,7 @@
             <div class="thumb" onclick="selectSample('Castanha', 'Anacardium', 'castanha.png')">
                 <img src="castanha.png"><p>Castanha</p>
             </div>
-            <button class="btn" style="grid-column: span 3; margin-top: 20px;" onclick="toggleGallery()">FECHAR SELEÇÃO</button>
+            <button class="btn" style="grid-column: span 3; margin-top: 10px;" onclick="toggleGallery()">CANCELAR</button>
         </div>
     </div>
 
@@ -214,7 +213,7 @@
             selectedSample = nome;
             document.getElementById('sample-img').src = url;
             document.getElementById('val-nome').innerText = cientifico;
-            document.getElementById('log-display').innerHTML += `> Amostra [${nome}] carregada no deck.<br>`;
+            document.getElementById('log-display').innerHTML += `> Amostra de ${nome} inserida.<br>`;
             toggleGallery();
             document.getElementById('result-badge').style.display = "none";
         }
@@ -226,38 +225,38 @@
             const img = document.getElementById('sample-img');
             const btn = document.getElementById('micro-btn');
             lens.style.display = microscopeActive ? 'block' : 'none';
-            img.style.transform = microscopeActive ? 'scale(3.2)' : 'scale(1)';
+            img.style.transform = microscopeActive ? 'scale(2.8)' : 'scale(1)';
             btn.classList.toggle('active');
         }
 
         function runAnalysis() {
-            if(!selectedSample) return alert("Erro: Insira o material genético primeiro!");
+            if(!selectedSample) return alert("Erro: Inicie uma amostra para analisar!");
             const btn = document.getElementById('anal-btn');
             const scanLine = document.getElementById('scan-line');
             const status = document.getElementById('status-tag');
             
             btn.disabled = true;
-            status.innerText = "ESCANEAMENTO MOLECULAR...";
+            status.innerText = "ESCANEANDO...";
             status.style.color = "yellow";
             scanLine.style.display = "block";
-            scanLine.style.animation = "scanning 2s linear infinite";
+            scanLine.style.animation = "scanning 2.5s linear infinite";
 
             setTimeout(() => {
                 scanLine.style.display = "none";
-                status.innerText = "ANÁLISE CONCLUÍDA";
+                status.innerText = "CONCLUÍDO";
                 status.style.color = "var(--bio-green)";
                 
-                document.getElementById('val-saude').innerText = "98.7% (ÓTIMO)";
-                document.getElementById('val-hidra').innerText = "ESTÁVEL";
-                document.getElementById('val-defesa').innerText = "ALTA RESISTÊNCIA";
-                document.getElementById('val-cresc').innerText = "R2 - DESENVOLVIMENTO";
+                document.getElementById('val-saude').innerText = "98.2% (SAUDÁVEL)";
+                document.getElementById('val-hidra').innerText = "ÓTIMA";
+                document.getElementById('val-defesa').innerText = "ESTÁVEL";
+                document.getElementById('val-cresc').innerText = "FASE VEGETATIVA R2";
                 
                 document.getElementById('result-badge').style.display = "block";
-                document.getElementById('veredito-text').innerText = "Amostra validada. O DNA apresenta alta qualidade para cultivo.";
+                document.getElementById('veredito-text').innerText = "Análise molecular concluída. Amostra com alto vigor genético.";
                 
                 btn.disabled = false;
-                alert("Protocolo Biogen finalizado com sucesso!");
-            }, 4000);
+                alert("Protocolo de análise finalizado!");
+            }, 3500);
         }
     </script>
 </body>
