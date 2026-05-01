@@ -24,7 +24,7 @@
             width: 750px; height: 550px;
             transform: translate(-50%, -50%);
             background-image: url('Gemini_Generated_Image_y5jyp5y5jyp5y5jy.png');
-            background-size: 100% 100%; /* Garante que a imagem preencha o box exatamente */
+            background-size: cover; /* Volta ao normal sem distorção */
             background-position: center;
             border: 4px solid #222;
             border-radius: 8px; z-index: 2;
@@ -40,8 +40,7 @@
         .unit {
             position: absolute; width: 45px; height: 60px;
             background: var(--neon-blue); border-radius: 4px;
-            /* Início na base da estrada (canto inferior esquerdo) */
-            top: 88%; left: 2%; 
+            top: 88%; left: 5%; 
             transition: all 0s linear;
             box-shadow: 0 0 20px var(--neon-blue);
             display: flex; align-items: center; justify-content: center; font-size: 24px;
@@ -95,7 +94,7 @@
     </div>
 
     <div class="panel log-panel" id="log-box">
-        <div class="log-entry">> Aguardando escaneamento de estrada...</div>
+        <div class="log-entry">> Sistema carregado. Mapeie o trajeto.</div>
     </div>
 
     <div class="panel command-panel">
@@ -115,14 +114,14 @@
         let routeScanned = false;
         let timeoutId;
 
-        // WAYPOINTS CALIBRADOS PARA A ESTRADA REAL DA IMAGEM
+        // WAYPOINTS INVERTIDOS: AGORA CONTORNA POR CIMA DA ROCHA
         const waypoints = [
-            {x: 0, y: 550},    // Ponto zero (entrada)
-            {x: 480, y: 250},  // Reta diagonal longa (subindo pela estrada)
-            {x: 650, y: 260},  // Início do contorno da rocha (pela direita)
-            {x: 720, y: 380},  // Curva externa na terra
-            {x: 680, y: 150},  // Volta para a trilha principal
-            {x: 640, y: 0}     // Saída no topo
+            {x: 20, y: 520},   // Entrada inferior esquerda
+            {x: 400, y: 280},  // Sobe a diagonal principal
+            {x: 450, y: 150},  // Curva para CIMA da rocha
+            {x: 600, y: 120},  // Contorna o topo da rocha
+            {x: 680, y: 280},  // Desce levemente para pegar a estrada lateral
+            {x: 730, y: 500}   // Final na parte inferior direita/estrada lateral
         ];
 
         function addLog(text) {
@@ -135,7 +134,7 @@
 
         function escanearTrajeto() {
             if(routeScanned) return;
-            addLog("Escaneando pixel-a-pixel por terra batida...");
+            addLog("Mapeando relevo e obstáculos...");
             document.getElementById('btn-scan').disabled = true;
             
             let i = 0;
@@ -145,16 +144,16 @@
                     ctx.moveTo(waypoints[i].x, waypoints[i].y);
                     ctx.lineTo(waypoints[i+1].x, waypoints[i+1].y);
                     ctx.strokeStyle = "rgba(0, 225, 255, 0.9)";
-                    ctx.lineWidth = 8; // Linha mais robusta
+                    ctx.lineWidth = 7;
                     ctx.lineCap = "round";
-                    ctx.setLineDash([15, 10]); 
-                    ctx.shadowBlur = 20;
+                    ctx.setLineDash([12, 10]); 
+                    ctx.shadowBlur = 15;
                     ctx.shadowColor = "#00e1ff";
                     ctx.stroke();
                     i++;
                 } else {
                     clearInterval(drawInterval);
-                    addLog("Trajeto mapeado com sucesso.");
+                    addLog("Trajeto superior validado (Desvio: ROCHA).");
                     routeScanned = true;
                     document.getElementById('btn-start').disabled = false;
                     document.getElementById('gps-stat').innerText = "READY";
@@ -174,28 +173,25 @@
             missionActive = true;
             document.getElementById('btn-start').disabled = true;
             
-            addLog("Iniciando tracionamento...");
+            addLog("Executando navegação autônoma...");
             document.getElementById('mode').innerText = "AUTÔNOMO";
-            document.getElementById('speed').innerText = "5.8 km/h";
+            document.getElementById('speed').innerText = "6.2 km/h";
 
-            // MOVIMENTAÇÃO CALIBRADA COM A IMAGEM
-            // 1. Sobe a diagonal principal
-            setTractorPos("40%", "58%", 4); 
+            // MOVIMENTO SINCRONIZADO: POR CIMA DA ROCHA
+            setTractorPos("45%", "48%", 4); // Sobe a diagonal principal
 
             timeoutId = setTimeout(() => {
                 if(!missionActive) return;
-                addLog("Detectando curva externa...");
-                // 2. Faz a volta na rocha pela direita
-                setTractorPos("65%", "88%", 3); 
+                addLog("Iniciando contorno superior...");
+                setTractorPos("15%", "65%", 3); // Curva por cima
 
                 timeoutId = setTimeout(() => {
                     if(!missionActive) return;
-                    addLog("Finalizando percurso.");
-                    // 3. Reta final para o topo
-                    setTractorPos("-10%", "80%", 4); 
+                    addLog("Retomando trilha lateral.");
+                    setTractorPos("80%", "92%", 4); // Desce pela estrada lateral
                     
                     timeoutId = setTimeout(() => {
-                        addLog("Unidade em repouso.");
+                        addLog("Operação concluída.");
                         missionActive = false;
                         document.getElementById('mode').innerText = "IDLE";
                         document.getElementById('speed').innerText = "0.0 km/h";
@@ -211,8 +207,8 @@
             tractor.style.transition = "none";
             tractor.style.top = computedStyle.top;
             tractor.style.left = computedStyle.left;
-            document.getElementById('mode').innerText = "INTERROMPIDO";
-            addLog("MÁQUINA PARADA.");
+            document.getElementById('mode').innerText = "STOPPED";
+            addLog("PARADA DE EMERGÊNCIA.");
         }
     </script>
 </body>
