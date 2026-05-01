@@ -6,143 +6,151 @@
     <title>Rastro Verde | Blockchain Agrinho</title>
     <style>
         :root {
-            --tech-blue: #0077b6;
+            --tech-blue: #00b4d8;
+            --dark-blue: #03045e;
             --clean-white: #ffffff;
-            --light-gray: #f8f9fa;
-            --text-main: #2b2d42;
-            --success: #2ecc71;
+            --bg-gray: #f0f2f5;
+            --success: #06d6a0;
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--light-gray);
-            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-gray);
+            color: var(--dark-blue);
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
         }
 
         nav {
             width: 100%;
             padding: 15px;
-            background: var(--clean-white);
-            border-bottom: 1px solid #ddd;
+            background: var(--dark-blue);
+            color: white;
             display: flex;
             justify-content: space-around;
             align-items: center;
         }
 
-        .back-link {
-            text-decoration: none;
-            color: var(--tech-blue);
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
+        .back-link { text-decoration: none; color: var(--tech-blue); font-weight: bold; }
 
         .container {
-            max-width: 800px;
-            width: 90%;
-            padding: 40px 0;
+            max-width: 900px;
+            width: 95%;
+            padding: 20px;
         }
 
-        header { text-align: center; margin-bottom: 30px; }
-        header h1 { color: var(--tech-blue); font-weight: 300; margin: 0; }
-        header b { font-weight: 800; }
-
-        .blockchain-card {
-            background: var(--clean-white);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        .main-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
+            grid-template-columns: 1fr 1fr;
         }
 
-        .input-section h3 { font-size: 1.1rem; color: var(--tech-blue); margin-top: 0; }
-        
-        .field { margin-bottom: 15px; }
-        label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 5px; }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            background: #fafafa;
-        }
+        @media (max-width: 768px) { .main-card { grid-template-columns: 1fr; } }
 
-        /* QR CODE SIMULADO */
-        .qr-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-left: 1px solid #eee;
-            padding-left: 20px;
-        }
-
-        .qr-placeholder {
-            width: 180px;
-            height: 180px;
-            background: #fff;
-            border: 10px solid #f0f0f0;
-            display: flex;
-            align-items: center;
+        .input-side { padding: 30px; border-right: 1px solid #eee; }
+        .display-side { 
+            padding: 30px; 
+            background: #fafafa; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
             justify-content: center;
             position: relative;
         }
 
-        /* Desenho do QR Code via CSS */
-        .qr-code-pixels {
-            width: 140px;
-            height: 140px;
-            background-image: radial-gradient(var(--text-main) 2px, transparent 2px);
-            background-size: 10px 10px;
-        }
-
-        .status-badge {
-            margin-top: 15px;
-            background: var(--success);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 50px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-
-        .id-lote {
-            margin-top: 10px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.8rem;
-            color: #aaa;
-        }
-
-        /* Texto que encolhe */
-        .id-display-container {
+        h2 { color: var(--dark-blue); margin-top: 0; font-size: 1.4rem; }
+        .field { margin-bottom: 15px; }
+        label { display: block; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: #666; }
+        
+        input, select {
             width: 100%;
-            text-align: center;
-            overflow: hidden;
-            margin-top: 5px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: 0.3s;
         }
 
-        #id-texto {
-            font-weight: bold;
-            white-space: nowrap;
-            font-size: 1.2rem;
-            color: var(--tech-blue);
-        }
+        input:focus { border-color: var(--tech-blue); outline: none; }
 
-        .btn-gerar {
+        .btn-register {
             width: 100%;
-            background: var(--tech-blue);
+            background: var(--dark-blue);
             color: white;
             border: none;
-            padding: 12px;
+            padding: 15px;
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-register:hover { background: var(--tech-blue); }
+
+        /* QR CODE E CERTIFICADO */
+        .qr-box {
+            width: 200px;
+            height: 200px;
+            background: white;
+            border: 2px solid var(--dark-blue);
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s;
+        }
+
+        .qr-dots {
+            width: 160px;
+            height: 160px;
+            background-image: 
+                radial-gradient(var(--dark-blue) 2px, transparent 2px),
+                linear-gradient(45deg, transparent 45%, var(--dark-blue) 45%, var(--dark-blue) 55%, transparent 55%);
+            background-size: 12px 12px, 100% 100%;
+        }
+
+        #hash-display {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            color: var(--tech-blue);
+            margin-top: 15px;
+            word-break: break-all;
+            text-align: center;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0,0,0,0.1);
+            border-left-color: var(--tech-blue);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .success-msg {
+            color: var(--success);
+            font-weight: bold;
+            display: none;
             margin-top: 10px;
         }
     </style>
@@ -150,81 +158,106 @@
 <body>
 
     <nav>
-        <a href="index.html" class="back-link">← VOLTAR AO HUB</a>
-        <span style="font-size: 0.8rem; color: #888;">PROTOCOLO DE SEGURANÇA ALIMENTAR</span>
+        <a href="index.html" class="back-link">← HUB</a>
+        <div style="font-weight: bold; letter-spacing: 2px;">RASTRO VERDE BLOCKCHAIN</div>
     </nav>
 
     <div class="container">
-        <header>
-            <h1>RASTRO<b>VERDE</b></h1>
-            <p>Certificação Blockchain de Origem Sustentável</p>
+        <header style="text-align: center; margin-bottom: 30px;">
+            <h1 style="margin: 0; color: var(--dark-blue);">Certificação de Origem</h1>
+            <p style="color: #666;">Registre seu lote na rede descentralizada para garantir transparência total.</p>
         </header>
 
-        <div class="blockchain-card">
-            <div class="input-section">
-                <h3>Registro de Lote</h3>
+        <div class="main-card">
+            <div class="input-side">
+                <h2>Dados do Lote</h2>
+                
                 <div class="field">
-                    <label>Produto</label>
-                    <select id="produto" onchange="gerarHash()">
-                        <option value="SOJ">Soja Orgânica</option>
-                        <option value="MIL">Milho Sustentável</option>
-                        <option value="TRI">Trigo Premium</option>
-                        <option value="FEI">Feijão Agroecológico</option>
+                    <label>PRODUTO SUSTENTÁVEL</label>
+                    <select id="prod">
+                        <option value="MILHO-BIO">Milho (Controle Biológico)</option>
+                        <option value="SOJA-LIVRE">Soja (Desmatamento Zero)</option>
+                        <option value="FEIJAO-ORG">Feijão Orgânico</option>
+                        <option value="TRIGO-GEN">Trigo Regenerativo</option>
                     </select>
                 </div>
+
                 <div class="field">
-                    <label>Safra</label>
-                    <input type="text" id="safra" value="2025/2026" oninput="gerarHash()">
+                    <label>ID DA FAZENDA (CAR)</label>
+                    <input type="text" id="car" placeholder="Ex: PR-1234567-ABC">
                 </div>
+
                 <div class="field">
-                    <label>Número do Lote</label>
-                    <input type="number" id="lote_num" value="1052" oninput="gerarHash()">
+                    <label>NÚMERO DO LOTE</label>
+                    <input type="number" id="lote" value="202601">
                 </div>
-                <button class="btn-gerar" onclick="alert('Certificado Blockchain Registrado com Sucesso!')">REGISTRAR NA REDE</button>
+
+                <button class="btn-register" onclick="registrar()">REGISTRAR NA BLOCKCHAIN</button>
             </div>
 
-            <div class="qr-section">
-                <div class="qr-placeholder">
-                    <div class="qr-code-pixels"></div>
+            <div class="display-side">
+                <div class="loading-overlay" id="loader">
+                    <div class="spinner"></div>
+                    <p>Criptografando Dados...</p>
                 </div>
-                <div class="status-badge">AUTENTICADO</div>
-                
-                <div class="id-display-container">
-                    <div id="id-texto">HASH-000000</div>
+
+                <div id="cert-content" style="text-align: center;">
+                    <div class="qr-box">
+                        <div class="qr-dots"></div>
+                    </div>
+                    <div class="success-msg" id="msg">✓ REGISTRO IMUTÁVEL CONFIRMADO</div>
+                    
+                    <div style="margin-top: 20px;">
+                        <small style="color: #888;">CÓDIGO HASH DE RASTREIO:</small>
+                        <div id="hash-display">AGUARDANDO REGISTRO...</div>
+                    </div>
                 </div>
-                <div class="id-lote">VERIFICADO VIA BLOCKCHAIN</div>
             </div>
         </div>
     </div>
 
     <script>
-        function gerarHash() {
-            const prod = document.getElementById('produto').value;
-            const safra = document.getElementById('safra').value;
-            const num = document.getElementById('lote_num').value;
-            
-            // Simula um código hash baseado nos inputs
-            const hashSimulado = (prod + "-" + safra.replace("/", "") + "-" + num).toUpperCase();
-            
-            const display = document.getElementById('id-texto');
-            display.innerText = hashSimulado;
+        function registrar() {
+            // Pegar valores
+            const prod = document.getElementById('prod').value;
+            const car = document.getElementById('car').value || "GERAL";
+            const lote = document.getElementById('lote').value;
 
-            ajustarFonte(display);
+            // Mostrar animação de carregamento
+            document.getElementById('loader').style.display = 'flex';
+            document.getElementById('msg').style.display = 'none';
+
+            // Simular o tempo de registro na rede (2 segundos)
+            setTimeout(() => {
+                // Esconder carregamento
+                document.getElementById('loader').style.display = 'none';
+                
+                // Mostrar mensagem de sucesso
+                document.getElementById('msg').style.display = 'block';
+
+                // Criar um "Hash" falso que pareça real
+                const randomHash = Math.random().toString(36).substring(2, 10).toUpperCase();
+                const hashFinal = `BC-${prod.substring(0,3)}-${lote}-${randomHash}`;
+                
+                const display = document.getElementById('hash-display');
+                display.innerText = hashFinal;
+
+                // Ajustar fonte se o hash for muito longo
+                ajustarFonte(display);
+                
+                // Efeito visual no QR Code
+                document.querySelector('.qr-box').style.borderColor = '#06d6a0';
+            }, 2000);
         }
 
         function ajustarFonte(el) {
-            let size = 1.2; 
+            let size = 1.2;
             el.style.fontSize = size + "rem";
-            const limite = el.parentElement.offsetWidth;
-
-            while (el.offsetWidth > limite && size > 0.5) {
-                size -= 0.05;
+            while (el.offsetWidth > 250 && size > 0.6) {
+                size -= 0.1;
                 el.style.fontSize = size + "rem";
             }
         }
-
-        // Gera o primeiro código ao carregar
-        gerarHash();
     </script>
 </body>
 </html>
