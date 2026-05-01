@@ -11,8 +11,6 @@
             --neon-blue: #00e1ff;
             --neon-green: #00ff88;
             --neon-red: #ff3e3e;
-            --field-width: 750px;
-            --field-height: 550px;
         }
 
         body, html {
@@ -21,10 +19,9 @@
             font-family: 'JetBrains Mono', monospace; overflow: hidden;
         }
 
-        /* CONTEINER DO CAMPO - TAMANHO FIXO PARA ALINHAMENTO */
         #field-container {
             position: absolute; top: 50%; left: 45%;
-            width: var(--field-width); height: var(--field-height);
+            width: 750px; height: 550px;
             transform: translate(-50%, -50%);
             background-image: url('Gemini_Generated_Image_y5jyp5y5jyp5y5jy.png');
             background-size: cover;
@@ -41,23 +38,17 @@
         }
 
         .unit {
-            position: absolute; 
-            /* Ajuste para alinhar o emoji exatamente no ponto de pixels */
-            width: 45px; height: 60px;
-            margin-left: -22.5px; /* Metade da largura */
-            margin-top: -30px; /* Metade da altura */
-            
+            position: absolute; width: 45px; height: 60px;
+            margin-left: -22.5px; margin-top: -30px;
             background: var(--neon-blue); border-radius: 4px;
-            /* Início no primeiro Waypoint */
+            /* Ponto inicial exato (Waypoint 0) */
             top: 520px; left: 20px; 
-            
             transition: all 0s linear;
             box-shadow: 0 0 20px var(--neon-blue);
             display: flex; align-items: center; justify-content: center; font-size: 24px;
             z-index: 10;
         }
 
-        /* PAINÉIS */
         .panel {
             position: absolute; background: rgba(0, 10, 15, 0.95);
             border: 1px solid var(--neon-blue); padding: 20px;
@@ -68,28 +59,20 @@
         .command-panel { bottom: 50px; left: 30px; width: 250px; }
 
         h2 { font-family: 'Outfit'; font-size: 1rem; color: var(--neon-blue); margin: 0 0 15px 0; border-bottom: 1px solid; text-transform: uppercase; }
-        .data-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.8rem; }
-        .label { color: #aaa; }
-        .value { color: #fff; font-weight: bold; }
-
         .btn {
             background: transparent; border: 1px solid var(--neon-blue);
             color: var(--neon-blue); padding: 12px; width: 100%;
             cursor: pointer; font-weight: bold; margin-bottom: 10px;
             font-family: 'JetBrains Mono'; text-transform: uppercase;
-            transition: 0.3s;
         }
         .btn:hover:not(:disabled) { background: var(--neon-blue); color: #000; }
         .btn:disabled { border-color: #444; color: #444; cursor: not-allowed; }
         .btn-scan { border-color: var(--neon-green); color: var(--neon-green); }
 
         .log-entry { margin-bottom: 6px; padding-left: 8px; border-left: 2px solid var(--neon-blue); color: #ccc; }
-        .back-btn { position: fixed; top: 20px; left: 20px; color: white; text-decoration: none; font-size: 0.7rem; border: 1px solid #444; padding: 10px 20px; border-radius: 30px; z-index: 100; background: rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
-
-    <a href="agrovr.html" class="back-btn">← EXIT CENTRAL</a>
 
     <div id="field-container">
         <canvas id="gps-canvas" width="750" height="550"></canvas>
@@ -98,21 +81,20 @@
 
     <div class="panel status-panel">
         <h2>Unidade: TR-800 Autonomy</h2>
-        <div class="data-row"><span class="label">STATUS:</span><span class="value" id="mode">STANDBY</span></div>
-        <div class="data-row"><span class="label">VELOCIDADE:</span><span class="value" id="speed">0.0 km/h</span></div>
-        <div class="data-row"><span class="label">GPS:</span><span class="value" id="gps-stat">LOCKING...</span></div>
-        <div class="data-row"><span class="label">ÁREA:</span><span class="value" id="area">0.00 ha</span></div>
+        <div style="font-size: 0.8rem;">
+            <p>STATUS: <span id="mode" style="color:white">STANDBY</span></p>
+            <p>GPS: <span id="gps-stat" style="color:var(--neon-red)">OFFLINE</span></p>
+        </div>
     </div>
 
     <div class="panel log-panel" id="log-box">
-        <div class="log-entry">> Central Online. Sincronize o GPS.</div>
+        <div class="log-entry">> Central iniciada. Aguardando comando...</div>
     </div>
 
     <div class="panel command-panel">
-        <h2>Operações</h2>
-        <button class="btn btn-scan" id="btn-scan" onclick="escanearTrajeto()">Sincronizar GPS</button>
+        <button class="btn btn-scan" id="btn-scan" onclick="escanearTrajeto()">Suavizar Trajeto</button>
         <button class="btn" id="btn-start" onclick="iniciarMissao()" disabled>Iniciar Missão</button>
-        <button class="btn btn-stop" onclick="abortarMissao()">Abortar</button>
+        <button class="btn" onclick="location.reload()" style="border-color:#555; color:#555">Reset</button>
     </div>
 
     <script>
@@ -125,14 +107,14 @@
         let routeScanned = false;
         let timeoutId;
 
-        // WAYPOINTS EXATOS EM PIXELS (Contornando por cima da rocha)
+        // WAYPOINTS CALIBRADOS (Invertendo a reta final para a esquerda)
         const waypoints = [
-            {x: 20, y: 520},   // Entrada inferior esquerda
-            {x: 400, y: 280},  // Sobe a diagonal principal
-            {x: 450, y: 150},  // Curva para CIMA da rocha
-            {x: 600, y: 120},  // Contorna o topo da rocha
-            {x: 680, y: 280},  // Desce levemente para pegar a estrada lateral
-            {x: 730, y: 500}   // Final na parte inferior direita/estrada lateral
+            {x: 20, y: 520},   // Entrada
+            {x: 400, y: 280},  // Diagonal
+            {x: 430, y: 120},  // Topo da curva (suave)
+            {x: 620, y: 110},  // Contorno da rocha
+            {x: 680, y: 300},  // Descida lateral
+            {x: 610, y: 530}   // FINAL: Invertido para a ESQUERDA (estrada lateral)
         ];
 
         function addLog(text) {
@@ -145,35 +127,42 @@
 
         function escanearTrajeto() {
             if(routeScanned) return;
-            addLog("Mapeando estrada e rocha (via IA)...");
+            addLog("Calculando curvas de Bézier para trajeto suave...");
             document.getElementById('btn-scan').disabled = true;
             
+            ctx.strokeStyle = "rgba(0, 225, 255, 0.9)";
+            ctx.lineWidth = 7;
+            ctx.lineCap = "round";
+            ctx.setLineDash([10, 10]);
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = "#00e1ff";
+
+            // Desenho arredondado ponto a ponto
             let i = 0;
             const drawInterval = setInterval(() => {
                 if (i < waypoints.length - 1) {
                     ctx.beginPath();
                     ctx.moveTo(waypoints[i].x, waypoints[i].y);
+                    
+                    // Cria o arredondamento usando o ponto atual e o próximo
+                    let xc = (waypoints[i].x + waypoints[i + 1].x) / 2;
+                    let yc = (waypoints[i].y + waypoints[i + 1].y) / 2;
+                    ctx.quadraticCurveTo(waypoints[i].x, waypoints[i].y, xc, yc);
                     ctx.lineTo(waypoints[i+1].x, waypoints[i+1].y);
-                    ctx.strokeStyle = "rgba(0, 225, 255, 0.9)";
-                    ctx.lineWidth = 7;
-                    ctx.lineCap = "round";
-                    ctx.setLineDash([12, 10]); 
-                    ctx.shadowBlur = 15;
-                    ctx.shadowColor = "#00e1ff";
+                    
                     ctx.stroke();
                     i++;
                 } else {
                     clearInterval(drawInterval);
-                    addLog("Trajeto validado e contorno superior calibrado.");
+                    addLog("Trajeto arredondado com sucesso.");
                     routeScanned = true;
                     document.getElementById('btn-start').disabled = false;
-                    document.getElementById('gps-stat').innerText = "READY";
+                    document.getElementById('gps-stat').innerText = "ONLINE";
                     document.getElementById('gps-stat').style.color = "var(--neon-green)";
                 }
-            }, 500);
+            }, 600);
         }
 
-        // NOVA FUNÇÃO: MOVE USANDO PIXELS EXATOS PARA ALINHAMENTO PERFEITO
         function setTractorPosPx(y, x, duration) {
             tractor.style.transition = `all ${duration}s linear`;
             tractor.style.top = y + 'px';
@@ -185,55 +174,38 @@
             missionActive = true;
             document.getElementById('btn-start').disabled = true;
             
-            addLog("Seguindo linha de GPS...");
+            addLog("Trator em modo autônomo. Seguindo curvas...");
             document.getElementById('mode').innerText = "AUTÔNOMO";
-            document.getElementById('speed').innerText = "6.2 km/h";
 
-            // MOVIMENTO UTILIZANDO OS WAYPOINTS EM PIXELS (x, y)
-            // 1. Vai até o Waypoint 1 (Meio da diagonal)
+            // Sequência de movimentos seguindo os novos pontos
             setTractorPosPx(waypoints[1].y, waypoints[1].x, 4);
 
             timeoutId = setTimeout(() => {
                 if(!missionActive) return;
-                addLog("Iniciando contorno superior (Desvio IA)...");
-                // 2. Passa pelo Waypoint 2 e 3 (Contorno da rocha)
-                setTractorPosPx(waypoints[2].y, waypoints[2].x, 1.5);
+                setTractorPosPx(waypoints[2].y, waypoints[2].x, 2);
                 
                 timeoutId = setTimeout(() => {
                     if(!missionActive) return;
-                    setTractorPosPx(waypoints[3].y, waypoints[3].x, 1.5);
+                    setTractorPosPx(waypoints[3].y, waypoints[3].x, 2);
 
                     timeoutId = setTimeout(() => {
                         if(!missionActive) return;
-                        addLog("Retomando trilha lateral.");
-                        // 3. Desce até o final (Waypoint 4 e 5)
+                        addLog("Contorno finalizado. Alinhando à esquerda.");
                         setTractorPosPx(waypoints[4].y, waypoints[4].x, 3);
                         
                         timeoutId = setTimeout(() => {
                             if(!missionActive) return;
-                            setTractorPosPx(waypoints[5].y, waypoints[5].x, 2);
+                            setTractorPosPx(waypoints[5].y, waypoints[5].x, 3);
 
                             timeoutId = setTimeout(() => {
-                                addLog("Alvo alcançado. Operação finalizada.");
+                                addLog("Missão Cumprida.");
                                 missionActive = false;
                                 document.getElementById('mode').innerText = "IDLE";
-                                document.getElementById('speed').innerText = "0.0 km/h";
-                            }, 2000);
+                            }, 3000);
                         }, 3000);
-                    }, 1500);
-                }, 1500);
+                    }, 2000);
+                }, 2000);
             }, 4000);
-        }
-
-        function abortarMissao() {
-            missionActive = false;
-            clearTimeout(timeoutId);
-            const computedStyle = window.getComputedStyle(tractor);
-            tractor.style.transition = "none";
-            tractor.style.top = computedStyle.top;
-            tractor.style.left = computedStyle.left;
-            document.getElementById('mode').innerText = "PARADO";
-            addLog("ABORTADO MANUALMENTE.");
         }
     </script>
 </body>
