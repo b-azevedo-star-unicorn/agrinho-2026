@@ -1,5 +1,172 @@
-<div id="gallery-overlay">
-        <div class="gallery-content" style="grid-template-columns: repeat(3, 1fr); max-width: 900px;">
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIO-GEN PRO | LABORATÓRIO VIRTUAL</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;600;800&display=swap');
+
+        :root {
+            --bio-green: #00ff88;
+            --dna-cyan: #00e1ff;
+            --bg-deep: #010806;
+            --glass: rgba(0, 255, 136, 0.1);
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: var(--bg-deep); color: white;
+            font-family: 'JetBrains Mono', monospace; overflow: hidden;
+        }
+
+        /* HEADER */
+        header {
+            padding: 15px 40px; border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 100;
+        }
+
+        .logo { font-family: 'Outfit'; font-weight: 800; font-size: 1.2rem; color: var(--bio-green); }
+
+        main {
+            display: grid; grid-template-columns: 320px 1fr 320px;
+            gap: 20px; padding: 20px; height: calc(100vh - 100px);
+        }
+
+        .panel {
+            background: var(--glass); border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 15px; padding: 20px; display: flex; flex-direction: column;
+            backdrop-filter: blur(5px);
+        }
+
+        /* ÁREA DA AMOSTRA */
+        .sample-viewport {
+            position: relative; background: #000; border-radius: 20px;
+            border: 2px solid #1a2a25; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        #sample-img {
+            max-width: 80%; max-height: 80%; transition: transform 0.5s ease;
+            filter: brightness(0.8);
+        }
+
+        /* EFEITO MICROSCÓPIO */
+        .microscope-lens {
+            position: absolute; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.9) 70%);
+            display: none; pointer-events: none; z-index: 10;
+        }
+
+        .lens-overlay {
+            position: absolute; width: 300px; height: 300px;
+            border: 2px solid var(--bio-green); border-radius: 50%;
+            box-shadow: 0 0 0 9999px rgba(0,0,0,0.7);
+            display: none; z-index: 11;
+        }
+
+        /* GALERIA DE AMOSTRAS */
+        #gallery-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 1000;
+            display: none; justify-content: center; align-items: center;
+        }
+
+        .gallery-content {
+            background: #051510; padding: 40px; border: 1px solid var(--bio-green);
+            border-radius: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+            max-width: 80%;
+        }
+
+        .thumb {
+            cursor: pointer; border: 2px solid #333; border-radius: 10px;
+            padding: 10px; text-align: center; transition: 0.3s;
+        }
+
+        .thumb:hover { border-color: var(--bio-green); background: rgba(0,255,136,0.1); }
+        .thumb img { width: 100px; height: 100px; object-fit: cover; border-radius: 5px; }
+
+        /* BOTÕES */
+        .btn {
+            background: transparent; border: 1px solid var(--bio-green);
+            color: var(--bio-green); padding: 12px; border-radius: 8px;
+            cursor: pointer; font-family: 'Outfit'; font-weight: bold;
+            margin-bottom: 10px; transition: 0.3s;
+        }
+
+        .btn:hover { background: var(--bio-green); color: black; }
+        .btn.active { background: var(--dna-cyan); color: black; border-color: var(--dna-cyan); }
+
+        /* INDICADORES */
+        .stat-box { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .stat-label { font-size: 0.6rem; color: #6a8a7a; }
+        .stat-value { font-size: 0.9rem; color: var(--bio-green); font-weight: bold; display: block; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">BIO-GEN <span>V.3.0</span></div>
+        <div id="status-tag" style="color: var(--dna-cyan);">SISTEMA PRONTO</div>
+    </header>
+
+    <main>
+        <section class="panel">
+            <h3 style="font-size: 0.8rem; color: var(--dna-cyan);">FERRAMENTAS</h3>
+            <button class="btn" onclick="toggleGallery()">📦 SELECIONAR AMOSTRAS</button>
+            <button class="btn" id="micro-btn" onclick="toggleMicroscope()">🔬 ATIVAR MICROSCÓPIO</button>
+            <button class="btn" onclick="runAnalysis()" id="anal-btn">🧪 INICIAR ANÁLISE</button>
+            
+            <div style="margin-top: 20px; font-size: 0.7rem; color: #4a6a5a;">
+                LOG DE OPERAÇÕES:
+                <div id="log-display" style="height: 150px; overflow-y: auto; margin-top: 10px;">
+                    > Aguardando seleção...
+                </div>
+            </div>
+            <button class="btn" style="margin-top: auto; border-color: #444; color: #666;" onclick="window.location.href='agrovr.html'">SAIR</button>
+        </section>
+
+        <section class="sample-viewport">
+            <div class="lens-overlay" id="lens"></div>
+            <div class="microscope-lens" id="lens-dark"></div>
+            <img src="https://via.placeholder.com/400x400/051510/00ff88?text=Aguardando+Amostra" id="sample-img" alt="Planta">
+        </section>
+
+        <section class="panel">
+            <h3 style="font-size: 0.8rem; color: var(--dna-cyan);">INDICADORES TÉCNICOS</h3>
+            
+            <div class="stat-box">
+                <span class="stat-label">NOME CIENTÍFICO</span>
+                <span class="stat-value" id="val-nome">---</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">SAÚDE FOLIAR</span>
+                <span class="stat-value" id="val-saude">---</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">HIDRATAÇÃO CELULAR</span>
+                <span class="stat-value" id="val-hidra">---</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">DEFESA NATURAL</span>
+                <span class="stat-value" id="val-defesa">---</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">ESTÁGIO DE CRESCIMENTO</span>
+                <span class="stat-value" id="val-cresc">---</span>
+            </div>
+
+            <div id="result-badge" style="margin-top: auto; padding: 15px; border-radius: 10px; background: rgba(0,255,136,0.1); display: none;">
+                <span style="font-size: 0.6rem; color: var(--bio-green);">VEREDITO:</span>
+                <p id="veredito-text" style="font-size: 0.7rem; margin: 5px 0 0 0;"></p>
+            </div>
+        </section>
+    </main>
+
+    <div id="gallery-overlay">
+        <div class="gallery-content">
             <div class="thumb" onclick="selectSample('Soja', 'Glycine max', 'https://images.unsplash.com/photo-1594904351111-a072f80b1a71?auto=format&fit=crop&q=80&w=400')">
                 <img src="https://images.unsplash.com/photo-1594904351111-a072f80b1a71?auto=format&fit=crop&q=80&w=400" alt="Soja">
                 <p>Soja Premium</p>
@@ -12,19 +179,98 @@
                 <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=400" alt="Trigo">
                 <p>Trigo Sustentável</p>
             </div>
-            <div class="thumb" onclick="selectSample('Algodão', 'Gossypium', 'https://images.unsplash.com/photo-1594904351111-a072f80b1a71?auto=format&fit=crop&q=80&w=400')">
+            <div class="thumb" onclick="selectSample('Algodão', 'Gossypium', 'https://images.unsplash.com/photo-1593105544559-ecb03bf76f82?auto=format&fit=crop&q=80&w=400')">
                 <img src="https://images.unsplash.com/photo-1593105544559-ecb03bf76f82?auto=format&fit=crop&q=80&w=400" alt="Algodão">
-                <p>Algodão Fibra</p>
+                <p>Algodão</p>
             </div>
             <div class="thumb" onclick="selectSample('Café', 'Coffea arabica', 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&q=80&w=400')">
                 <img src="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&q=80&w=400" alt="Café">
                 <p>Café Arábica</p>
             </div>
-            <div class="thumb" onclick="selectSample('Cana', 'Saccharum officinarum', 'https://images.unsplash.com/photo-1596200234255-7096e24f8d48?auto=format&fit=crop&q=80&w=400')">
+            <div class="thumb" onclick="selectSample('Cana', 'Saccharum', 'https://images.unsplash.com/photo-1596200234255-7096e24f8d48?auto=format&fit=crop&q=80&w=400')">
                 <img src="https://images.unsplash.com/photo-1596200234255-7096e24f8d48?auto=format&fit=crop&q=80&w=400" alt="Cana">
                 <p>Cana-de-Açúcar</p>
             </div>
 
-            <button class="btn" style="grid-column: span 3; margin-top: 20px;" onclick="toggleGallery()">FECHAR GALERIA</button>
+            <button class="btn" style="grid-column: span 3; margin-top: 10px;" onclick="toggleGallery()">FECHAR</button>
         </div>
     </div>
+
+    <script>
+        let microscopeActive = false;
+        let selectedSample = null;
+
+        function toggleGallery() {
+            const gal = document.getElementById('gallery-overlay');
+            gal.style.display = gal.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function selectSample(nome, cientifico, url) {
+            selectedSample = nome;
+            document.getElementById('sample-img').src = url;
+            document.getElementById('val-nome').innerText = cientifico;
+            document.getElementById('log-display').innerHTML += `> Amostra ${nome} carregada.<br>`;
+            toggleGallery();
+            
+            // Reseta indicadores
+            document.getElementById('val-saude').innerText = "---";
+            document.getElementById('val-hidra').innerText = "---";
+            document.getElementById('result-badge').style.display = "none";
+        }
+
+        function toggleMicroscope() {
+            if(!selectedSample) return alert("Selecione uma amostra primeiro!");
+            
+            microscopeActive = !microscopeActive;
+            const lens = document.getElementById('lens');
+            const dark = document.getElementById('lens-dark');
+            const img = document.getElementById('sample-img');
+            const btn = document.getElementById('micro-btn');
+
+            if(microscopeActive) {
+                lens.style.display = 'block';
+                dark.style.display = 'block';
+                img.style.transform = 'scale(2.5)';
+                btn.classList.add('active');
+                btn.innerText = "🔬 DESATIVAR MICROSCÓPIO";
+            } else {
+                lens.style.display = 'none';
+                dark.style.display = 'none';
+                img.style.transform = 'scale(1)';
+                btn.classList.remove('active');
+                btn.innerText = "🔬 ATIVAR MICROSCÓPIO";
+            }
+        }
+
+        function runAnalysis() {
+            if(!selectedSample) return alert("Nenhuma amostra no compartimento!");
+            
+            document.getElementById('anal-btn').disabled = true;
+            document.getElementById('status-tag').innerText = "ANALISANDO...";
+            
+            let p = 0;
+            const timer = setInterval(() => {
+                p += 5;
+                if(p >= 100) {
+                    clearInterval(timer);
+                    showResults();
+                }
+            }, 50);
+        }
+
+        function showResults() {
+            document.getElementById('status-tag').innerText = "ANÁLISE CONCLUÍDA";
+            document.getElementById('anal-btn').disabled = false;
+            
+            document.getElementById('val-saude').innerText = "94.8% (ÓTIMA)";
+            document.getElementById('val-hidra').innerText = "Normal (Estável)";
+            document.getElementById('val-defesa').innerText = "Alta (Imune)";
+            document.getElementById('val-cresc').innerText = "Fase Vegetativa";
+            
+            const badge = document.getElementById('result-badge');
+            badge.style.display = "block";
+            document.getElementById('veredito-text').innerText = "Trajeto realizado com sucesso. Amostra aprovada para reprodução.";
+        }
+    </script>
+</body>
+</html>
