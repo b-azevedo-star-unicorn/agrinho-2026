@@ -29,6 +29,7 @@
             border: 4px solid #222;
             border-radius: 8px; z-index: 2;
             overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
         }
 
         #gps-canvas {
@@ -40,11 +41,12 @@
             position: absolute; width: 45px; height: 60px;
             margin-left: -22.5px; margin-top: -30px;
             background: var(--neon-blue); border-radius: 4px;
+            /* Ponto inicial exato */
             top: 520px; left: 20px; 
-            transition: transform 0.1s linear; /* Suaviza a rotação do trator */
             box-shadow: 0 0 20px var(--neon-blue);
             display: flex; align-items: center; justify-content: center; font-size: 24px;
             z-index: 10;
+            transform-origin: center;
         }
 
         .panel {
@@ -60,7 +62,7 @@
             background: transparent; border: 1px solid var(--neon-blue);
             color: var(--neon-blue); padding: 12px; width: 100%;
             cursor: pointer; font-weight: bold; margin-bottom: 10px;
-            text-transform: uppercase;
+            text-transform: uppercase; transition: 0.3s;
         }
         .btn:hover:not(:disabled) { background: var(--neon-blue); color: #000; }
         .btn:disabled { border-color: #444; color: #444; }
@@ -78,14 +80,15 @@
     <div class="panel status-panel">
         <h2>Unidade: TR-800 Autonomy</h2>
         <p>STATUS: <span id="mode">STANDBY</span></p>
+        <p>VELOCIDADE: <span id="speed">0.0 km/h</span></p>
     </div>
 
     <div class="panel log-panel" id="log-box">
-        <div class="log-entry">> Central Online. Aguardando comando...</div>
+        <div class="log-entry">> Central pronta. Escaneie o terreno.</div>
     </div>
 
     <div class="panel command-panel">
-        <button class="btn" id="btn-scan" onclick="escanearTrajeto()">Suavizar Trajeto (Bézier)</button>
+        <button class="btn" id="btn-scan" onclick="escanearTrajeto()">Sincronizar GPS Suave</button>
         <button class="btn" id="btn-start" onclick="iniciarMissao()" disabled>Iniciar Missão</button>
     </div>
 
@@ -96,16 +99,16 @@
         const logBox = document.getElementById('log-box');
         
         let missionActive = false;
-        let routePoints = []; // Guardará os pontos da curva suave
+        let routePoints = [];
 
-        // PONTOS DE CONTROLE PARA A CURVA (Ajustados para a estrada)
-        const controlPoints = [
-            {x: 20, y: 520},   // Início
-            {x: 350, y: 300},  // Meio da estrada
-            {x: 400, y: 100},  // Topo da rocha (Curva acentuada)
-            {x: 650, y: 150},  // Contorno lateral
-            {x: 700, y: 350},  // Descida suave
-            {x: 580, y: 530}   // FINAL: Levemente para a esquerda
+        // PONTOS DE CONTROLE - Ajustados para contornar a pedra POR CIMA e descer à ESQUERDA
+        const points = [
+            {x: 20, y: 520},   // Entrada
+            {x: 400, y: 280},  // Diagonal central
+            {x: 420, y: 130},  // Curva superior (Cume da rocha)
+            {x: 630, y: 110},  // Contorno completo
+            {x: 690, y: 320},  // Início da descida lateral
+            {x: 600, y: 530}   // PONTO FINAL: Estrada lateral esquerda
         ];
 
         function addLog(text) {
@@ -116,74 +119,91 @@
             logBox.scrollTop = logBox.scrollHeight;
         }
 
-        // Função para desenhar curva suave (Cardinal Spline)
-        function drawSmoothCurve() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = "rgba(0, 225, 255, 0.9)";
-            ctx.lineWidth = 8;
-            ctx.lineCap = "round";
-            ctx.setLineDash([15, 10]);
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = "#00e1ff";
+        // Função para gerar curva de Catmull-Rom (Mais arredondada que Bézier comum)
+        function getCurvePoints(pts, tension = 0.5, numOfSegments = 100) {
+            let res = [];
+            let _pts = pts.slice(0);
+            _pts.unshift(pts[0]);
+            _pts.push(pts[pts.length - 1]);
 
-            ctx.beginPath();
-            ctx.moveTo(controlPoints[0].x, controlPoints[0].y);
+            for (let i = 1; i < _pts.length - 2; i++) {
+                for (let t = 0; t <= numOfSegments; t++) {
+                    let t1x = (_pts[i + 1].x - _pts[i - 1].x) * tension;
+                    let t2x = (_pts[i + 2].x - _pts[i].x) * tension;
+                    let t1y = (_pts[i + 1].y - _pts[i - 1].y) * tension;
+                    let t2y = (_pts[i + 2].y - _pts[i].y) * tension;
 
-            // Algoritmo de suavização
-            for (let i = 0; i < controlPoints.length - 1; i++) {
-                let p0 = controlPoints[i];
-                let p1 = controlPoints[i+1];
-                let cp = { x: (p0.x + p1.x) / 2, y: (p0.y + p1.y) / 2 };
-                ctx.quadraticCurveTo(p0.x, p0.y, cp.x, cp.y);
-                
-                // Armazena pontos para o trator seguir
-                for(let t=0; t<=1; t+=0.05) {
-                    let tx = Math.pow(1-t, 2) * p0.x + 2 * (1-t) * t * p0.x + Math.pow(t, 2) * cp.x;
-                    let ty = Math.pow(1-t, 2) * p0.y + 2 * (1-t) * t * p0.y + Math.pow(t, 2) * cp.y;
-                    routePoints.push({x: tx, y: ty});
+                    let st = t / numOfSegments;
+                    let c1 = 2 * Math.pow(st, 3) - 3 * Math.pow(st, 2) + 1;
+                    let c2 = -(2 * Math.pow(st, 3)) + 3 * Math.pow(st, 2);
+                    let c3 = Math.pow(st, 3) - 2 * Math.pow(st, 2) + st;
+                    let c4 = Math.pow(st, 3) - Math.pow(st, 2);
+
+                    res.push({
+                        x: c1 * _pts[i].x + c2 * _pts[i + 1].x + c3 * t1x + c4 * t2x,
+                        y: c1 * _pts[i].y + c2 * _pts[i + 1].y + c3 * t1y + c4 * t2y
+                    });
                 }
             }
-            ctx.lineTo(controlPoints[controlPoints.length-1].x, controlPoints[controlPoints.length-1].y);
-            ctx.stroke();
+            return res;
         }
 
         function escanearTrajeto() {
-            addLog("IA processando curvatura do terreno...");
-            drawSmoothCurve();
+            routePoints = getCurvePoints(points, 0.5, 50);
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = "rgba(0, 225, 255, 0.8)";
+            ctx.lineWidth = 6;
+            ctx.setLineDash([10, 10]);
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = "cyan";
+
+            ctx.beginPath();
+            ctx.moveTo(routePoints[0].x, routePoints[0].y);
+            routePoints.forEach(p => ctx.lineTo(p.x, p.y));
+            ctx.stroke();
+
+            addLog("Trajeto curvado e validado. GPS Sincronizado.");
             document.getElementById('btn-scan').disabled = true;
-            setTimeout(() => {
-                addLog("Trajeto suavizado. Pronto para navegar.");
-                document.getElementById('btn-start').disabled = false;
-            }, 1000);
+            document.getElementById('btn-start').disabled = false;
         }
 
         function iniciarMissao() {
             if(missionActive) return;
             missionActive = true;
-            addLog("Navegação iniciada. Mantendo alinhamento orbital.");
-            document.getElementById('mode').innerText = "MOVENDO";
+            addLog("Missão iniciada. Controle de tração ativo.");
+            document.getElementById('mode').innerText = "AUTÔNOMO";
+            document.getElementById('speed').innerText = "5.4 km/h";
 
-            let step = 0;
-            const moveInterval = setInterval(() => {
-                if (step < routePoints.length) {
-                    const target = routePoints[step];
-                    tractor.style.left = target.x + 'px';
-                    tractor.style.top = target.y + 'px';
-                    
-                    // Pequena lógica de rotação para o trator "olhar" para onde vai
-                    if (step > 0) {
-                        const prev = routePoints[step - 1];
-                        const angle = Math.atan2(target.y - prev.y, target.x - prev.x) * 180 / Math.PI;
+            let currentIndex = 0;
+            
+            function animate() {
+                if (!missionActive) return;
+
+                if (currentIndex < routePoints.length) {
+                    const p = routePoints[currentIndex];
+                    tractor.style.left = p.x + 'px';
+                    tractor.style.top = p.y + 'px';
+
+                    // Rotação suave baseada no próximo ponto
+                    if (currentIndex < routePoints.length - 1) {
+                        const next = routePoints[currentIndex + 1];
+                        const angle = Math.atan2(next.y - p.y, next.x - p.x) * 180 / Math.PI;
                         tractor.style.transform = `rotate(${angle + 90}deg)`;
                     }
-                    
-                    step++;
+
+                    // Controle de velocidade: pular menos pontos = mais devagar
+                    currentIndex += 1; 
+                    requestAnimationFrame(animate);
                 } else {
-                    clearInterval(moveInterval);
-                    addLog("Destino alcançado. Desligando sistemas.");
-                    document.getElementById('mode').innerText = "FINALIZADO";
+                    missionActive = false;
+                    addLog("Unidade estacionada no destino final.");
+                    document.getElementById('mode').innerText = "IDLE";
+                    document.getElementById('speed').innerText = "0.0 km/h";
                 }
-            }, 50); // Velocidade do movimento
+            }
+
+            requestAnimationFrame(animate);
         }
     </script>
 </body>
