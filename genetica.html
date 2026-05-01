@@ -20,7 +20,6 @@
             font-family: 'JetBrains Mono', monospace; overflow: hidden;
         }
 
-        /* HEADER */
         header {
             padding: 15px 40px; border-bottom: 1px solid rgba(0, 255, 136, 0.2);
             display: flex; justify-content: space-between; align-items: center;
@@ -40,7 +39,6 @@
             backdrop-filter: blur(5px);
         }
 
-        /* ÁREA DA AMOSTRA */
         .sample-viewport {
             position: relative; background: #000; border-radius: 20px;
             border: 2px solid #1a2a25; overflow: hidden;
@@ -52,7 +50,6 @@
             filter: brightness(0.8);
         }
 
-        /* EFEITO MICROSCÓPIO */
         .microscope-lens {
             position: absolute; width: 100%; height: 100%;
             background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.9) 70%);
@@ -66,7 +63,6 @@
             display: none; z-index: 11;
         }
 
-        /* GALERIA DE AMOSTRAS */
         #gallery-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); z-index: 1000;
@@ -87,7 +83,6 @@
         .thumb:hover { border-color: var(--bio-green); background: rgba(0,255,136,0.1); }
         .thumb img { width: 100px; height: 100px; object-fit: cover; border-radius: 5px; }
 
-        /* BOTÕES */
         .btn {
             background: transparent; border: 1px solid var(--bio-green);
             color: var(--bio-green); padding: 12px; border-radius: 8px;
@@ -98,11 +93,9 @@
         .btn:hover { background: var(--bio-green); color: black; }
         .btn.active { background: var(--dna-cyan); color: black; border-color: var(--dna-cyan); }
 
-        /* INDICADORES */
         .stat-box { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .stat-label { font-size: 0.6rem; color: #6a8a7a; }
         .stat-value { font-size: 0.9rem; color: var(--bio-green); font-weight: bold; display: block; }
-
     </style>
 </head>
 <body>
@@ -131,33 +124,16 @@
         <section class="sample-viewport">
             <div class="lens-overlay" id="lens"></div>
             <div class="microscope-lens" id="lens-dark"></div>
-            <img src="https://via.placeholder.com/400x400/051510/00ff88?text=Aguardando+Amostra" id="sample-img" alt="Planta">
+            <img src="https://via.placeholder.com/400x400/051510/00ff88?text=Aguardando+Amostra" id="sample-img">
         </section>
 
         <section class="panel">
             <h3 style="font-size: 0.8rem; color: var(--dna-cyan);">INDICADORES TÉCNICOS</h3>
-            
-            <div class="stat-box">
-                <span class="stat-label">NOME CIENTÍFICO</span>
-                <span class="stat-value" id="val-nome">---</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-label">SAÚDE FOLIAR</span>
-                <span class="stat-value" id="val-saude">---</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-label">HIDRATAÇÃO CELULAR</span>
-                <span class="stat-value" id="val-hidra">---</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-label">DEFESA NATURAL</span>
-                <span class="stat-value" id="val-defesa">---</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-label">ESTÁGIO DE CRESCIMENTO</span>
-                <span class="stat-value" id="val-cresc">---</span>
-            </div>
-
+            <div class="stat-box"><span class="stat-label">NOME CIENTÍFICO</span><span class="stat-value" id="val-nome">---</span></div>
+            <div class="stat-box"><span class="stat-label">SAÚDE FOLIAR</span><span class="stat-value" id="val-saude">---</span></div>
+            <div class="stat-box"><span class="stat-label">HIDRATAÇÃO CELULAR</span><span class="stat-value" id="val-hidra">---</span></div>
+            <div class="stat-box"><span class="stat-label">DEFESA NATURAL</span><span class="stat-value" id="val-defesa">---</span></div>
+            <div class="stat-box"><span class="stat-label">ESTÁGIO DE CRESCIMENTO</span><span class="stat-value" id="val-cresc">---</span></div>
             <div id="result-badge" style="margin-top: auto; padding: 15px; border-radius: 10px; background: rgba(0,255,136,0.1); display: none;">
                 <span style="font-size: 0.6rem; color: var(--bio-green);">VEREDITO:</span>
                 <p id="veredito-text" style="font-size: 0.7rem; margin: 5px 0 0 0;"></p>
@@ -167,32 +143,25 @@
 
     <div id="gallery-overlay">
         <div class="gallery-content">
-            <div class="thumb" onclick="selectSample('Soja', 'Glycine max', 'Captura de tela 2026-05-01 145503.png')">
-                <img src="Captura de tela 2026-05-01 145503.png" alt="Soja">
-                <p>Soja</p>
+            <div class="thumb" onclick="selectSample('Soja', 'Glycine max', 'soja.png')">
+                <img src="soja.png" alt="Soja"><p>Soja</p>
             </div>
-            <div class="thumb" onclick="selectSample('Milho', 'Zea mays', 'Captura de tela 2026-05-01 145704.png')">
-                <img src="Captura de tela 2026-05-01 145704.png" alt="Milho">
-                <p>Milho Híbrido</p>
+            <div class="thumb" onclick="selectSample('Milho', 'Zea mays', 'milho.png')">
+                <img src="milho.png" alt="Milho"><p>Milho</p>
             </div>
-            <div class="thumb" onclick="selectSample('Trigo', 'Triticum', 'Captura de tela 2026-05-01 145809.png')">
-                <img src="Captura de tela 2026-05-01 145809.png" alt="Trigo">
-                <p>Trigo</p>
+            <div class="thumb" onclick="selectSample('Trigo', 'Triticum', 'trigo.png')">
+                <img src="trigo.png" alt="Trigo"><p>Trigo</p>
             </div>
-            <div class="thumb" onclick="selectSample('Algodão', 'Gossypium', 'Captura de tela 2026-05-01 145947.png')">
-                <img src="Captura de tela 2026-05-01 145947.png" alt="Algodão">
-                <p>Algodão</p>
+            <div class="thumb" onclick="selectSample('Algodao', 'Gossypium', 'algodao.png')">
+                <img src="algodao.png" alt="Algodao"><p>Algodão</p>
             </div>
-            <div class="thumb" onclick="selectSample('Café', 'Coffea arabica', 'Captura de tela 2026-05-01 150020.png')">
-                <img src="Captura de tela 2026-05-01 150020.png" alt="Café">
-                <p>Café</p>
+            <div class="thumb" onclick="selectSample('Cafe', 'Coffea arabica', 'cafe.png')">
+                <img src="cafe.png" alt="Cafe"><p>Café</p>
             </div>
-            <div class="thumb" onclick="selectSample('Castanha', 'Anacardium occidentale', 'Captura de tela 2026-05-01 150020.png')">
-                <img src="Captura de tela 2026-05-01 150020.png" alt="Cana">
-                <p>Castanha de caju</p>
+            <div class="thumb" onclick="selectSample('Castanha', 'Anacardium', 'castanha.png')">
+                <img src="castanha.png" alt="Castanha"><p>Castanha</p>
             </div>
-
-            <button class="btn" style="grid-column: span 3; margin-top: 10px;" onclick="toggleGallery()">FECHAR</button>
+            <button class="btn" style="grid-column: span 3;" onclick="toggleGallery()">FECHAR</button>
         </div>
     </div>
 
@@ -211,8 +180,6 @@
             document.getElementById('val-nome').innerText = cientifico;
             document.getElementById('log-display').innerHTML += `> Amostra ${nome} carregada.<br>`;
             toggleGallery();
-            
-            // Reseta indicadores
             document.getElementById('val-saude').innerText = "---";
             document.getElementById('val-hidra').innerText = "---";
             document.getElementById('result-badge').style.display = "none";
@@ -220,7 +187,6 @@
 
         function toggleMicroscope() {
             if(!selectedSample) return alert("Selecione uma amostra primeiro!");
-            
             microscopeActive = !microscopeActive;
             const lens = document.getElementById('lens');
             const dark = document.getElementById('lens-dark');
@@ -228,48 +194,28 @@
             const btn = document.getElementById('micro-btn');
 
             if(microscopeActive) {
-                lens.style.display = 'block';
-                dark.style.display = 'block';
-                img.style.transform = 'scale(2.5)';
-                btn.classList.add('active');
+                lens.style.display = 'block'; dark.style.display = 'block';
+                img.style.transform = 'scale(2.5)'; btn.classList.add('active');
                 btn.innerText = "🔬 DESATIVAR MICROSCÓPIO";
             } else {
-                lens.style.display = 'none';
-                dark.style.display = 'none';
-                img.style.transform = 'scale(1)';
-                btn.classList.remove('active');
+                lens.style.display = 'none'; dark.style.display = 'none';
+                img.style.transform = 'scale(1)'; btn.classList.remove('active');
                 btn.innerText = "🔬 ATIVAR MICROSCÓPIO";
             }
         }
 
         function runAnalysis() {
-            if(!selectedSample) return alert("Nenhuma amostra no compartimento!");
-            
-            document.getElementById('anal-btn').disabled = true;
+            if(!selectedSample) return alert("Selecione uma amostra!");
             document.getElementById('status-tag').innerText = "ANALISANDO...";
-            
-            let p = 0;
-            const timer = setInterval(() => {
-                p += 5;
-                if(p >= 100) {
-                    clearInterval(timer);
-                    showResults();
-                }
-            }, 50);
-        }
-
-        function showResults() {
-            document.getElementById('status-tag').innerText = "ANÁLISE CONCLUÍDA";
-            document.getElementById('anal-btn').disabled = false;
-            
-            document.getElementById('val-saude').innerText = "94.8% (ÓTIMA)";
-            document.getElementById('val-hidra').innerText = "Normal (Estável)";
-            document.getElementById('val-defesa').innerText = "Alta (Imune)";
-            document.getElementById('val-cresc').innerText = "Fase Vegetativa";
-            
-            const badge = document.getElementById('result-badge');
-            badge.style.display = "block";
-            document.getElementById('veredito-text').innerText = "Trajeto realizado com sucesso. Amostra aprovada para reprodução.";
+            setTimeout(() => {
+                document.getElementById('status-tag').innerText = "CONCLUÍDO";
+                document.getElementById('val-saude').innerText = "94.8%";
+                document.getElementById('val-hidra').innerText = "Estável";
+                document.getElementById('val-defesa').innerText = "Alta";
+                document.getElementById('val-cresc').innerText = "Fase 2";
+                document.getElementById('result-badge').style.display = "block";
+                document.getElementById('veredito-text').innerText = "Amostra saudável.";
+            }, 1000);
         }
     </script>
 </body>
