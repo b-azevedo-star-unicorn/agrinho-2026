@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroVR Academy | Imersão 360°</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Outfit:wght@300;600&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        :root {
+            --vr-blue: #00f5d4;
+            --vr-purple: #7209b7;
+            --vr-red: #f72585;
+            --glass: rgba(0, 245, 212, 0.05);
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background: #000;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden;
+        }
+
+        /* EFEITO DE LENTE VR (VIGNETTE) */
+        .vr-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.8) 100%);
+            pointer-events: none; z-index: 10;
+        }
+
+        /* FUNDO DINÂMICO (SIMULANDO AMBIENTE 3D) */
+        .world-bg {
+            position: fixed; top: 0; left: 0; width: 110%; height: 110%;
+            background: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=2000') no-repeat center center;
+            background-size: cover;
+            filter: blur(4px) brightness(0.4);
+            transform: translate(-5%, -5%);
+            transition: 0.1s ease-out;
+            z-index: 1;
+        }
+
+        /* SCANLINE E RUÍDO DIGITAL */
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none; z-index: 11;
+        }
+
+        .interface {
+            position: relative; z-index: 20;
+            height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+
+        /* HUD ELEMENTS */
+        .hud-header {
+            position: absolute; top: 40px; text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .hud-header h1 {
+            font-family: 'Fredoka', sans-serif; font-size: 3rem; margin: 0;
+            letter-spacing: 5px; color: var(--vr-blue);
+            text-shadow: 0 0 20px rgba(0, 245, 212, 0.5);
+        }
+
+        .status-bar {
+            display: flex; gap: 20px; font-size: 0.7rem; color: var(--vr-blue);
+            margin-top: 10px; text-transform: uppercase;
+        }
+
+        /* CARDS DE TREINAMENTO */
+        .training-grid {
+            display: flex; gap: 30px; padding: 20px;
+            perspective: 1000px;
+        }
+
+        .vr-card {
+            width: 300px; height: 400px;
+            background: var(--glass);
+            border: 1px solid var(--vr-blue);
+            border-radius: 20px;
+            padding: 30px;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            backdrop-filter: blur(10px);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .vr-card:hover {
+            transform: translateZ(50px) scale(1.05);
+            background: rgba(0, 245, 212, 0.15);
+            box-shadow: 0 0 30px rgba(0, 245, 212, 0.3);
+        }
+
+        .vr-card i { font-size: 4rem; margin-bottom: 20px; display: block; }
+        .vr-card h3 { font-family: 'Fredoka'; font-size: 1.5rem; margin: 10px 0; color: var(--vr-blue); }
+        .vr-card p { font-size: 0.9rem; color: #ccc; line-height: 1.6; }
+
+        .btn-start {
+            margin-top: auto; width: 100%; padding: 12px;
+            background: transparent; border: 1px solid var(--vr-blue);
+            color: var(--vr-blue); border-radius: 50px;
+            font-weight: bold; text-transform: uppercase; cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .vr-card:hover .btn-start {
+            background: var(--vr-blue); color: #000;
+        }
+
+        /* MENSAGEM DE RODAPÉ */
+        .hud-footer {
+            position: absolute; bottom: 40px; width: 80%;
+            display: flex; justify-content: space-between;
+            font-family: 'JetBrains Mono'; font-size: 0.7rem; color: rgba(255,255,255,0.4);
+        }
+
+        /* BOTÃO VOLTAR */
+        .back-btn {
+            position: absolute; top: 40px; left: 40px;
+            color: white; text-decoration: none; font-size: 0.8rem;
+            border: 1px solid rgba(255,255,255,0.3); padding: 10px 20px;
+            border-radius: 50px; transition: 0.3s;
+        }
+        .back-btn:hover { background: white; color: black; }
+
+        /* CURSOR VR */
+        #cursor {
+            width: 20px; height: 20px; border: 2px solid white;
+            border-radius: 50%; position: fixed; pointer-events: none;
+            z-index: 100; transition: 0.1s; mix-blend-mode: difference;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+    <div class="vr-overlay"></div>
+    <div class="scanlines"></div>
+    <div class="world-bg" id="bg"></div>
+
+    <a href="index.html" class="back-btn">EXIT VR_MODE</a>
+
+    <div class="interface">
+        <div class="hud-header">
+            <h1>AgroVR ACADEMY</h1>
+            <div class="status-bar">
+                <span>● NEURAL_LINK: ESTABLISHED</span>
+                <span>● LATENCY: 2ms</span>
+                <span>● USER: ADMIN_AGRINHO</span>
+            </div>
+        </div>
+
+        <div class="training-grid">
+            <div class="vr-card" onclick="startSim('Drones')">
+                <div style="font-size: 0.7rem; color: var(--vr-blue); margin-bottom: 10px;">MODULE_01</div>
+                <i>🛸</i>
+                <h3>Pilotagem de Drones</h3>
+                <p>Aprenda a mapear falhas de plantio e aplicar defensivos com precisão milimétrica.</p>
+                <button class="btn-start">INICIAR SIMULAÇÃO</button>
+            </div>
+
+            <div class="vr-card" onclick="startSim('Manutenção')">
+                <div style="font-size: 0.7rem; color: var(--vr-blue); margin-bottom: 10px;">MODULE_02</div>
+                <i>🚜</i>
+                <h3>Manutenção Autônoma</h3>
+                <p>Conserte tratores de última geração usando realidade aumentada e diagramas 3D.</p>
+                <button class="btn-start">INICIAR SIMULAÇÃO</button>
+            </div>
+
+            <div class="vr-card" onclick="startSim('Solo')">
+                <div style="font-size: 0.7rem; color: var(--vr-blue); margin-bottom: 10px;">MODULE_03</div>
+                <i>🔬</i>
+                <h3>Análise Microbiana</h3>
+                <p>Mergulhe no solo em nível microscópico para entender a saúde das raízes.</p>
+                <button class="btn-start">INICIAR SIMULAÇÃO</button>
+            </div>
+        </div>
+
+        <div class="hud-footer">
+            <div>POS_X: <span id="posx">0</span> // POS_Y: <span id="posy">0</span></div>
+            <div>AGRINHO 2026 // TECNOLOGIA IMERSIVA PARA EDUCAÇÃO RURAL</div>
+            <div id="clock">00:00:00</div>
+        </div>
+    </div>
+
+    <script>
+        const bg = document.getElementById('bg');
+        const cursor = document.getElementById('cursor');
+        const posx = document.getElementById('posx');
+        const posy = document.getElementById('posy');
+
+        // Efeito de movimento do fundo e HUD baseado no mouse (Efeito VR)
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+
+            // Move o cursor customizado
+            cursor.style.left = x + 'px';
+            cursor.style.top = y + 'px';
+
+            // Move o fundo levemente para dar profundidade
+            const moveX = (x / window.innerWidth - 0.5) * 20;
+            const moveY = (y / window.innerHeight - 0.5) * 20;
+            bg.style.transform = `translate(calc(-5% + ${-moveX}px), calc(-5% + ${-moveY}px))`;
+
+            // Atualiza coordenadas no HUD
+            posx.innerText = Math.floor(x);
+            posy.innerText = Math.floor(y);
+        });
+
+        // Relógio
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+        }, 1000);
+
+        function startSim(tipo) {
+            alert(`Iniciando Imersão em ${tipo}...\n\nPrepare seu headset AgroVR.`);
+        }
+    </script>
+</body>
+</html>
