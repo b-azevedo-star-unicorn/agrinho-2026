@@ -3,172 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgroTech Hub v2.0 | Agrinho 2026</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <title>SustentaAgro OS | Agrinho 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #00ff88;
-            --secondary: #00e1ff;
-            --accent: #bcff00;
-            --dark-bg: #020a08;
-            --card-glass: rgba(255, 255, 255, 0.03);
-            --border-glass: rgba(0, 255, 136, 0.15);
-            --text-main: #e0f2ed;
-            --text-dim: #889e98;
+            --agro-green: #2d5a27;
+            --leaf-light: #4caf50;
+            --soil: #3e2723;
+            --cream: #f8fbf8;
+            --stone: #e0e4e0;
+            --text-dark: #1a1c1a;
+            --text-muted: #5c635c;
         }
 
         body {
-            font-family: 'Outfit', sans-serif;
-            background: var(--dark-bg);
-            /* Fundo com efeito de profundidade */
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 255, 136, 0.03) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(0, 225, 255, 0.03) 0%, transparent 40%),
-                url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
-            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--cream);
+            color: var(--text-dark);
             margin: 0;
             padding: 60px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
+            /* Fundo sutil inspirado em topografia */
+            background-image: radial-gradient(var(--stone) 0.5px, transparent 0.5px);
+            background-size: 30px 30px;
         }
 
         header {
             text-align: center;
-            max-width: 900px;
-            margin-bottom: 70px;
-            position: relative;
+            max-width: 700px;
+            margin-bottom: 80px;
         }
 
         header h1 {
-            font-size: 4rem;
-            font-weight: 800;
-            letter-spacing: -2px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--agro-green);
             margin: 0;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 15px rgba(0, 255, 136, 0.3));
+            letter-spacing: -2px;
+        }
+
+        header h1 span {
+            color: var(--leaf-light);
+            font-weight: 300;
         }
 
         header p {
-            font-family: 'JetBrains Mono', monospace;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            font-size: 0.9rem;
-            color: var(--text-dim);
+            font-size: 1.1rem;
+            color: var(--text-muted);
             margin-top: 10px;
+            font-weight: 400;
         }
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
             width: 100%;
-            max-width: 1400px;
+            max-width: 1200px;
         }
 
         .card {
-            background: var(--card-glass);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--border-glass);
-            border-radius: 28px;
-            padding: 35px;
-            position: relative;
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            background: #ffffff;
+            border: 1px solid var(--stone);
+            border-radius: 12px;
+            padding: 40px;
+            text-decoration: none;
+            transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
-            text-decoration: none;
-            overflow: hidden;
-        }
-
-        /* Efeito de brilho no hover */
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 100%);
-            pointer-events: none;
+            position: relative;
         }
 
         .card:hover {
-            transform: translateY(-10px);
-            border-color: var(--primary);
-            background: rgba(0, 255, 136, 0.05);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 255, 136, 0.1);
+            transform: translateY(-8px);
+            border-color: var(--agro-green);
+            box-shadow: 0 20px 40px rgba(45, 90, 39, 0.08);
         }
 
         .badge {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            font-weight: 600;
+            font-size: 0.7rem;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--agro-green);
+            background: rgba(45, 90, 39, 0.05);
             padding: 6px 12px;
-            border-radius: 8px;
-            background: rgba(0, 225, 255, 0.1);
-            color: var(--secondary);
-            border: 1px solid rgba(0, 225, 255, 0.2);
+            border-radius: 4px;
             width: fit-content;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .icon {
-            font-size: 40px;
+            font-size: 32px;
             margin-bottom: 20px;
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
+            display: block;
         }
 
         .card h3 {
-            margin: 0 0 12px 0;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: -0.5px;
+            margin: 0 0 15px 0;
+            font-size: 1.6rem;
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--soil);
         }
 
         .card p {
-            font-size: 0.95rem;
+            font-size: 1rem;
             line-height: 1.6;
-            color: var(--text-dim);
-            margin-bottom: 30px;
+            color: var(--text-muted);
+            margin-bottom: 35px;
             flex-grow: 1;
         }
 
         .btn {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #fff;
-            padding: 14px;
-            border-radius: 14px;
-            font-size: 0.85rem;
+            background: var(--agro-green);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
             font-weight: 600;
-            transition: 0.4s;
             text-align: center;
-            backdrop-filter: blur(5px);
+            transition: 0.2s;
         }
 
         .card:hover .btn {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: #001a11;
-            box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+            background: var(--leaf-light);
         }
 
         footer {
-            margin-top: 100px;
-            padding: 40px;
-            width: 100%;
+            margin-top: 120px;
             text-align: center;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            color: #3e4f4a;
-            border-top: 1px solid rgba(255,255,255,0.03);
+            padding: 40px;
+            border-top: 1px solid var(--stone);
+            width: 100%;
+            max-width: 1000px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
             letter-spacing: 1px;
         }
 
-        /* Responsividade para telas menores */
         @media (max-width: 768px) {
             header h1 { font-size: 2.5rem; }
             body { padding: 40px 15px; }
@@ -178,80 +153,79 @@
 <body>
 
     <header>
-        <h1>SustentaAgro <span style="font-weight: 300;">OS</span></h1>
-        <p>Future-Proof Farming Operating System</p>
+        <h1>SustentaAgro <span>OS</span></h1>
+        <p>Ecossistema de Inteligência Agrícola</p>
     </header>
 
     <div class="grid-container">
         
         <a href="bioradar.html" class="card">
-            <div class="badge">Circular</div>
-            <div class="icon">🔄</div>
+            <div class="badge">Ecosistema</div>
+            <div class="icon">🌿</div>
             <h3>Bio-Radar</h3>
-            <p>Marketplace para troca e venda de resíduos orgânicos entre fazendas vizinhas.</p>
-            <div class="btn">Abrir Mapa de Resíduos</div>
+            <p>Conecte-se com produtores locais para a gestão inteligente de resíduos orgânicos.</p>
+            <div class="btn">Visualizar Mapa</div>
         </a>
 
         <a href="carbono.html" class="card">
-            <div class="badge">Finanças</div>
-            <div class="icon">🍃</div>
+            <div class="badge">Ativos</div>
+            <div class="icon">📉</div>
             <h3>Carbon Wallet</h3>
-            <p>Simulador de rentabilidade para áreas de reserva legal e reflorestamento.</p>
-            <div class="btn">Simular Ganhos</div>
+            <p>Calcule o valor ambiental das suas áreas preservadas e projete créditos de carbono.</p>
+            <div class="btn">Simular Rentabilidade</div>
         </a>
 
         <a href="legacy.html" class="card">
-            <div class="badge">Sucessão</div>
-            <div class="icon">📈</div>
+            <div class="badge">Estratégia</div>
+            <div class="icon">🌳</div>
             <h3>Legacy Pro</h3>
-            <p>Projeção de valorização da terra com tecnologias sustentáveis para a próxima geração.</p>
-            <div class="btn">Ver Projeção</div>
+            <p>Análise de valorização patrimonial focada em práticas de manejo sustentável.</p>
+            <div class="btn">Abrir Projeção</div>
         </a>
 
         <a href="rastroverde.html" class="card">
-            <div class="badge">Blockchain</div>
-            <div class="icon">🔗</div>
+            <div class="badge">Certificação</div>
+            <div class="icon">📦</div>
             <h3>Rastro Verde</h3>
-            <p>Rastreabilidade total da produção com geração de QR Code para o consumidor final.</p>
-            <div class="btn">Rastrear Lote</div>
+            <p>Sistema de blockchain para proveniência e segurança alimentar do campo à mesa.</p>
+            <div class="btn">Gerenciar Lotes</div>
         </a>
 
         <a href="biolab.html" class="card">
-            <div class="badge">Biotecnologia</div>
-            <div class="icon">🧪</div>
+            <div class="badge">Laboratório</div>
+            <div class="icon">🔬</div>
             <h3>BioLab Assist</h3>
-            <p>Guia interativo para reduzir químicos usando controle biológico e biopesticidas.</p>
-            <div class="btn">Consultar Bio-Receitas</div>
+            <p>Monitoramento e receitas para controle biológico e redução de químicos.</p>
+            <div class="btn">Protocolos Biológicos</div>
         </a>
 
         <a href="aquaguard.html" class="card">
-            <div class="badge">Hidrologia</div>
+            <div class="badge">Recursos</div>
             <div class="icon">💧</div>
             <h3>AquaGuard</h3>
-            <p>Monitoramento remoto de nascentes e qualidade da água em tempo real.</p>
-            <div class="btn">Monitorar Águas</div>
+            <p>Gestão hídrica inteligente e monitoramento de pureza em nascentes e reservatórios.</p>
+            <div class="btn">Telemetria de Água</div>
         </a>
 
         <a href="agrovr.html" class="card">
-            <div class="badge">Educação</div>
-            <div class="icon">🥽</div>
+            <div class="badge">Capacitação</div>
+            <div class="icon">🎓</div>
             <h3>AgroVR Academy</h3>
-            <p>Treinamentos em Realidade Virtual para desperdício zero.</p>
-            <div class="btn">Iniciar Treinamento</div>
+            <p>Treinamentos imersivos para operação de máquinas com impacto ambiental zero.</p>
+            <div class="btn">Acessar Cursos</div>
         </a>
 
         <a href="climate.html" class="card">
-            <div class="badge">Inteligência</div>
-            <div class="icon">☁️</div>
+            <div class="badge">Climatologia</div>
+            <div class="icon">☀️</div>
             <h3>Climate AI</h3>
-            <p>Previsão climática avançada para proteção de solo.</p>
-            <div class="btn">Previsão em Tempo Real</div>
+            <p>Inteligência de dados climáticos aplicada à preservação da microbiota do solo.</p>
+            <div class="btn">Análise Preditiva</div>
         </a>
     </div>
 
     <footer>
-        &lt; SYSTEM_CORE_2026 /&gt; <br>
-        PROJETADO PARA O CONCURSO AGRINHO | TECNOLOGIA SUSTENTÁVEL AMBIENTAL
+        CONCURSO AGRINHO 2026 • SOLUÇÕES TECNOLÓGICAS PARA O AGRONEGÓCIO SUSTENTÁVEL
     </footer>
 </body>
 </html>
