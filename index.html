@@ -4,25 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SustentaAgro | Inteligência Rural</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&family=Bree+Serif&family=Special+Elite&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Rock+Salt&family=Bree+Serif&display=swap" rel="stylesheet">
     <style>
         :root {
-            --madeira: #4e342e;
-            --terra: #6d4c41;
-            --grama: #2e7d32;
-            --papel: #fdfaf5;
-            --borda: #d7ccc8;
-            --texto: #2c1e1b;
+            --madeira-escura: #3e2723;
+            --madeira-clara: #a1887f;
+            --terra: #5d4037;
+            --palha: #f5f5dc;
+            --verde-mato: #2e7d32;
+            --ferro: #212121;
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f0ebe6;
-            /* Textura sutil de linho/saco no fundo */
-            background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
-            color: var(--texto);
+            font-family: 'Bree Serif', serif;
+            background-color: #d7ccc8;
+            background-image: url('https://www.transparenttextures.com/patterns/pinstriped-suit.png');
+            color: var(--madeira-escura);
             margin: 0;
-            padding: 50px 20px;
+            padding: 40px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -30,129 +29,126 @@
 
         header {
             text-align: center;
-            max-width: 800px;
-            margin-bottom: 70px;
-            padding: 30px;
-            border: 2px solid var(--madeira);
-            background: rgba(255, 255, 255, 0.5);
-            position: relative;
-        }
-
-        /* Detalhe de "cantoneira" rústica */
-        header::before {
-            content: '';
-            position: absolute;
-            top: -5px; left: -5px; width: 20px; height: 20px;
-            border-top: 5px solid var(--madeira); border-left: 5px solid var(--madeira);
+            margin-bottom: 60px;
+            padding: 20px;
+            border: 4px solid var(--madeira-escura);
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 8px 8px 0px var(--terra);
         }
 
         header h1 {
-            font-family: 'Bree Serif', serif;
-            font-size: 3rem;
-            color: var(--madeira);
+            font-family: 'Rock Salt', cursive;
+            font-size: 2.5rem;
+            color: var(--verde-mato);
             margin: 0;
-            letter-spacing: -1px;
+            transform: rotate(-2deg);
         }
 
         header p {
-            font-size: 1.1rem;
+            font-family: 'Special Elite', display;
+            font-size: 1.2rem;
+            margin-top: 15px;
             color: var(--terra);
-            margin-top: 10px;
-            font-weight: 500;
         }
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
             width: 100%;
             max-width: 1200px;
         }
 
         .card {
-            background: var(--papel);
-            border: 1px solid var(--borda);
-            border-bottom: 5px solid var(--madeira); /* Efeito de tábua */
-            padding: 35px;
+            background: #efebe9;
+            border-left: 15px solid var(--madeira-escura);
+            border-top: 2px solid var(--madeira-escura);
+            border-right: 2px solid var(--madeira-escura);
+            border-bottom: 8px solid var(--madeira-escura);
+            padding: 30px;
             text-decoration: none;
-            color: var(--texto);
-            transition: all 0.3s ease;
+            color: var(--madeira-escura);
+            transition: 0.3s;
+            position: relative;
             display: flex;
             flex-direction: column;
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.05);
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            border-bottom-color: var(--grama);
-            box-shadow: 15px 15px 30px rgba(0,0,0,0.1);
+            transform: scale(1.02);
+            background: #fff;
+            box-shadow: 10px 10px 0px var(--verde-mato);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 10px; right: 10px;
+            width: 8px; height: 8px;
+            background: var(--ferro);
+            border-radius: 50%;
         }
 
         .badge {
-            font-family: 'Special Elite', cursive;
-            font-size: 0.75rem;
-            color: var(--grama);
-            border: 1px solid var(--grama);
-            padding: 4px 10px;
+            font-family: 'Special Elite', display;
+            font-size: 0.8rem;
+            background: var(--madeira-clara);
+            color: #fff;
+            padding: 5px 10px;
+            display: inline-block;
+            margin-bottom: 15px;
             width: fit-content;
-            margin-bottom: 20px;
-            text-transform: uppercase;
         }
 
         .icon {
-            font-size: 35px;
+            font-size: 40px;
             margin-bottom: 15px;
             display: block;
         }
 
         .card h3 {
-            font-family: 'Bree Serif', serif;
-            font-size: 1.6rem;
-            margin: 0 0 12px 0;
-            color: var(--madeira);
+            margin: 0 0 10px 0;
+            font-size: 1.8rem;
+            color: var(--terra);
+            text-transform: uppercase;
         }
 
         .card p {
-            font-size: 0.95rem;
+            font-size: 1rem;
             line-height: 1.5;
-            color: #5d4037;
-            margin-bottom: 25px;
+            color: #4e342e;
+            margin-bottom: 20px;
             flex-grow: 1;
         }
 
-        .btn-link {
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: var(--grama);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
+        .btn-rustico {
+            font-family: 'Special Elite', display;
+            background: var(--verde-mato);
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            border-radius: 0;
+            border: 2px solid var(--ferro);
+            font-weight: bold;
         }
 
-        .btn-link::after {
-            content: ' →';
-            transition: 0.2s;
-        }
-
-        .card:hover .btn-link::after {
-            margin-left: 8px;
+        .card:hover .btn-rustico {
+            background: var(--terra);
         }
 
         footer {
-            margin-top: 100px;
+            margin-top: 80px;
             text-align: center;
-            padding: 40px;
+            font-family: 'Special Elite', display;
+            border: 2px dashed var(--terra);
+            padding: 20px;
+            background: rgba(255,255,255,0.2);
             width: 100%;
             max-width: 600px;
-            border-top: 1px solid var(--borda);
-            font-size: 0.9rem;
-            color: var(--terra);
         }
 
-        @media (max-width: 768px) {
-            header h1 { font-size: 2.2rem; }
-            body { padding: 30px 15px; }
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8rem; }
         }
     </style>
 </head>
@@ -160,80 +156,79 @@
 
     <header>
         <h1>SustentaAgro</h1>
-        <p>Soluções Práticas para a Gestão Rural Sustentável</p>
+        <p>Soluções Práticas para o Produtor Rural</p>
     </header>
 
     <div class="grid-container">
         
         <a href="bioradar.html" class="card">
-            <div class="badge">Economia Circular</div>
-            <div class="icon">🔄</div>
+            <div class="badge">Rede Local</div>
+            <div class="icon">🚜</div>
             <h3>Bio-Radar</h3>
-            <p>Plataforma para troca e comercialização de resíduos orgânicos entre produtores da região.</p>
-            <div class="btn-link">Acessar Mapa</div>
+            <p>Conecte-se com produtores vizinhos para a troca e venda de adubos e resíduos orgânicos.</p>
+            <div class="btn-rustico">Ver Mapa de Trocas</div>
         </a>
 
         <a href="carbono.html" class="card">
-            <div class="badge">Meio Ambiente</div>
+            <div class="badge">Ativos Verdes</div>
             <div class="icon">🍃</div>
             <h3>Carbon Wallet</h3>
-            <p>Calcule o potencial de rendimento das áreas preservadas e explore o mercado de créditos de carbono.</p>
-            <div class="btn-link">Simular Ganhos</div>
+            <p>Calcule a rentabilidade das suas áreas preservadas e explore o mercado de crédito de carbono.</p>
+            <div class="btn-rustico">Simular Ganhos</div>
         </a>
 
         <a href="legacy.html" class="card">
             <div class="badge">Patrimônio</div>
             <div class="icon">📈</div>
             <h3>Legacy Pro</h3>
-            <p>Analise a valorização da sua propriedade com a aplicação de tecnologias sustentáveis.</p>
-            <div class="btn-link">Ver Projeção</div>
+            <p>Analise como a gestão sustentável aumenta o valor da sua terra para as próximas gerações.</p>
+            <div class="btn-rustico">Projeção de Valor</div>
         </a>
 
         <a href="rastroverde.html" class="card">
-            <div class="badge">Rastreabilidade</div>
-            <div class="icon">🔗</div>
+            <div class="badge">Certificação</div>
+            <div class="icon">🪵</div>
             <h3>Rastro Verde</h3>
-            <p>Certifique a origem da sua produção e ofereça total transparência ao consumidor final.</p>
-            <div class="btn-link">Rastrear Lote</div>
+            <p>Certifique a origem da sua colheita e ofereça transparência total para o consumidor final.</p>
+            <div class="btn-rustico">Rastrear Lote</div>
         </a>
 
         <a href="biolab.html" class="card">
-            <div class="badge">Inovação</div>
+            <div class="badge">Bio-Defesa</div>
             <div class="icon">🧪</div>
             <h3>BioLab Assist</h3>
-            <p>Guia técnico para o uso de defensivos biológicos e manejo integrado de pragas.</p>
-            <div class="btn-link">Consultar Guia</div>
+            <p>Guia técnico para o uso de controle biológico e redução de produtos químicos no manejo.</p>
+            <div class="btn-rustico">Ver Guia Técnico</div>
         </a>
 
         <a href="aquaguard.html" class="card">
-            <div class="badge">Recursos Hídricos</div>
+            <div class="badge">Hidrologia</div>
             <div class="icon">💧</div>
             <h3>AquaGuard</h3>
-            <p>Monitoramento em tempo real da qualidade da água e do nível dos reservatórios da fazenda.</p>
-            <div class="btn-link">Monitorar Água</div>
+            <p>Monitore a qualidade das nascentes e o nível de água dos reservatórios da propriedade.</p>
+            <div class="btn-rustico">Medir Recursos</div>
         </a>
 
         <a href="agrovr.html" class="card">
-            <div class="badge">Educação</div>
+            <div class="badge">Capacitação</div>
             <div class="icon">🥽</div>
             <h3>AgroVR Academy</h3>
-            <p>Capacitação técnica através de simuladores para redução de desperdícios no campo.</p>
-            <div class="btn-link">Iniciar Treinamento</div>
+            <p>Treinamentos em realidade virtual para otimizar o uso de máquinas e evitar desperdícios.</p>
+            <div class="btn-rustico">Acessar Aulas</div>
         </a>
 
         <a href="climate.html" class="card">
-            <div class="badge">Monitoramento</div>
-            <div class="icon">☁️</div>
+            <div class="badge">Climatologia</div>
+            <div class="icon">⛈️</div>
             <h3>Climate AI</h3>
-            <p>Previsões meteorológicas precisas para otimizar o plantio e a proteção do solo.</p>
-            <div class="btn-link">Ver Previsão</div>
+            <p>Previsão meteorológica detalhada para planejar o plantio e a proteção do solo.</p>
+            <div class="btn-rustico">Ver Previsão</div>
         </a>
 
     </div>
 
     <footer>
-        Desenvolvido para o Concurso Agrinho 2026<br>
-        <strong>Tecnologia e Sustentabilidade no Agronegócio</strong>
+        PROJETO AGRINHO 2026 - Tecnologia e Sustentabilidade no Campo
     </footer>
 
 </body>
