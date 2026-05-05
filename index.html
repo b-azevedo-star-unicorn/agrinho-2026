@@ -3,262 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SustentaAgro OS | Tradição & Excelência</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Prata&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+    <title>SustentaAgro | Do Campo para o Campo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Rock+Salt&family=Bree+Serif&display=swap" rel="stylesheet">
     <style>
         :root {
-            --vintage-gold: #c5a059;
-            --deep-green: #1a302a;
-            --oxblood: #4a1c1c;
-            --parchment: #f4eee1;
-            --ebony: #121212;
-            --border-style: 2px solid var(--vintage-gold);
+            --madeira-escura: #3e2723;
+            --madeira-clara: #a1887f;
+            --terra: #5d4037;
+            --palha: #f5f5dc;
+            --verde-mato: #2e7d32;
+            --ferro: #212121;
         }
 
         body {
-            font-family: 'Prata', serif;
-            background-color: var(--deep-green);
-            /* Fundo com textura de papel de parede clássico sutil */
-            background-image: 
-                linear-gradient(rgba(26, 48, 42, 0.95), rgba(26, 48, 42, 0.95)),
-                url('https://www.transparenttextures.com/patterns/cream-paper.png');
-            color: var(--parchment);
+            font-family: 'Bree Serif', serif;
+            background-color: #d7ccc8;
+            /* Textura de fundo que lembra tecido de saco ou papel pardo */
+            background-image: url('https://www.transparenttextures.com/patterns/pinstriped-suit.png');
+            color: var(--madeira-escura);
             margin: 0;
-            padding: 80px 20px;
+            padding: 40px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        /* Moldura maximalista na tela */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 20px; left: 20px; right: 20px; bottom: 20px;
-            border: 1px solid rgba(197, 160, 89, 0.3);
-            pointer-events: none;
-            z-index: 100;
-        }
-
         header {
             text-align: center;
-            max-width: 900px;
-            margin-bottom: 100px;
-            position: relative;
+            margin-bottom: 60px;
+            padding: 20px;
+            border: 4px solid var(--madeira-escura);
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 8px 8px 0px var(--terra);
         }
 
         header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(3rem, 8vw, 5.5rem);
-            font-weight: 900;
-            font-style: italic;
-            color: var(--vintage-gold);
+            font-family: 'Rock Salt', cursive;
+            font-size: 2.5rem;
+            color: var(--verde-mato);
             margin: 0;
-            line-height: 1;
-            text-transform: none;
-            filter: drop-shadow(3px 3px 0px var(--ebony));
+            transform: rotate(-2deg);
         }
 
         header p {
-            font-family: 'Montserrat', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 8px;
-            font-size: 0.8rem;
-            margin-top: 20px;
-            color: var(--parchment);
-            opacity: 0.8;
+            font-family: 'Special Elite', display;
+            font-size: 1.2rem;
+            margin-top: 15px;
+            color: var(--terra);
         }
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
             width: 100%;
-            max-width: 1300px;
+            max-width: 1200px;
         }
 
         .card {
-            background: var(--ebony);
-            border: 3px double var(--vintage-gold); /* Bordas duplas clássicas */
-            padding: 45px 35px;
+            background: #efebe9;
+            border-left: 15px solid var(--madeira-escura); /* Lembra uma tábua */
+            border-top: 2px solid var(--madeira-escura);
+            border-right: 2px solid var(--madeira-escura);
+            border-bottom: 8px solid var(--madeira-escura);
+            padding: 30px;
             text-decoration: none;
-            color: var(--parchment);
-            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            color: var(--madeira-escura);
+            transition: 0.3s;
             position: relative;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 20px 20px 0px rgba(0,0,0,0.3);
         }
 
         .card:hover {
-            transform: translate(-10px, -10px);
-            box-shadow: 30px 30px 0px var(--vintage-gold);
-            background: var(--oxblood); /* Mudança de cor dramática */
+            transform: scale(1.02);
+            background: #fff;
+            box-shadow: 10px 10px 0px var(--verde-mato);
+        }
+
+        /* Detalhe de "prego" nos cantos */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 10px; right: 10px;
+            width: 8px; height: 8px;
+            background: var(--ferro);
+            border-radius: 50%;
         }
 
         .badge {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 1px solid var(--vintage-gold);
-            width: fit-content;
-            margin-bottom: 30px;
-            padding-bottom: 5px;
-            color: var(--vintage-gold);
+            font-family: 'Special Elite', display;
+            font-size: 0.8rem;
+            background: var(--madeira-clara);
+            color: #fff;
+            padding: 5px 10px;
+            display: inline-block;
+            margin-bottom: 15px;
         }
 
         .icon {
-            font-size: 45px;
-            margin-bottom: 25px;
-            filter: sepia(1) saturate(2);
+            font-size: 40px;
+            margin-bottom: 15px;
+            display: block;
         }
 
         .card h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2rem;
-            margin: 0 0 15px 0;
-            color: var(--vintage-gold);
+            margin: 0 0 10px 0;
+            font-size: 1.8rem;
+            color: var(--terra);
+            text-transform: uppercase;
         }
 
         .card p {
-            font-family: 'Prata', serif;
-            font-size: 1.05rem;
-            line-height: 1.7;
-            color: var(--parchment);
-            margin-bottom: 40px;
-            flex-grow: 1;
-            font-style: italic;
+            font-size: 1rem;
+            line-height: 1.4;
+            color: #4e342e;
+            margin-bottom: 20px;
         }
 
-        .btn-classic {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            padding: 15px;
-            border: 1px solid var(--vintage-gold);
-            color: var(--vintage-gold);
+        .btn-rustico {
+            font-family: 'Special Elite', display;
+            background: var(--verde-mato);
+            color: #fff;
+            padding: 10px;
             text-align: center;
-            transition: 0.3s;
+            border-radius: 0;
+            border: 2px solid var(--ferro);
+            font-weight: bold;
         }
 
-        .card:hover .btn-classic {
-            background: var(--vintage-gold);
-            color: var(--ebony);
+        .card:hover .btn-rustico {
+            background: var(--terra);
         }
 
         footer {
-            margin-top: 150px;
+            margin-top: 80px;
             text-align: center;
-            border-top: 1px solid var(--vintage-gold);
-            padding: 50px;
-            width: 100%;
-            max-width: 800px;
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 1.2rem;
+            font-family: 'Special Elite', display;
+            border: 2px dashed var(--terra);
+            padding: 20px;
+            background: rgba(255,255,255,0.2);
         }
 
-        /* Detalhe ornamental nos cantos dos cards */
-        .card::after {
-            content: '❦';
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-            color: var(--vintage-gold);
-            font-size: 1.5rem;
-            opacity: 0.3;
-        }
-
-        @media (max-width: 768px) {
-            header h1 { font-size: 3rem; }
-            .grid-container { gap: 20px; }
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8rem; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <p>Desde 2026 • Excelência Rural</p>
-        <h1>SustentaAgro <span style="font-family: 'Prata'">Legacy</span></h1>
-        <p>A Tradição Encontra a Nova Era</p>
+        <h1>SustentaAgro</h1>
+        <p>Tecnologia que entende a lida do campo</p>
     </header>
 
     <div class="grid-container">
         
         <a href="bioradar.html" class="card">
-            <div class="badge">Patrimônio</div>
-            <div class="icon">📜</div>
+            <div class="badge">Vizinhança</div>
+            <div class="icon">🚜</div>
             <h3>Bio-Radar</h3>
-            <p>A arte da troca mútua entre vizinhos. Gestão nobre de ativos orgânicos.</p>
-            <div class="btn-classic">Abrir Registro</div>
+            <p>Troca de sobra de esterco e adubo orgânico com os sítios parceiros da região.</p>
+            <div class="btn-rustico">Ver Mapa da Lida</div>
         </a>
 
         <a href="carbono.html" class="card">
-            <div class="badge">Riqueza Verde</div>
-            <div class="icon">⚜️</div>
+            <div class="badge">Reserva Legal</div>
+            <div class="icon">🐂</div>
             <h3>Carbon Wallet</h3>
-            <p>O valor da terra preservada convertido em lastro para gerações futuras.</p>
-            <div class="btn-classic">Consultar Tesouro</div>
+            <p>Veja quanto a sua mata em pé pode render pro caixa da fazenda.</p>
+            <div class="btn-rustico">Simular Valores</div>
         </a>
 
         <a href="legacy.html" class="card">
-            <div class="badge">Sucessão</div>
-            <div class="icon">🏰</div>
+            <div class="badge">Da Família</div>
+            <div class="icon">🛖</div>
             <h3>Legacy Pro</h3>
-            <p>Mapeando a herança e a valorização das raízes desta terra.</p>
-            <div class="btn-classic">Analisar Linhagem</div>
+            <p>Planejamento pra passar o comando pros filhos com a terra valorizada.</p>
+            <div class="btn-rustico">Projeção do Sítio</div>
         </a>
 
         <a href="rastroverde.html" class="card">
-            <div class="badge">Honra</div>
-            <div class="icon">🖋️</div>
+            <div class="badge">Origem</div>
+            <div class="icon">🪵</div>
             <h3>Rastro Verde</h3>
-            <p>Assinatura digital e selo de procedência. A garantia da palavra dada.</p>
-            <div class="btn-classic">Verificar Origem</div>
+            <p>Mostre pro comprador que o seu produto é bão e vem de terra cuidada.</p>
+            <div class="btn-rustico">Rastrear Colheita</div>
         </a>
 
         <a href="biolab.html" class="card">
-            <div class="badge">Alquimia</div>
-            <div class="icon">🏺</div>
+            <div class="badge">Remédio Natural</div>
+            <div class="icon">🐜</div>
             <h3>BioLab Assist</h3>
-            <p>Segredos da natureza aplicados com o rigor da ciência biológica.</p>
-            <div class="btn-classic">Ver Receituário</div>
+            <p>Dicas pra bater as pragas usando o que a própria natureza oferece.</p>
+            <div class="btn-rustico">Ver Receitas Caseiras</div>
         </a>
 
         <a href="aquaguard.html" class="card">
-            <div class="badge">Vitalidade</div>
-            <div class="icon">⛲</div>
+            <div class="badge">Água da Mina</div>
+            <div class="icon">💧</div>
             <h3>AquaGuard</h3>
-            <p>Vigilância constante sobre as águas sagradas que banham nosso solo.</p>
-            <div class="btn-classic">Telemetria Vital</div>
+            <p>De olho na limpeza das nascentes e no nível das caixas d'água.</p>
+            <div class="btn-rustico">Medir Águas</div>
         </a>
 
-        <a href="agrovr.html" class="card">
-            <div class="badge">Maestria</div>
-            <div class="icon">🎻</div>
-            <h3>AgroVR Academy</h3>
-            <p>Treinamento de alta classe em ambientes virtuais de simulação perfeita.</p>
-            <div class="btn-classic">Iniciar Lição</div>
+        <a href="agrovr.html" class="badge-container">
+            <div class="card">
+                <div class="badge">Escola Rural</div>
+                <div class="icon">🤠</div>
+                <h3>AgroVR Academy</h3>
+                <p>Treinamento moderno pra moçada aprender a lida sem desperdício.</p>
+                <div class="btn-rustico">Entrar na Aula</div>
+            </div>
         </a>
 
         <a href="climate.html" class="card">
-            <div class="badge">Presságio</div>
-            <div class="icon">🧭</div>
+            <div class="badge">Tempo</div>
+            <div class="icon">⛈️</div>
             <h3>Climate AI</h3>
-            <p>Entenda os céus com precisão absoluta para proteger seu legado.</p>
-            <div class="btn-classic">Ler os Céus</div>
+            <p>Previsão certeira pra saber a hora certa de plantar e colher.</p>
+            <div class="btn-rustico">Ver Previsão</div>
         </a>
 
     </div>
 
     <footer>
-        "A terra não é uma herança de nossos pais, mas um empréstimo de nossos filhos."
-        <br>
-        <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 4px; margin-top: 20px; display: block; font-family: 'Montserrat'">Agrinho 2026</span>
+        AGRINHO 2026 - Orgulho de ser produtor rural.
     </footer>
 
 </body>
