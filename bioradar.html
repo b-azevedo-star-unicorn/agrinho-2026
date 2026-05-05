@@ -7,19 +7,50 @@
     <style>
         :root {
             --primary: #00ff88;
+            --secondary: #00d4ff;
             --bg: #0f172a;
             --card: #1e293b;
             --text: #f1f5f9;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
             display: flex;
             height: 100vh;
             overflow: hidden;
+        }
+
+        /* Modal de Aviso Pedagógico */
+        #modal-aviso {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            text-align: center;
+            border: 1px solid var(--primary);
+        }
+        .modal-content h2 { color: var(--primary); }
+        .btn-entendi {
+            background: var(--primary);
+            border: none;
+            padding: 10px 30px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
         }
 
         /* Sidebar */
@@ -32,42 +63,68 @@
             flex-direction: column;
             gap: 20px;
             overflow-y: auto;
-            z-index: 10;
         }
 
-        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); cursor: pointer; margin-bottom: 10px; }
-        .search-box { background: rgba(0,0,0,0.2); border: 1px solid #334155; padding: 12px; border-radius: 10px; color: white; width: 100%; box-sizing: border-box; }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 10px; cursor: pointer; }
         
+        .search-box {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid #334155;
+            padding: 12px;
+            border-radius: 10px;
+            color: white;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .filter-group h4 { margin-bottom: 10px; font-size: 0.9rem; color: #94a3b8; }
         .tag-container { display: flex; flex-wrap: wrap; gap: 8px; }
-        .tag { background: #334155; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; }
+        
+        .tag {
+            background: #334155;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
         .tag.active { background: var(--primary); color: #000; font-weight: bold; }
 
-        .offer-list { display: flex; flex-direction: column; gap: 10px; }
-        .offer-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; cursor: pointer; border: 1px solid transparent; }
-        .offer-item:hover { border-color: var(--primary); }
+        /* Lista de Ofertas */
+        .offer-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .offer-item {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: 0.2s;
+        }
+        .offer-item:hover { border-color: var(--primary); background: rgba(255,255,255,0.08); }
 
         /* Mapa */
         .map-area {
             flex-grow: 1;
             position: relative;
             background: #111;
-            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('Gemini_Generated_Image_gfcfcogfcfcogfcf.png'); 
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('Gemini_Generated_Image_gfcfcogfcfcogfcf.png'); 
             background-size: cover;
-            background-position: center;
         }
 
         .marker {
             position: absolute;
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             background: var(--primary);
             border: 3px solid white;
             border-radius: 50%;
             cursor: pointer;
             box-shadow: 0 0 15px var(--primary);
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%); /* Centraliza o marcador */
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 5;
         }
+        .marker:hover { transform: translate(-50%, -50%) scale(1.3); }
 
         /* Painel de Info */
         .info-panel {
@@ -79,7 +136,7 @@
             border-radius: 20px;
             padding: 25px;
             border: 1px solid var(--primary);
-            display: none; /* Começa escondido */
+            display: none;
             box-shadow: 0 10px 50px rgba(0,0,0,0.5);
             z-index: 100;
         }
@@ -88,67 +145,78 @@
             background: var(--primary);
             color: #000;
             border: none;
-            padding: 14px;
+            padding: 12px;
             width: 100%;
             border-radius: 10px;
             font-weight: bold;
             margin-top: 15px;
             cursor: pointer;
-            font-size: 1rem;
         }
-        
-        .btn-match:active { transform: scale(0.98); }
-
-        #modal-aviso {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 2000;
-        }
+        .btn-match:hover { background: white; }
     </style>
 </head>
 <body>
 
     <div id="modal-aviso">
-        <div style="background: var(--card); padding: 30px; border-radius: 20px; text-align: center; border: 1px solid var(--primary); max-width: 400px;">
-            <h2>Simulação Bio-Radar</h2>
-            <p>Plataforma fictícia para o Concurso Agrinho.</p>
-            <button onclick="document.getElementById('modal-aviso').remove(); renderizar();" style="background: var(--primary); border:none; padding: 10px 20px; border-radius: 10px; cursor:pointer; font-weight:bold;">ACESSAR MAPA</button>
+        <div class="modal-content">
+            <h2>⚠️ Aviso Importante</h2>
+            <p>Este site foi desenvolvido para fins pedagógicos (Concurso Agrinho 2026). Todas as informações são <strong>fictícias</strong>.</p>
+            <button class="btn-entendi" onclick="fecharAviso()">ENTENDI</button>
         </div>
     </div>
 
     <aside class="sidebar">
         <div class="logo" onclick="resetarMapa()">🔄 Bio-Radar</div>
-        <input type="text" id="searchInput" class="search-box" placeholder="Procurar resíduo..." onkeyup="filtrar()">
+        
+        <input type="text" id="searchInput" class="search-box" placeholder="Pesquisar resíduo..." onkeyup="filtrar()">
 
-        <div class="tag-container">
-            <span class="tag active" onclick="filtrarCategoria('Todos', this)">Todos</span>
-            <span class="tag" onclick="filtrarCategoria('Fertilizante', this)">Fertilizante</span>
-            <span class="tag" onclick="filtrarCategoria('Biomassa', this)">Biomassa</span>
+        <div class="filter-group">
+            <h4>CATEGORIAS</h4>
+            <div class="tag-container" id="categoryFilters">
+                <span class="tag active" onclick="filtrarCategoria('Todos', this)">Todos</span>
+                <span class="tag" onclick="filtrarCategoria('Fertilizante', this)">Fertilizante</span>
+                <span class="tag" onclick="filtrarCategoria('Biomassa', this)">Biomassa</span>
+                <span class="tag" onclick="filtrarCategoria('Ração', this)">Ração</span>
+            </div>
         </div>
 
-        <div class="offer-list" id="offerList"></div>
+        <div class="filter-group">
+            <h4>OFERTAS DISPONÍVEIS</h4>
+            <div class="offer-list" id="offerList"></div>
+        </div>
     </aside>
 
     <main class="map-area" id="mapContainer">
         <div class="info-panel" id="info-panel">
-            <h2 id="info-title" style="margin: 0;"></h2>
-            <p id="info-farm" style="color: var(--primary); font-weight: bold;"></p>
-            <p id="info-desc" style="font-size: 0.9rem; color: #94a3b8;"></p>
-            
-            <button id="mainMatchBtn" class="btn-match" onclick="executarMatch()">SOLICITAR MATCH</button>
-            
-            <button onclick="fecharPainel()" style="background:none; border:none; color:#555; cursor:pointer; width:100%; margin-top:10px;">Voltar ao Mapa Geral</button>
+            <h2 id="info-title" style="margin: 0; font-size: 1.2rem;"></h2>
+            <p id="info-farm" style="color: var(--primary); margin: 5px 0; font-weight: bold;"></p>
+            <p id="info-desc" style="font-size: 0.85rem; color: #94a3b8; line-height: 1.4;"></p>
+            <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; margin-top: 10px;">
+                <small>Impacto Ambiental:</small><br>
+                <strong id="info-impact" style="color: #fff;"></strong>
+            </div>
+            <button class="btn-match" onclick="realizarMatch()">SOLICITAR MATCH</button>
+            <button onclick="fecharPainel()" style="background:none; border:none; color:#94a3b8; cursor:pointer; width:100%; margin-top:10px; font-size: 0.8rem;">Fechar e Ver Todos</button>
         </div>
     </main>
 
     <script>
         const ofertas = [
-            { id: 1, nome: "Cama de Frango", fazenda: "Sítio Santa Maria", cat: "Fertilizante", lat: "40%", lng: "30%", desc: "Rico em nitrogênio para adubação." },
-            { id: 2, nome: "Bagaço de Cana", fazenda: "Usina Vale", cat: "Biomassa", lat: "25%", lng: "70%", desc: "Ideal para caldeiras e energia." },
-            { id: 3, nome: "Esterco Bovino", fazenda: "Fazenda Horizonte", cat: "Fertilizante", lat: "60%", lng: "50%", desc: "Adubo orgânico curtido." }
+            { id: 1, nome: "Cama de Frango", fazenda: "Fazenda Santa Maria", cat: "Fertilizante", vol: "10 ton", impact: "-2.4t CO2", lat: "40%", lng: "30%", desc: "Rico em nitrogênio, ideal para milho e soja." },
+            { id: 2, nome: "Bagaço de Cana", fazenda: "Usina Alvorada", cat: "Biomassa", vol: "100 m³", impact: "-5.0t CO2", lat: "25%", lng: "70%", desc: "Excelente para queima em caldeiras industriais." },
+            { id: 3, nome: "Soro de Leite", fazenda: "Laticínios Vale Verde", cat: "Ração", vol: "5000L", impact: "-1.2t CO2", lat: "60%", lng: "55%", desc: "Subproduto líquido para alimentação de suínos." },
+            { id: 4, nome: "Casca de Arroz", fazenda: "Grãos do Sul", cat: "Biomassa", vol: "20 ton", impact: "-3.1t CO2", lat: "75%", lng: "20%", desc: "Material seco para forração de solos ou energia." },
+            { id: 5, nome: "Esterco Bovino", fazenda: "Pecuária Horizonte", cat: "Fertilizante", vol: "15 ton", impact: "-4.0t CO2", lat: "45%", lng: "85%", desc: "Curtido e pronto para espalhamento em pastagens." },
+            { id: 6, nome: "Restos de Silagem", fazenda: "Sítio Novo", cat: "Ração", vol: "5 ton", impact: "-0.8t CO2", lat: "15%", lng: "45%", desc: "Excedente de produção de silagem de milho." }
         ];
 
         let categoriaAtual = "Todos";
-        let idFocado = null;
+        let idSelecionado = null;
+
+        function fecharAviso() { 
+            document.getElementById('modal-aviso').style.display = 'none'; 
+            renderizar(); 
+        }
 
         function renderizar(focoId = null) {
             const list = document.getElementById('offerList');
@@ -156,84 +224,82 @@
             const search = document.getElementById('searchInput').value.toLowerCase();
             
             list.innerHTML = "";
-            document.querySelectorAll('.marker').forEach(m => m.remove());
+            const markers = document.querySelectorAll('.marker');
+            markers.forEach(m => m.remove());
 
             ofertas.forEach(o => {
-                const matchSearch = o.nome.toLowerCase().includes(search);
+                const matchSearch = o.nome.toLowerCase().includes(search) || o.fazenda.toLowerCase().includes(search);
                 const matchCat = categoriaAtual === "Todos" || o.cat === categoriaAtual;
 
                 if (matchSearch && matchCat) {
+                    // Renderiza lista lateral
                     list.innerHTML += `
-                        <div class="offer-item" onclick="selecionarPonto(${o.id})">
-                            <div style="font-weight:bold">${o.nome}</div>
-                            <small>${o.fazenda}</small>
+                        <div class="offer-item" onclick="selecionarProduto(${o.id})">
+                            <small style="color: var(--primary)">${o.cat}</small>
+                            <div style="font-size:0.9rem">${o.nome}</div>
+                            <small style="color:#64748b">${o.fazenda}</small>
                         </div>
                     `;
 
-                    // Lógica: se tiver um focoId, só mostra ele. Se for null, mostra todos.
-                    if (focoId === null || o.id === focoId) {
+                    // Lógica para mostrar apenas UM ou TODOS no mapa
+                    if (focoId === null || focoId === o.id) {
                         const m = document.createElement('div');
                         m.className = 'marker';
-                        m.style.top = o.lat; m.style.left = o.lng;
-                        m.onclick = () => selecionarPonto(o.id);
+                        m.style.top = o.lat;
+                        m.style.left = o.lng;
+                        m.onclick = () => selecionarProduto(o.id);
                         map.appendChild(m);
                     }
                 }
             });
         }
 
-        function selecionarPonto(id) {
-            idFocado = id;
-            const o = ofertas.find(item => item.id === id);
-            
-            // Atualiza painel
-            document.getElementById('info-title').innerText = o.nome;
-            document.getElementById('info-farm').innerText = o.fazenda;
-            document.getElementById('info-desc').innerText = o.desc;
-            
-            // Reseta o botão de match caso tenha sido usado antes
-            const btn = document.getElementById('mainMatchBtn');
-            btn.innerText = "SOLICITAR MATCH";
-            btn.style.background = "var(--primary)";
-
-            document.getElementById('info-panel').style.display = 'block';
-            renderizar(id); // Limpa o mapa e deixa só este
+        function selecionarProduto(id) {
+            idSelecionado = id;
+            renderizar(id); // Re-renderiza o mapa focando apenas neste ID
+            showInfo(id);
         }
 
-        // FUNÇÃO DE MATCH CORRIGIDA
-        function executarMatch() {
-            const btn = document.getElementById('mainMatchBtn');
-            btn.innerText = "✅ SOLICITADO!";
-            btn.style.background = "#fff";
-            
-            // Simula um tempo de processamento
-            setTimeout(() => {
-                alert("Match realizado com sucesso! O produtor foi notificado.");
-                fecharPainel();
-            }, 500);
+        function showInfo(id) {
+            const o = ofertas.find(item => item.id === id);
+            const panel = document.getElementById('info-panel');
+            panel.style.display = 'block';
+            document.getElementById('info-title').innerText = o.nome;
+            document.getElementById('info-farm').innerText = o.fazenda + " (" + o.vol + ")";
+            document.getElementById('info-desc').innerText = o.desc;
+            document.getElementById('info-impact').innerText = o.impact + " eq";
+        }
+
+        function realizarMatch() {
+            alert('Match realizado! Conexão estabelecida com sucesso. Verifique seu e-mail para os próximos passos.');
+            fecharPainel();
         }
 
         function fecharPainel() {
             document.getElementById('info-panel').style.display = 'none';
-            idFocado = null;
-            renderizar();
+            idSelecionado = null;
+            renderizar(); // Volta a mostrar todos
         }
 
-        function filtrar() { idFocado = null; renderizar(); }
-        
-        function filtrarCategoria(cat, el) {
+        function filtrar() { 
+            idSelecionado = null; 
+            renderizar(); 
+        }
+
+        function filtrarCategoria(cat, element) {
             categoriaAtual = cat;
+            idSelecionado = null;
             document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
-            idFocado = null;
+            element.classList.add('active');
             renderizar();
         }
 
         function resetarMapa() {
-            idFocado = null;
-            categoriaAtual = "Todos";
             document.getElementById('searchInput').value = "";
-            renderizar();
+            categoriaAtual = "Todos";
+            document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tag')[0].classList.add('active');
+            fecharPainel();
         }
     </script>
 </body>
