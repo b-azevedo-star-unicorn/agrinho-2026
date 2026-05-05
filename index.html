@@ -27,6 +27,59 @@
             align-items: center;
         }
 
+        /* --- ESTILO DO AVISO DE BOAS-VINDAS (MODAL) --- */
+        #modal-aviso {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-conteudo {
+            background: #f4ece1;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            border: 10px solid var(--madeira-escura);
+            box-shadow: 15px 15px 0px var(--terra);
+            position: relative;
+            text-align: center;
+        }
+
+        .modal-conteudo h2 {
+            font-family: 'Rock Salt', cursive;
+            color: var(--verde-mato);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .modal-conteudo p {
+            font-family: 'Special Elite', cursive;
+            line-height: 1.6;
+            color: var(--madeira-escura);
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .btn-fechar {
+            background: var(--verde-mato);
+            color: white;
+            padding: 12px 25px;
+            border: 2px solid var(--ferro);
+            font-family: 'Special Elite', cursive;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-fechar:hover {
+            background: var(--terra);
+        }
+
+        /* --- RESTANTE DO ESTILO ORIGINAL --- */
         header {
             text-align: center;
             margin-bottom: 60px;
@@ -132,10 +185,6 @@
             font-weight: bold;
         }
 
-        .card:hover .btn-rustico {
-            background: var(--terra);
-        }
-
         footer {
             margin-top: 80px;
             text-align: center;
@@ -146,31 +195,33 @@
             width: 100%;
             max-width: 600px;
         }
-
-        @media (max-width: 600px) {
-            header h1 { font-size: 1.8rem; }
-        }
     </style>
 </head>
 <body>
 
-    <div vw class="enabled">
-        <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper>
-            <div class="vw-plugin-top-wrapper"></div>
+    <div id="modal-aviso">
+        <div class="modal-conteudo">
+            <h2>Bem-vindo ao SustentaAgro</h2>
+            <hr border="1" color="#3e2723">
+            <p><strong>Para que serve:</strong> Este site é uma central de inteligência agrícola que une ferramentas de sustentabilidade, rastreabilidade e economia circular para o dia a dia no campo.</p>
+            <p><strong>Para quem é:</strong> Direcionado a pequenos e médios produtores rurais, técnicos agrícolas e estudantes que buscam modernizar a gestão da terra preservando o meio ambiente.</p>
+            <button class="btn-fechar" onclick="fecharModal()">ENTRAR NO SISTEMA</button>
         </div>
     </div>
+
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div>
+    </div>
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-    <script>
-        new window.VLibras.Widget('https://vlibras.gov.br/app');
-    </script>
+    <script>new window.VLibras.Widget('https://vlibras.gov.br/app');</script>
+
     <header>
         <h1>SustentaAgro</h1>
-        <p>Soluções Práticas para o Produtor Rural</p>
+        <p>Tecnologia e Sustentabilidade Rural</p>
     </header>
 
     <div class="grid-container">
-        
         <a href="bioradar.html" class="card">
             <div class="badge">Rede Local</div>
             <div class="icon">🚜</div>
@@ -234,12 +285,17 @@
             <p>Previsão meteorológica detalhada para planejar o plantio e a proteção do solo.</p>
             <div class="btn-rustico">Ver Previsão</div>
         </a>
-
     </div>
 
     <footer>
         PROJETO AGRINHO 2026 - Tecnologia e Sustentabilidade no Campo
     </footer>
+
+    <script>
+        function fecharModal() {
+            document.getElementById('modal-aviso').style.display = 'none';
+        }
+    </script>
 
 </body>
 </html>
