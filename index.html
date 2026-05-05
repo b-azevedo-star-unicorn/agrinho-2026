@@ -3,298 +3,262 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SustentaAgro OS | Experience</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <title>SustentaAgro OS | Tradição & Excelência</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Prata&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon-green: #00ff88;
-            --neon-blue: #00d4ff;
-            --deep-violet: #0f0524;
-            --glass: rgba(255, 255, 255, 0.05);
+            --vintage-gold: #c5a059;
+            --deep-green: #1a302a;
+            --oxblood: #4a1c1c;
+            --parchment: #f4eee1;
+            --ebony: #121212;
+            --border-style: 2px solid var(--vintage-gold);
         }
 
         body {
-            font-family: 'Outfit', sans-serif;
-            background: var(--deep-violet);
-            color: #fff;
+            font-family: 'Prata', serif;
+            background-color: var(--deep-green);
+            /* Fundo com textura de papel de parede clássico sutil */
+            background-image: 
+                linear-gradient(rgba(26, 48, 42, 0.95), rgba(26, 48, 42, 0.95)),
+                url('https://www.transparenttextures.com/patterns/cream-paper.png');
+            color: var(--parchment);
             margin: 0;
-            min-height: 100vh;
+            padding: 80px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow-x: hidden;
-            padding: 40px 20px;
         }
 
-        /* MANCHAS DE LUZ ANIMADAS NO FUNDO */
-        .blob {
+        /* Moldura maximalista na tela */
+        body::before {
+            content: '';
             position: fixed;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(0, 255, 136, 0.15) 0%, transparent 70%);
-            filter: blur(80px);
-            z-index: -1;
-            animation: move 20s infinite alternate;
-        }
-
-        .blob-2 {
-            right: -100px;
-            top: -100px;
-            background: radial-gradient(circle, rgba(0, 212, 255, 0.15) 0%, transparent 70%);
-            animation-duration: 15s;
-        }
-
-        @keyframes move {
-            from { transform: translate(-10%, -10%); }
-            to { transform: translate(20%, 20%); }
+            top: 20px; left: 20px; right: 20px; bottom: 20px;
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            pointer-events: none;
+            z-index: 100;
         }
 
         header {
             text-align: center;
-            margin-bottom: 60px;
+            max-width: 900px;
+            margin-bottom: 100px;
             position: relative;
         }
 
         header h1 {
-            font-family: 'Syncopate', sans-serif;
-            font-size: clamp(2rem, 5vw, 4rem);
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            font-weight: 900;
+            font-style: italic;
+            color: var(--vintage-gold);
             margin: 0;
-            text-transform: uppercase;
-            background: linear-gradient(to right, var(--neon-green), var(--neon-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.5));
+            line-height: 1;
+            text-transform: none;
+            filter: drop-shadow(3px 3px 0px var(--ebony));
         }
 
-        header::after {
-            content: '';
-            display: block;
-            width: 60px;
-            height: 4px;
-            background: var(--neon-green);
-            margin: 20px auto;
-            box-shadow: 0 0 15px var(--neon-green);
-            border-radius: 10px;
+        header p {
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            font-size: 0.8rem;
+            margin-top: 20px;
+            color: var(--parchment);
+            opacity: 0.8;
         }
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
             width: 100%;
-            max-width: 1200px;
-            perspective: 1000px;
+            max-width: 1300px;
         }
 
         .card {
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 30px;
-            padding: 30px;
+            background: var(--ebony);
+            border: 3px double var(--vintage-gold); /* Bordas duplas clássicas */
+            padding: 45px 35px;
             text-decoration: none;
-            color: #fff;
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            color: var(--parchment);
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
             position: relative;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        /* FORMAS GEOMÉTRICAS DE FUNDO NO CARD */
-        .card::before {
-            content: '';
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            background: var(--neon-green);
-            opacity: 0.05;
-            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-            top: -20px;
-            right: -20px;
-            transition: 0.5s;
+            box-shadow: 20px 20px 0px rgba(0,0,0,0.3);
         }
 
         .card:hover {
-            transform: translateY(-10px) rotateX(5deg);
-            border-color: var(--neon-green);
-            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.2);
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .card:hover::before {
-            width: 150px;
-            height: 150px;
-            opacity: 0.2;
-            transform: rotate(45deg);
+            transform: translate(-10px, -10px);
+            box-shadow: 30px 30px 0px var(--vintage-gold);
+            background: var(--oxblood); /* Mudança de cor dramática */
         }
 
         .badge {
-            font-size: 0.65rem;
-            letter-spacing: 2px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
             text-transform: uppercase;
-            color: var(--neon-blue);
-            font-weight: 900;
-            margin-bottom: 20px;
+            letter-spacing: 2px;
+            border-bottom: 1px solid var(--vintage-gold);
+            width: fit-content;
+            margin-bottom: 30px;
+            padding-bottom: 5px;
+            color: var(--vintage-gold);
         }
 
-        .icon-circle {
-            width: 60px;
-            height: 60px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        .icon {
+            font-size: 45px;
+            margin-bottom: 25px;
+            filter: sepia(1) saturate(2);
         }
 
         .card h3 {
-            font-size: 1.5rem;
-            margin: 0 0 10px 0;
-            font-weight: 600;
-            letter-spacing: -0.5px;
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin: 0 0 15px 0;
+            color: var(--vintage-gold);
         }
 
         .card p {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: rgba(255,255,255,0.7);
-            margin-bottom: 25px;
+            font-family: 'Prata', serif;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--parchment);
+            margin-bottom: 40px;
             flex-grow: 1;
+            font-style: italic;
         }
 
-        .btn-glow {
-            width: 100%;
-            padding: 12px;
-            border-radius: 15px;
-            background: transparent;
-            border: 1px solid var(--neon-green);
-            color: var(--neon-green);
+        .btn-classic {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            padding: 15px;
+            border: 1px solid var(--vintage-gold);
+            color: var(--vintage-gold);
             text-align: center;
-            position: relative;
-            z-index: 1;
             transition: 0.3s;
-            overflow: hidden;
         }
 
-        .btn-glow::after {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.4), transparent);
-            transition: 0.5s;
-        }
-
-        .card:hover .btn-glow {
-            background: var(--neon-green);
-            color: var(--deep-violet);
-            box-shadow: 0 0 20px var(--neon-green);
-        }
-
-        .card:hover .btn-glow::after {
-            left: 100%;
+        .card:hover .btn-classic {
+            background: var(--vintage-gold);
+            color: var(--ebony);
         }
 
         footer {
-            margin-top: 80px;
-            padding: 30px;
-            font-size: 0.7rem;
-            letter-spacing: 3px;
-            color: rgba(255,255,255,0.3);
-            text-transform: uppercase;
+            margin-top: 150px;
+            text-align: center;
+            border-top: 1px solid var(--vintage-gold);
+            padding: 50px;
+            width: 100%;
+            max-width: 800px;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.2rem;
+        }
+
+        /* Detalhe ornamental nos cantos dos cards */
+        .card::after {
+            content: '❦';
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            color: var(--vintage-gold);
+            font-size: 1.5rem;
+            opacity: 0.3;
         }
 
         @media (max-width: 768px) {
-            .grid-container { grid-template-columns: 1fr; }
+            header h1 { font-size: 3rem; }
+            .grid-container { gap: 20px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="blob"></div>
-    <div class="blob blob-2"></div>
-
     <header>
-        <h1>SustentaAgro OS</h1>
-        <p style="letter-spacing: 5px; color: var(--neon-blue);">Interface Experimental v2.0</p>
+        <p>Desde 2026 • Excelência Rural</p>
+        <h1>SustentaAgro <span style="font-family: 'Prata'">Legacy</span></h1>
+        <p>A Tradição Encontra a Nova Era</p>
     </header>
 
     <div class="grid-container">
         
         <a href="bioradar.html" class="card">
-            <div class="badge">Eco-Network</div>
-            <div class="icon-circle">🔄</div>
+            <div class="badge">Patrimônio</div>
+            <div class="icon">📜</div>
             <h3>Bio-Radar</h3>
-            <p>Mapeamento de simbiose industrial: transforme resíduos em recursos.</p>
-            <div class="btn-glow">ACESSAR RADAR</div>
+            <p>A arte da troca mútua entre vizinhos. Gestão nobre de ativos orgânicos.</p>
+            <div class="btn-classic">Abrir Registro</div>
         </a>
 
         <a href="carbono.html" class="card">
-            <div class="badge">Cryptocarbon</div>
-            <div class="icon-circle">🍃</div>
+            <div class="badge">Riqueza Verde</div>
+            <div class="icon">⚜️</div>
             <h3>Carbon Wallet</h3>
-            <p>Ativos ambientais digitalizados. Monitore seu impacto em tempo real.</p>
-            <div class="btn-glow">VER CARTEIRA</div>
+            <p>O valor da terra preservada convertido em lastro para gerações futuras.</p>
+            <div class="btn-classic">Consultar Tesouro</div>
         </a>
 
         <a href="legacy.html" class="card">
-            <div class="badge">Future Value</div>
-            <div class="icon-circle">📈</div>
+            <div class="badge">Sucessão</div>
+            <div class="icon">🏰</div>
             <h3>Legacy Pro</h3>
-            <p>Algoritmos de valorização baseados em biodiversidade e saúde do solo.</p>
-            <div class="btn-glow">SIMULAR LEGADO</div>
+            <p>Mapeando a herança e a valorização das raízes desta terra.</p>
+            <div class="btn-classic">Analisar Linhagem</div>
         </a>
 
         <a href="rastroverde.html" class="card">
-            <div class="badge">Protocolo 01</div>
-            <div class="icon-circle">🔗</div>
+            <div class="badge">Honra</div>
+            <div class="icon">🖋️</div>
             <h3>Rastro Verde</h3>
-            <p>A verdade da terra gravada em blocos. Rastreabilidade inquestionável.</p>
-            <div class="btn-glow">RASTREAR ORIGEM</div>
+            <p>Assinatura digital e selo de procedência. A garantia da palavra dada.</p>
+            <div class="btn-classic">Verificar Origem</div>
         </a>
 
         <a href="biolab.html" class="card">
-            <div class="badge">Gen-Tech</div>
-            <div class="icon-circle">🧪</div>
+            <div class="badge">Alquimia</div>
+            <div class="icon">🏺</div>
             <h3>BioLab Assist</h3>
-            <p>Inteligência biológica para o manejo de pragas e regeneração.</p>
-            <div class="btn-glow">BIO-CONSULTA</div>
+            <p>Segredos da natureza aplicados com o rigor da ciência biológica.</p>
+            <div class="btn-classic">Ver Receituário</div>
         </a>
 
         <a href="aquaguard.html" class="card">
-            <div class="badge">Hydro-Sync</div>
-            <div class="icon-circle">💧</div>
+            <div class="badge">Vitalidade</div>
+            <div class="icon">⛲</div>
             <h3>AquaGuard</h3>
-            <p>Fluxo vital. Telemetria avançada de pureza e níveis de bacias.</p>
-            <div class="btn-glow">ABRIR HIDRO-PAINEL</div>
+            <p>Vigilância constante sobre as águas sagradas que banham nosso solo.</p>
+            <div class="btn-classic">Telemetria Vital</div>
         </a>
 
         <a href="agrovr.html" class="card">
-            <div class="badge">Deep Learning</div>
-            <div class="icon-circle">🥽</div>
+            <div class="badge">Maestria</div>
+            <div class="icon">🎻</div>
             <h3>AgroVR Academy</h3>
-            <p>Simulações neuro-imersivas para agricultura de precisão.</p>
-            <div class="btn-glow">ENTRAR NA VR</div>
+            <p>Treinamento de alta classe em ambientes virtuais de simulação perfeita.</p>
+            <div class="btn-classic">Iniciar Lição</div>
         </a>
 
         <a href="climate.html" class="card">
-            <div class="badge">Atmos-AI</div>
-            <div class="icon-circle">☁️</div>
+            <div class="badge">Presságio</div>
+            <div class="icon">🧭</div>
             <h3>Climate AI</h3>
-            <p>Previsão sináptica: entenda o clima antes que ele aconteça.</p>
-            <div class="btn-glow">SCAN CLIMÁTICO</div>
+            <p>Entenda os céus com precisão absoluta para proteger seu legado.</p>
+            <div class="btn-classic">Ler os Céus</div>
         </a>
 
     </div>
 
     <footer>
-        &lt; AGRO_CONEXÃO_TOTAL_2026 /&gt;
+        "A terra não é uma herança de nossos pais, mas um empréstimo de nossos filhos."
+        <br>
+        <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 4px; margin-top: 20px; display: block; font-family: 'Montserrat'">Agrinho 2026</span>
     </footer>
 
 </body>
